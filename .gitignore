@@ -1,0 +1,67 @@
+# ==========================================
+# Entornos Virtuales y Python
+# ==========================================
+nasa/
+venv/
+.venv/
+env/
+ENV/
+
+# Caché y compilación de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribución y empaquetado
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Pruebas y análisis estático
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ==========================================
+# Frontend (Node / Vite / React)
+# ==========================================
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ==========================================
+# Editores e IDEs (VS Code, JetBrains, etc.)
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ==========================================
+# Variables de entorno y credenciales
+# ==========================================
+.env
+.env*.local
+
+# ==========================================
+# Archivos del Sistema Operativo
+# ==========================================
+.DS_Store
+Thumbs.db
