@@ -1,5 +1,5 @@
 {
-  "_status": "Borrador de P5 basado en los textos de back-AR. Textos finales a cargo de P6.",
+  "_status": "Versión revisada por P6 (T3, 2026-11-14), pendiente de aprobación del PM. Términos según docs/p6/glosario.md.",
   "app": {
     "title": "TerraAnáloga",
     "tagline": "Análogos terrestres de la Luna y Marte",
@@ -15,14 +15,15 @@
     }
   },
   "analogs": {
-    "placeholderTitle": "Buscador de análogos en construcción",
-    "placeholderBody": "Este módulo (IFA, presets por zona, fichas y radar) llega en la Fase 2. Mientras tanto, usa el Explorador de datos."
+    "placeholderTitle": "Estamos construyendo el buscador de análogos",
+    "placeholderBody": "Aquí podrás comparar sitios de la Tierra con la Luna y Marte (IFA, presets por zona, fichas y radar). Todavía no está disponible; mientras tanto, usa el Explorador de datos.",
+    "placeholderAction": "Ir al Explorador de datos"
   },
   "bodies": {
     "label": "Cuerpo planetario",
-    "earth": { "label": "Tierra (Worldview)", "region": "Tierra - Región Mesoamérica" },
-    "moon": { "label": "Luna (LRO/Diviner)", "region": "Luna - Polo Sur / LRO Diviner" },
-    "mars": { "label": "Marte (PDS)", "region": "Marte - Cráter Gale / NASA PDS" }
+    "earth": { "label": "Tierra (Worldview)", "region": "Tierra · Región Mesoamérica" },
+    "moon": { "label": "Luna (LRO/Diviner)", "region": "Luna · Polo Sur / LRO Diviner" },
+    "mars": { "label": "Marte (PDS)", "region": "Marte · Cráter Gale / NASA PDS" }
   },
   "explorer": {
     "mapLabel": "Mapa del explorador de datos",
@@ -33,22 +34,22 @@
     },
     "globe": {
       "label": "Globo 3D del cuerpo seleccionado",
-      "hint": "Arrastra para girar · rueda o pellizco para acercar · clic para mover el BBox",
-      "loading": "Cargando mosaico {loaded}/{total}",
-      "noWebgl": "Este navegador no puede mostrar el globo 3D (WebGL no disponible). Usa el mapa 2D."
+      "hint": "Arrastra para girar · rueda o pellizco para acercar · clic o toque para mover el BBox",
+      "loading": "Cargando mosaico {loaded} de {total}",
+      "noWebgl": "Tu navegador no puede mostrar el globo 3D (WebGL no está disponible). Cambia al mapa 2D para seguir."
     },
-    "mapHint": "Haz clic en cualquier punto del mapa para mover el BBox",
-    "gibsDate": "Fecha capa NASA Worldview GIBS",
-    "bbox": "BBox (minLon, minLat, maxLon, maxLat)",
+    "mapHint": "Toca o haz clic en el mapa para mover el BBox",
+    "gibsDate": "Fecha de la capa NASA Worldview GIBS",
+    "bbox": "BBox: caja de coordenadas (lon. mín., lat. mín., lon. máx., lat. máx.)",
     "bboxErrors": {
-      "format": "Escribe 4 números separados por comas.",
-      "range": "La longitud va de -180 a 180 y la latitud de -90 a 90.",
-      "order": "Cada mínimo debe ser menor que su máximo."
+      "format": "Escribe 4 números separados por comas, por ejemplo: -90.1,13.1,-87.6,14.5.",
+      "range": "Ajusta los valores: la longitud va de -180 a 180 y la latitud de -90 a 90.",
+      "order": "Revisa el orden: cada mínimo debe ser menor que su máximo."
     },
     "startDate": "Buscar desde",
     "endDate": "Hasta",
-    "dateOrder": "La fecha inicial debe ser anterior o igual a la final.",
-    "variable": "Filtro de agencia / variable",
+    "dateOrder": "Ajusta las fechas: la inicial debe ser anterior o igual a la final.",
+    "variable": "Filtrar por agencia o variable",
     "variables": {
       "all": "Todas las misiones (NASA, CSA, ESA, JAXA)",
       "maritime": "CSA RCM (marítimo / desastres / ecosistemas)",
@@ -61,14 +62,14 @@
     "search": "Buscar escenas en vivo",
     "searching": "Consultando catálogos...",
     "processing": {
-      "title": "Procesamiento bajo demanda",
+      "title": "Procesamiento con datos simulados",
       "running": "Procesando...",
       "modes": {
-        "sar_db": "SAR dB + Lee (CSA)",
-        "ndvi": "Índice NDVI (ESA/NASA)",
-        "ndwi": "Índice NDWI (agua)",
-        "jaxa_precip": "Precipitación (JAXA)",
-        "diviner_thermal": "Térmico LRO Diviner"
+        "sar_db": "Procesar SAR dB + filtro Lee",
+        "ndvi": "Calcular NDVI",
+        "ndwi": "Calcular NDWI (agua)",
+        "jaxa_precip": "Mostrar precipitación",
+        "diviner_thermal": "Mostrar temperatura (tipo Diviner)"
       }
     },
     "result": {
@@ -78,35 +79,35 @@
       "mean": "Media",
       "opacity": "Opacidad: {value} %",
       "download": "Descargar resultado GeoTIFF (.tif)",
-      "demoSample": "Muestra de demostración: {file}. La imagen no se recorta al bbox; solo se coloca sobre él.",
+      "demoSample": "Datos simulados de demostración ({file}): no son mediciones de ninguna misión ni de esta zona. La imagen no se recorta al BBox; solo se coloca sobre él.",
       "legendLow": "Bajo",
       "legendHigh": "Alto"
     },
     "cryo": {
-      "title": "Comparativa polo lunar vs. Tierra",
-      "lunarMin": "Mín. polo lunar (Diviner): {value} K",
-      "earthAvg": "Media Antártida (Tierra): {value} K",
-      "colder": "El punto más frío de esta muestra está {delta} K por debajo de la media antártica.",
-      "warmer": "El punto más frío de esta muestra está {delta} K por encima de la media antártica."
+      "title": "Ejemplo simulado: polo lunar frente a la Tierra",
+      "lunarMin": "Mínimo del perfil simulado (tipo Diviner): {value} K",
+      "earthAvg": "Media antártica de referencia: {value} K",
+      "colder": "El punto más frío de este perfil simulado está {delta} K por debajo de la media antártica de referencia.",
+      "warmer": "El punto más frío de este perfil simulado está {delta} K por encima de la media antártica de referencia."
     },
     "results": {
-      "hint": "Haz clic en una escena para ubicarla y procesarla:",
+      "hint": "Elige una escena para ubicarla y procesarla:",
       "copernicus": "ESA Copernicus STAC en vivo ({count})",
       "earthdata": "NASA Earthdata CMR en vivo ({count})",
       "pds": "NASA PDS planetario en vivo ({count})",
       "partners": "Agencias asociadas ({count})",
-      "empty": "Sin resultados o fuente no disponible.",
+      "empty": "Sin resultados o fuente no disponible. Prueba con otras fechas, otro BBox u otro filtro.",
       "clouds": "Nubes: {value}",
       "date": "Fecha: {value}",
       "instrument": "Instrumento: {value}",
       "approxLocation": "Ubicación aproximada",
-      "notAvailable": "N/D"
+      "notAvailable": "sin dato"
     }
   },
   "errors": {
-    "network": "No se pudo conectar con el backend ({api}). Comprueba que esté en marcha.",
-    "timeout": "El backend tardó demasiado en responder. Inténtalo de nuevo.",
-    "http": "El backend respondió con un error ({status}): {detail}",
-    "parse": "El backend devolvió una respuesta que no se pudo leer."
+    "network": "No pudimos conectar con el servidor de datos ({api}). Comprueba que esté en marcha e inténtalo de nuevo.",
+    "timeout": "El servidor de datos tardó demasiado en responder. Inténtalo de nuevo en unos segundos.",
+    "http": "El servidor de datos respondió con un error ({status}): {detail}. Prueba con otra escena o inténtalo más tarde.",
+    "parse": "El servidor de datos envió una respuesta que no pudimos leer. Inténtalo de nuevo."
   }
 }

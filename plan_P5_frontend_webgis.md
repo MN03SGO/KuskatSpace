@@ -11,6 +11,8 @@
 
 ## 1. Alcance y reparto P5 / P6
 
+> **Actualización 2026-11-14:** las tareas de P6 pasan al equipo frontend y se delegan al orquestador `nasa-space-7f`, con P5 como arquitecto/PM y revisor. El detalle está en [plan_P6_ux_pitch.md](plan_P6_ux_pitch.md). Donde esta tabla dice "P6", léase "responsable de las tareas P6".
+
 El frontend es **responsabilidad completa del equipo P5 + P6**. P5 programa; P6 decide la experiencia y el contenido. **P5 no redacta textos finales ni cambia el diseño aprobado sin P6**, y P6 no tiene que tocar código.
 
 | Área | P5 (desarrollo) | P6 (UI/UX y contenido) |
@@ -34,14 +36,16 @@ El frontend es **responsabilidad completa del equipo P5 + P6**. P5 programa; P6 
 
 ## 2. Situación real del repositorio
 
+> **Actualización 2026-11-14, 19:10:** `feature/database` ya está integrada en `Frontend/WebGIS` (merge `c3e2be9`) y trae una **API de MongoDB Atlas** nueva en la raíz (sección 2.5). Las secciones 2.4, 3 (D6–D8), 4.1, 4.3, 6 (B32–B38), 7, 10 y 11 se revisaron con esto. El contexto lo aportó el usuario por la sesión `nasa-space-7f`, y el PM lo verificó contra el código.
+
 ### 2.1 Estado de las ramas (revisado el 14-nov-2026 tras `git fetch`)
 
 | Rama | Último commit | Qué contiene | Relevancia para el frontend |
 | :--- | :--- | :--- | :--- |
-| `Frontend/WebGIS` (la nuestra) | `47cfe92` 16:44 | Igual que `main`: plantilla de Vite + backend MVP antiguo | Base de trabajo; **aún no se ha hecho merge de nada** |
+| `Frontend/WebGIS` (la nuestra) | `c3e2be9` 19:09 | Merge de `back-AR` (`f8ba6fc`), frontend TS + globos (`093a1a8`) y merge de `feature/database` con la API de Mongo (`c3e2be9`) | Rama integrada; contiene **dos backends** (sección 2.5) |
 | `main` | `47cfe92` 16:44 | README con roles y plan maestro | — |
 | `back-AR` | `f87dc3e` 17:25 | Backend v0.3.0 + `App.jsx` con Leaflet | **Alta**: es el backend real de hoy (ya hay una copia local de esta rama) |
-| `feature/database` | `8b18173` 16:31 | `docker-compose` con PostGIS 16 + MinIO + Adminer, tabla `stac_items`, `seed.py` | Media: todavía **no hay tabla de candidatos** ni API que la lea |
+| `feature/database` | `c8e5dbc` | `docker-compose` con PostGIS 16 + MinIO + Adminer (tabla `stac_items`) **y además** la API FastAPI de MongoDB Atlas en `main.py` de la raíz, `seed_mongo.py` y `test_db.py` | **Alta**: ya integrada (`c3e2be9`); alimenta el módulo A |
 | `develop` | `dcb6576` 15:54 | Versión anterior de `back-AR` + `feature/database` | Desactualizada |
 | `datos-planetarios` | `394b79d` 16:42 | Igual que `main` (sin datos planetarios todavía) | Ninguna por ahora |
 
@@ -52,23 +56,37 @@ El frontend es **responsabilidad completa del equipo P5 + P6**. P5 programa; P6 
 - **`frontend/src/App.jsx` (393 líneas, un solo componente):** React + `react-leaflet` 5, estilos inline, JS. Vistas Tierra (EPSG:3857, base Esri + MODIS de GIBS con fecha por defecto `2024-08-15`), Luna y Marte (EPSG:4326, teselas Trek). El mapa se vuelve a montar al cambiar de cuerpo.
 - **Merge:** reescribe `frontend/` (~500 líneas de diferencia) y **borra `frontend/.gitignore`**. No es grave porque el `.gitignore` de la raíz ya ignora `node_modules/`, `dist/` y `.env`, pero **habrá conflictos**.
 
-### 2.3 `feature/database` (código leído completo)
+### 2.3 `feature/database`: parte PostGIS (código leído completo)
 - PostGIS con una sola tabla, `stac_items` (footprint `GEOMETRY(4326)` con índice GIST). `seed.py` carga 15 escenas de Sentinel-2 de **Buenos Aires** desde Microsoft Planetary Computer.
-- **No guarda candidatos análogos ni puntuaciones IFA**, y ningún endpoint de FastAPI la consulta todavía. Para el frontend no cambia nada por ahora: seguimos dependiendo de `candidates.json`.
+- No guarda candidatos y **ninguna API la consulta**. Convive con la API de Mongo (2.5), y la elección entre las dos sigue abierta (D6).
 - Las credenciales están escritas directamente en `docker-compose.yml` y `seed.py`. Sirve para uso local, pero no para desplegar.
 
-### 2.4 Divergencia con el plan maestro
+### 2.5 API de MongoDB Atlas (`main.py` de la raíz, integrada en `c3e2be9`; código leído completo)
+- **FastAPI + PyMongo + python-dotenv**, base de datos `nasa_space`, colecciones `candidates` (índice `2dsphere` sobre `location`, que se crea al arrancar) y `targets`. CORS abierto.
+- Endpoints: `GET /` (salud: `{status, service}`), `GET /candidates` (todos), `GET /candidates/near?lat&lon&radius_km` (por defecto 100 km, `$near` en metros), `GET /targets` y `GET /export` (respaldo JSON: `{database, candidates[], targets[]}`). Error: 500 `{detail}` o 503 si la base de datos no está disponible.
+- **`MONGO_URI` es obligatoria** (`.env` en la raíz). Sin ella, el proceso se detiene al importar (`RuntimeError`). Todavía no hay `.env.example`.
+- **No es un duplicado de `backend/main.py`: son dos aplicaciones distintas.** `main.py` de la raíz = datos del módulo A; `backend/main.py` (back-AR) = búsqueda y procesamiento del módulo B. **Las dos usan el puerto 8000 por defecto**, y el frontend hoy solo conoce una URL (`VITE_API_BASE`) → decisión D7.
+- `requirements.txt` también son dos: el de la raíz (`fastapi`, `uvicorn`, `pymongo`, `python-dotenv`, sin versión fija) y el de `backend/` (back-AR, con versiones fijas). Pueden convivir en el mismo `.venv`.
+- **Los datos de ejemplo (`seed_mongo.py`) no cumplen el contrato del plan maestro (§05):**
+  - Los candidatos solo tienen `{name, target: "Marte"|"Luna", location, features{mineral, biofirma}}`: **no hay `scores`**, ni `region_type`, ni ninguno de los campos de la ficha.
+  - Los 3 "candidatos" (Cráter Jezero, Valle Marineris, Cráter Shackleton) **son lugares de Marte y de la Luna, no análogos terrestres**, y sus coordenadas son marcianas o lunares. El módulo A los pintaría en el globo de la Tierra, en un sitio que no corresponde.
+  - `target` usa nombres ("Marte", "Luna") en lugar de los identificadores del plan (`moon_south_pole`, `mars_surface`, `lava_tubes`), y `targets` no trae el perfil de 5 dimensiones que necesita el radar.
+  - `test_db.py` inserta un documento `{"test": "ok"}` en `candidates`. Si se ejecuta después del seed, ensucia la colección.
+- No se pudo probar contra Atlas desde esta máquina: no hay `MONGO_URI` (y es correcto que no esté en el repo).
 
-| Plan maestro | `back-AR` hoy |
+### 2.4 Divergencia con el plan maestro (actualizada tras `c3e2be9`)
+
+| Plan maestro | Hoy en `Frontend/WebGIS` |
 | :--- | :--- |
-| MongoDB Atlas `2dsphere` | Sin base de datos (`feature/database` usa PostGIS, solo con escenas STAC) |
-| `/candidates`, `/candidates/near`, `/targets` | `/api/search`, `/api/process`, `/api/export/geotiff` |
-| IFA con sliders y presets por zona | No existe |
+| MongoDB Atlas `2dsphere` | **Hecho** en `main.py` de la raíz. El `docker-compose` de PostGIS sigue en el repo (D6) |
+| `/candidates`, `/candidates/near`, `/targets` | **Existen** (más `GET /` y `GET /export`), pero en una aplicación separada de `/api/search`, `/api/process` y `/api/export/geotiff` (D7) |
+| Contrato del candidato (§05) con `scores` | **No se cumple**: los datos de ejemplo no tienen `scores` ni los campos de la ficha (2.5). Bloquea el IFA |
+| IFA con sliders y presets por zona | No existe (Fase 2 del frontend) |
 | Fichas de candidatos análogos | No existen |
-| React + TS + Tailwind + MapLibre + Recharts | React JS + Leaflet, estilos inline |
-| Plan B estático `candidates.json` | No existe |
+| React + TS + Tailwind + MapLibre + Recharts | React **TS** + Tailwind + three.js (globos) + Leaflet (2D); Recharts instalado |
+| Plan B estático `candidates.json` | `GET /export` permite generarlo; **todavía no se ha generado** |
 
-**Consecuencia:** si seguimos solo el plan maestro, hoy no hay backend que alimente el buscador. Si seguimos solo `back-AR`, el producto es un visor de teledetección y **no responde al reto** (encontrar análogos terrestres).
+**Consecuencia:** el backend del módulo A ya existe, pero **sus datos todavía no sirven para el buscador**: faltan `scores` y fichas, y los candidatos no son terrestres. El cuello de botella pasa de "falta la API" a **"falta el `candidates.json` real de P3 cargado en Mongo con el contrato §05"**.
 
 ---
 
@@ -81,7 +99,9 @@ El frontend es **responsabilidad completa del equipo P5 + P6**. P5 programa; P6 
 | **D3** | ¿Dónde se calcula el IFA? | **En el navegador**, a partir de los `scores` de cada candidato. Así es instantáneo y el Plan B funciona entero. | P3 + P4 + P5 |
 | **D4** | ¿TypeScript + Tailwind? | **Sí, de forma gradual:** `allowJs`, los archivos nuevos en `.tsx` y el `App.jsx` de `back-AR` se migra al partirlo en componentes. | P5 |
 | **D5** | Merge de `back-AR` | **Merge de `back-AR` en `Frontend/WebGIS` en H0–H1**, antes de reestructurar. Desde ese momento, **el backend no toca `frontend/`**. | P4 + P5 |
-| **D6** | Base de datos del módulo A | La rama `feature/database` ya eligió **PostGIS**. Pedir a P4 una tabla `candidates` (punto `geography` + `scores` JSONB) que alimente `/candidates` y `/candidates/near` (`ST_DWithin`). El frontend solo exige el contrato JSON del candidato y un `candidates.json` estático. | P4 |
+| **D6** | Base de datos del módulo A | **Seguir con MongoDB Atlas** (ya implementado, coincide con el plan maestro) y sacar del camino crítico el `docker-compose` de PostGIS/MinIO, dejándolo como experimento o eliminándolo. Sigue **abierta**: la decide P4 con el equipo. Al frontend le da igual mientras se respete el contrato JSON. | P4 + equipo |
+| **D7** | Dos APIs en el puerto 8000 | **Corto plazo (sin tocar el backend):** levantar la API de Mongo en el **puerto 8001**; el frontend usa dos URLs, `VITE_API_BASE` (back-AR, módulo B) y **`VITE_DATA_API_BASE`** (Mongo, módulo A). **Definitivo (P4):** unir las dos en una sola aplicación (routers `/api/*` + `/candidates*`, `/targets`, `/export`) y un solo `requirements.txt`. Así vuelve a bastar una URL y un solo despliegue en Render. | P4 (definitivo) · P5 (corto plazo) |
+| **D8** | Fuente de datos del módulo A | **API primero** (`GET /candidates`, que se recarga al elegir objetivo) y **Plan B** = `public/data/candidates.json` generado con `GET /export` cuando P3 cargue los datos reales. `candidates.mock.json` queda **solo para desarrollo y pruebas**, nunca en la demo. Un adaptador (`lib/candidateAdapter.ts`) valida cada documento contra el contrato §05 y **descarta y cuenta** los que no lo cumplen, en lugar de inventar puntuaciones. | P5 |
 
 ---
 
@@ -117,7 +137,32 @@ Reglas:
 - Solo se commitea `pnpm-lock.yaml`. Si aparece un `package-lock.json` o un `yarn.lock`, se borra.
 - Añadir `"packageManager": "pnpm@<versión>"` en `package.json` para que Corepack y Vercel usen pnpm.
 - En Vercel: Root Directory = `frontend`, Install Command = `pnpm install --frozen-lockfile`, Build = `pnpm build`.
-- Scripts que se usan: `pnpm dev`, `pnpm build`, `pnpm preview`, `pnpm lint`, `pnpm test` (Vitest), `pnpm e2e` (Playwright).
+- Scripts que se usan: `pnpm dev`, `pnpm build` (`tsc && vite build`), `pnpm typecheck`, `pnpm preview`, `pnpm lint`, `pnpm test` (Vitest), `pnpm e2e` (Playwright) y `pnpm bake:textures`.
+- **Solo TypeScript:** no se añaden archivos `.jsx`/`.js` nuevos en `frontend/src/`.
+
+**Variables de entorno y secretos:**
+
+| Dónde | Archivo | Variables | Regla |
+| :--- | :--- | :--- | :--- |
+| Frontend | `frontend/.env.local` (copiado de `.env.example`) | `VITE_API_BASE` (back-AR, por defecto `http://localhost:8000`) y `VITE_DATA_API_BASE` (Mongo, por defecto `http://localhost:8001`, D7) | Nunca se commitea `.env.local`; las variables `VITE_*` son públicas en el navegador, así que **nunca llevan secretos** |
+| API de Mongo (raíz) | `.env` en la raíz | **`MONGO_URI`** (obligatoria; sin ella la API no arranca) | Nunca se commitea `.env`. **Falta un `.env.example`** con `MONGO_URI=` vacío (B33) |
+| Vercel / Render | Ajustes del proyecto | Las mismas variables | `MONGO_URI` solo en Render, nunca en Vercel |
+
+**Levantar los dos backends en local** (hasta que P4 los una, D7), cada uno en su propia terminal:
+
+```bash
+cd backend && .\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
+```
+
+```bash
+.\backend\.venv\Scripts\python.exe -m pip install pymongo python-dotenv
+```
+
+```bash
+.\backend\.venv\Scripts\python.exe -m uvicorn main:app --port 8001
+```
+
+El último comando se ejecuta desde la raíz y necesita `.env` con `MONGO_URI`. No uses `--reload` en la raíz: vigilaría todo el repo, incluido `node_modules`.
 
 ### 4.2 Contrato de la API `back-AR` (módulo B)
 
@@ -129,8 +174,19 @@ Reglas:
 
 Para MapLibre hay que convertir `bounds` a 4 esquinas `[lon,lat]` (arriba-izquierda, arriba-derecha, abajo-derecha, abajo-izquierda) para la `image source`.
 
-### 4.3 Contrato del módulo A (plan maestro)
-El esquema de candidato de la sección 05 del plan maestro (`scores` con 5 dimensiones, `similar_properties`, `similar_processes`, `differences_and_limits`, `exploration_use_cases`, `subsurface_and_biology`, `datasets_used`). Mientras P4 no tenga `/candidates`, se trabaja con `public/data/candidates.mock.json` con ese mismo esquema.
+### 4.3 Contrato del módulo A (plan maestro) y API de Mongo
+- **Contrato exigido** (plan maestro §05): `_id`, `name`, `region_type`, `country`, `location` (GeoJSON `Point` `[lon, lat]` **en la Tierra**), `target` (`moon_south_pole` | `mars_surface` | `lava_tubes`), `analog_category[]`, `scores{relieve, iluminacion, frio, hielo, polvo}` en [0, 1], `similar_properties[]`, `similar_processes[]`, `differences_and_limits[]`, `exploration_use_cases[]`, `subsurface_and_biology{subsurface_potential, extremophiles_note}` y `datasets_used[]`.
+- **API (Mongo, `VITE_DATA_API_BASE`):**
+
+| Endpoint | Uso en el frontend |
+| :--- | :--- |
+| `GET /` | Indicador "API" de la demo (salud) |
+| `GET /candidates` | Carga inicial del módulo A; IFA en el navegador (D3) |
+| `GET /candidates/near?lat&lon&radius_km` | Clic en el globo → "Cerca de aquí" (Fase 5) |
+| `GET /targets` | Perfil del objetivo para el radar (cuando P2/P3 entreguen el perfil de 5 dimensiones) |
+| `GET /export` | **No lo llama la app**: P4/P5 lo usan para generar `public/data/candidates.json` (Plan B). No reemplaza a `/api/export/geotiff`, que descarga el GeoTIFF del módulo B |
+
+- **Estado:** la API existe, pero los datos de ejemplo no cumplen el contrato (2.5). Mientras P3 no cargue datos reales, el adaptador mostrará "0 candidatos válidos de N" y el desarrollo seguirá con `candidates.mock.json` (D8).
 
 ### 4.4 Capas de mapa
 
@@ -242,13 +298,32 @@ Del informe del backend, ordenadas por prioridad. **Frontend** = lo resolvemos n
 | B9 | No se muestran `source_file` ni `unit` | Leyenda con unidad, archivo de origen y escala de color por modo | Frontend |
 | B10 | `/api/search` oculta los fallos de CMR, Copernicus o PDS (listas vacías) | **Pedir a P4** un campo `errors` o `status` por fuente; mientras tanto mostrar "Sin resultados o fuente no disponible" | P4 |
 | B11 | El export ignora `sample_name` | **Pedir a P4** que lo acepte | P4 |
-| B12 | El procesamiento siempre usa las mismas muestras, sea cual sea el bbox | **Mostrarlo en la interfaz**: etiqueta "Muestra de demostración: `<source_file>`". No presentarlo como dato real del bbox | Frontend + P6 (texto) |
+| B12 | El procesamiento siempre usa las mismas muestras, sea cual sea el bbox. **Además, las 4 muestras son sintéticas** (`prepare_samples.py`, NumPy), incluido el "Diviner" de 45–355 K (hallazgo de T6, 2026-11-14); ya corregido en los textos ("datos simulados", panel "Ejemplo simulado", botones sin atribución a agencias) | **Mostrarlo en la interfaz**: etiqueta "Muestra de demostración: `<source_file>`". No presentarlo como dato real del bbox | Frontend + P6 (texto) |
 | B13 | No hay README para levantar el backend | **Pedir a P4**. Mientras tanto: desde `backend/`, `uvicorn main:app --reload` (las rutas a `sample_data/` dependen de la carpeta desde donde se ejecuta) | P4 |
 | B14 | **El mapa vuelve a volar al bbox en cada render**: `MapController` recibe `parsedBboxBounds()`, que crea un arreglo nuevo cada vez, así que el `useEffect` se dispara al mover la opacidad, al escribir o al cargar | Memorizar los bounds con `useMemo` según `bbox` y volar solo cuando el bbox cambia | Frontend |
 | B15 | El bbox escrito a mano no se valida (con un valor inválido vuelve en silencio a Mesoamérica) y el clic limita la longitud a ±175 | `lib/bbox.ts`: validar orden y rangos, y mostrar el error junto al campo (texto de P6) | Frontend |
 | B16 | `cryosphere_comparison.insight` es un texto fijo ("~175 K más frías") que no cambia con el valor calculado (`delta_vs_earth_ice_k`) | Construir la frase en el frontend a partir de los números y la plantilla i18n de P6, o **pedir a P4** que la genere | Frontend + P6 |
 | B17 | El overlay se vuelve a montar al cambiar el bbox después de procesar (`key` incluye el `bbox` actual) | `key` con `mode` + el bbox **procesado** (relacionado con B3) | Frontend |
 | B18 | Base Esri World Imagery y fecha GIBS por defecto `2024-08-15` | Base GIBS `BlueMarble` por defecto (Esri opcional, con atribución) y fechas en `config/gibsLayers.ts` | Frontend |
+| B20 | (T1-U1) Botones de menos de 40 px de alto en móvil | `min-h-10` en los botones de `SearchPanel`, `ProcessingPanel`, `BodySelector` y `ViewToggle` por debajo de `md` | Frontend |
+| B21 | (T1-U2/U3) Sin instrucción de gestos en móvil; "clic" no sirve en pantallas táctiles | Pista corta en móvil y textos neutros ("Toca o haz clic"), con el texto de T3 | Frontend + P6 |
+| B22 | (T1-U4) La leyenda de color no tiene texto accesible | `aria-label` en la leyenda con la unidad y los extremos | Frontend |
+| B23 | (T1-U5) La app abre en el módulo B | Abrir en el módulo A cuando exista (Fase 2) | Frontend |
+| B24 | (T1-U6) No se avisa si fallan las teselas en vivo del globo | Contar los errores y mostrar "Detalle no disponible; se usa la textura local" | Frontend |
+| B25 | (T1 §3) Puente A → B | Decidido: vía `useExplorerStore` (`setBody('earth')` + `setBbox` + un campo `origin` con el nombre del candidato para el aviso "Volver a la ficha") | Frontend |
+| B32 | Dos APIs en el puerto 8000 (`main.py` de la raíz y `backend/main.py`), con dos `requirements.txt` | Corto plazo: Mongo en el puerto 8001 + `VITE_DATA_API_BASE` en el frontend. **Pedir a P4:** una sola app FastAPI con routers y un solo `requirements.txt` con versiones fijas (D7) | P5 + P4 |
+| B33 | Falta `.env.example` con `MONGO_URI` | **Pedir a P4:** `.env.example` en la raíz (`MONGO_URI=` vacío) y una línea en el README | P4 |
+| B34 | Los datos de `seed_mongo.py` no cumplen el contrato §05 (sin `scores` ni ficha) y los "candidatos" son sitios de Marte y la Luna, no análogos terrestres | **Pedir a P3/P4:** cargar en `candidates` el `candidates.json` real con el contrato §05, coordenadas **terrestres** y `target` con los identificadores del plan. El frontend no inventa puntuaciones: descarta y cuenta los documentos inválidos (D8) | P3 + P4 |
+| B35 | `targets` no trae el perfil de 5 dimensiones para el radar | **Pedir a P2/P3:** `targets` con `id` (`moon_south_pole`…) y el perfil por dimensión | P2 + P3 |
+| B36 | `test_db.py` inserta `{"test":"ok"}` en `candidates` | **Pedir a P4:** que use una colección de prueba o borre el documento al terminar | P4 |
+| B37 | Adaptador y cliente del módulo A | `api/candidates.ts` (`VITE_DATA_API_BASE`, timeout, respaldo a `/data/candidates.json`) + `lib/candidateAdapter.ts` (validación del contrato y conteo de descartes) + pruebas. La interfaz muestra solo el conteo (`analogs.status.invalid/allInvalid`, propuestas en `docs/p6/textos-modulo-a.md`); el detalle (`_id` y motivo) va a `console.warn` solo en desarrollo | Frontend |
+| B38 | Plan B del módulo A | Generar `public/data/candidates.json` con `GET /export` en cuanto haya datos reales, y regenerarlo en el congelamiento (H20) | P4 + P5 |
+| B26 | (T3-c1) Las cifras de estadísticas, criósfera y opacidad usan `toFixed` y salen con punto también en ES | Formatear con `Intl.NumberFormat(lang)` en `ProcessingPanel` (y en el IFA del módulo A) | Frontend |
+| B27 | (T2-3.3c/d) El estado activo se marca solo por color y el foco interior `info` sobre `accent` da 2,41:1 | Señal no cromática en el estado activo (borde `info` de 2 px o ✓) en `BodySelector`, `ViewToggle` y `LangToggle`; contorno de foco `outline-ink` en los controles rellenos de `accent` | Frontend |
+| B28 | (T2-3.3a/e) Rótulos translúcidos sobre el globo (3,05–4,39:1 sobre zonas blancas) y atribución en `text-[11px]` | `bg-surface` opaco y `text-xs` en `GlobeView` | Frontend |
+| B29 | (T2-3.3b) Bordes de los campos a 1,72:1 | `border-ink-muted` en `inputClass` (`SearchPanel`); `line` solo para divisores | Frontend |
+| B30 | (T2-4.2) 3 pesos tipográficos | Reducir a 400 y 700 (`font-medium` y `font-semibold` → normal o bold) | Frontend |
+| B31 | (T2-5.2) Medios pasos fuera de la cuadrícula (`*-1.5`, `px-2.5`, `mt-0.5`) | Llevarlos a la escala de 4 px | Frontend |
 | B19 | Las búsquedas en Luna y Marte devuelven productos PDS con un bbox fijo (no el real) | Mostrar "ubicación aproximada" en esos resultados; **pedir a P4** el footprint real si ODE lo entrega | Frontend + P4 |
 
 ---
@@ -262,23 +337,26 @@ Cada tarea indica el responsable. "Hecho cuando…" es el criterio para pasar a 
 - [x] **P5:** merge de `origin/back-AR` en `Frontend/WebGIS` (commit `f8ba6fc`; único conflicto: `.gitignore`, resuelto con la versión unificada de `back-AR`). *No se probó contra el backend real: esta máquina no tiene Python.*
 - [x] **P5:** pnpm 12 (`packageManager`), TS 7 con `allowJs`, Tailwind 4 y `.env.example` con `VITE_API_BASE`.
 - [ ] **P5:** proyecto en Vercel (Root `frontend`, pnpm) con vista previa por PR.
-- [ ] **P6:** wireframes de los módulos A y B (entrega H3).
+- [x] **P6:** wireframes de los módulos A y B (T1, aceptada; `docs/p6/wireframes.md`).
+- [x] **P4:** API de MongoDB Atlas integrada (`c3e2be9`). Pendientes de P4: D6, D7 y B32–B36.
 
 **Hecho cuando:** la rama compila con `pnpm build`, Vercel publica la vista previa y las decisiones D1–D6 están anotadas en el README.
 
 ### Fase 1 · H1–H4 — Esqueleto + módulo B refactorizado
-- [x] **P5:** partir `App.jsx` en los componentes de `modules/explorer/` y crear `api/http.ts` + `api/explorer.ts` (resuelve B1, B2, B5, B14 y B17). Se adelantaron también B3, B4, B6, B7, B8, B9 (unidad y leyenda), B12, B15, B16, B18 y B19. 27 pruebas Vitest en verde.
-- [ ] **P5:** módulo A con el globo MapLibre, la base GIBS y los candidatos mock (IFA con pesos iguales).
-- [ ] **P5:** `candidates.ts` con respaldo estático y `DataSourceToggle`.
-- [ ] **P6:** paleta, tipografía y escala de espaciado (entrega H4); P5 las pasa a *tokens* de Tailwind.
+- [x] **P5:** partir `App.jsx` en los componentes de `modules/explorer/` y crear `api/http.ts` + `api/explorer.ts` (resuelve B1, B2, B5, B14 y B17). Se adelantaron también B3, B4, B6, B7, B8, B9 (unidad y leyenda), B12, B15, B16, B18 y B19. 35 pruebas Vitest en verde (27 al terminar esta tarea; 8 más con el globo).
+- [x] **P5:** globo 3D (three.js) de la Tierra, la Luna y Marte como vista por defecto del módulo B, con texturas 2K locales y detalle en vivo (decisión D2).
+- [ ] **P5:** módulo A sobre el **globo three.js ya existente** (se reutiliza `globeEngine`, con una capa de puntos por IFA; MapLibre deja de hacer falta), con la base de la Tierra.
+- [ ] **P5 (B37):** `VITE_DATA_API_BASE`, `api/candidates.ts` contra `GET /candidates` de la API de Mongo, `lib/candidateAdapter.ts` con validación del contrato §05 y aviso "N candidatos descartados por no cumplir el contrato", respaldo a `/data/candidates.json` y `DataSourceToggle`. En desarrollo se usa `candidates.mock.json` mientras la API no tenga datos válidos (D8).
+- [x] **P6:** paleta, tipografía y espaciado (T2, aceptada; `ink-muted` aplicado en `index.css`; B27–B31 en el backlog).
 
-**Hecho cuando:** en Vercel se ven los dos módulos; el B busca y procesa con el backend local y el A muestra puntos mock.
+**Hecho cuando:** en Vercel se ven los dos módulos; el B busca y procesa con back-AR, y el A carga desde la API de Mongo (o muestra el aviso de datos inválidos y usa el mock en desarrollo).
 
 ### Fase 2 · H4–H8 — Interacción científica (módulo A)
 - [ ] **P5:** `lib/ifa.ts` + pruebas con los casos de P3; `presets.ts` con los pesos del plan maestro (el peso restante y el preset "Subsuelo" los define P3).
 - [ ] **P5:** `WeightSliders` que recolorea y reordena sin llamar a la API; `RadarCompare`; `CandidateCard` con todos los campos del contrato.
 - [ ] **P5:** capas GIBS de la sección 4.4 en `LayerPanel` con opacidad y leyenda.
-- [ ] **P5:** módulo B: B3, B6, B7, B8, B9, B15, B18.
+- [x] **P5:** módulo B: B3, B6, B7, B8, B9, B15, B18 (adelantados en la Fase 1).
+- [ ] **P3/P4 (B34, B35):** `candidates` y `targets` en Mongo con el contrato §05 y coordenadas terrestres. **Sin esto, el IFA no tiene datos reales.**
 - [ ] **P6:** maqueta de la ficha y del orden de lectura (propiedad → proceso → límites → usos).
 
 **Hecho cuando:** "Luna Z4" y "Marte" producen Top 10 claramente distintos y el módulo B descarga el GeoTIFF del bbox que se procesó.
@@ -287,7 +365,7 @@ Cada tarea indica el responsable. "Hecho cuando…" es el criterio para pasar a 
 - [ ] **P5:** `useT()` con todas las claves; ningún texto fijo en los componentes.
 - [ ] **P6:** textos finales ES/EN en `es.json` / `en.json` (entrega H10), incluidos los mensajes de error, la etiqueta de B12 y la plantilla de B16.
 - [ ] **P5:** cámaras "Polo Sur", "Polo Norte" y "Centroamérica"; filtro "Solo descubrimientos"; puente A → B.
-- [ ] **P5:** pasar a `candidates.json` real en cuanto P4 lo publique.
+- [ ] **P4/P5 (B38):** cuando la API sirva datos reales, generar `public/data/candidates.json` con `GET /export` (Plan B) y retirar el mock de la demo.
 - [ ] **Juntos, H12:** guion de demo completo (sección 9.3) en ES y EN, con API y en modo estático.
 
 **Hecho cuando:** el guion pasa entero en la URL de Vercel.
@@ -408,7 +486,9 @@ Se mide si la persona completa la tarea, cuánto tarda y dónde duda.
 | El backend vuelve a tocar `frontend/` | Diferencias en `frontend/` en los PR de backend | Acuerdo D5 y regla de revisión: los PR de backend no tocan `frontend/` |
 | No hay Node/pnpm en alguna máquina | `pnpm` no reconocido | Node LTS + `corepack enable pnpm` (sección 4.1) |
 | `react-map-gl` 8 incompatible con `maplibre-gl` 6 | Errores de *peer* o mapa en blanco | `maplibre-gl` directo con `useRef` |
-| No llega `candidates.json` ni `/candidates` | No existen a H8 | Seguir con el mock (mismo contrato); el módulo B sostiene la demo de datos |
+| `/candidates` existe pero sus datos no cumplen el contrato (B34) | El adaptador descarta todos los documentos | Desarrollo con el mock; en la demo, **no** se muestra el mock como resultado científico. Si a H12 no hay datos reales, el módulo A se presenta como "en construcción" y la demo se apoya en el módulo B |
+| Dos backends en el mismo puerto (B32) | El módulo A o el B reciben 404 | Puertos 8000 y 8001 con dos URLs (D7) hasta que P4 los una |
+| Falta `MONGO_URI` en el entorno de despliegue | La API de Mongo no arranca en Render | Configurar `MONGO_URI` en Render y comprobar `GET /` antes de la demo; si falla, Plan B (`candidates.json`) |
 | Fuentes de `/api/search` caídas o vacías | Listas vacías | Mensaje neutro y pedir B10; los `partner_resources` siempre aparecen |
 | El jurado cree que el procesamiento usa datos reales del bbox | — | Etiqueta B12 visible y explicación en el pitch (P6) |
 | Dos librerías de mapa pesan demasiado | Bundle > 450 kB | Leaflet en carga diferida solo en el módulo B; si no alcanza, todo en Leaflet (D2) |
@@ -419,7 +499,8 @@ Se mide si la persona completa la tarea, cuánto tarda y dónde duda.
 
 ## 11. Preguntas abiertas
 1. **Equipo:** ¿aprobamos el producto de dos módulos (D1)?
-2. **P4:** ¿la tabla `candidates` irá en el PostGIS de `feature/database`? ¿Cuándo estarán `/candidates`, `/candidates/near` y `/targets`? ¿Puede añadir `errors` por fuente en `/api/search` (B10) y `sample_name` en el export (B11)?
+2. **P4:** ¿Mongo Atlas definitivo y PostGIS fuera del camino crítico (D6)? ¿Cuándo une las dos APIs en una sola app y un solo `requirements.txt` (D7/B32)? ¿Puede añadir `.env.example` (B33), arreglar `test_db.py` (B36), un campo `errors` por fuente en `/api/search` (B10) y `sample_name` en el export (B11)?
+2b. **P3/P4:** ¿cuándo se carga en Mongo el `candidates.json` real con el contrato §05 y coordenadas terrestres (B34)? ¿Y `targets` con el perfil de 5 dimensiones (B35)?
 3. **P4:** ¿cuál es el bbox de la Luna correcto (B8)? ¿Se deja de tocar `frontend/` después del merge (D5)?
 4. **P3:** pesos restantes de cada preset, preset "Subsuelo" y si "Sombra persistente" (Z4) es una dimensión propia o sale de `iluminacion`.
 5. **P1/P2:** formato y nombres de los pares de imágenes del comparador y del mapa de calor PNG.

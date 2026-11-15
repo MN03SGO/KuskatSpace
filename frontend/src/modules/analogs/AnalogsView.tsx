@@ -13,7 +13,7 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
           onClick={onOpenExplorer}
           className="rounded bg-accent px-4 py-2 text-sm font-bold text-ink hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info"
         >
-          {t('app.tabs.explorer')}
+          {t('analogs.placeholderAction')}
         </button>
       </div>
     </div>
