@@ -1,4 +1,4 @@
-﻿"""
+"""
 TerraAnáloga REST API - NASA Space Apps Challenge 2026
 ======================================================
 Reto: Identify Earth Locations that Analog Permanent Moon Base & Mars
