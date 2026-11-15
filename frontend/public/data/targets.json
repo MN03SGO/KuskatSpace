@@ -1,0 +1,152 @@
+[
+  {
+    "_id": "moon_south_pole",
+    "name": "Polo Sur Lunar (Crestas Iluminadas y PSR)",
+    "body": "Moon",
+    "description": "Región objetivo de Artemis III (Shackleton, Malapert, Faustini). Caracterizada por picos de iluminación cuasi-permanente adyacentes a Regiones en Sombra Permanente (PSR) que funcionan como trampas frías reteniendo volátiles y hielo de agua.",
+    "priority": 1,
+    "dimensions": {
+      "relieve": {
+        "description": "Pendientes de crestas de cráteres de impacto y rugosidad a microescala",
+        "unit": "grados (°)",
+        "mean": 14.5,
+        "p10": 4.2,
+        "p90": 26.8
+      },
+      "iluminacion": {
+        "description": "Porcentaje de iluminación solar a lo largo del año anomalístico",
+        "unit": "%",
+        "mean": 68.0,
+        "p10": 0.0,
+        "p90": 92.4
+      },
+      "frio": {
+        "description": "Temperatura de superficie en trampas frías PSR y fondos de cráteres",
+        "unit": "Kelvin (K)",
+        "mean": 85.0,
+        "p10": 40.0,
+        "p90": 130.0
+      },
+      "hielo": {
+        "description": "Firma espectral de hielo de agua superficial y subsuperficial ISRU",
+        "unit": "fracción en peso (% wt eq.)",
+        "mean": 5.5,
+        "p10": 0.8,
+        "p90": 12.0
+      },
+      "polvo": {
+        "description": "Fracción de regolito fino abrasivo sin cubierta orgánica/vegetal (homólogo a polvo electrostático lunar)",
+        "unit": "índice adimensional [0-1]",
+        "mean": 0.85,
+        "p10": 0.60,
+        "p90": 0.98
+      }
+    },
+    "environmental_factors": {
+      "gravity": "0.165 g (1.62 m/s²)",
+      "atmosphere_pressure": "10^-10 Pa (Vacío ultra-alto)",
+      "radiation": "Sin blindaje magnético ni atmosférico (GCR y SPE directos)"
+    },
+    "key_instruments": ["LOLA (LRO)", "Diviner Radiometer (LRO)", "LEND (LRO)", "Mini-RF"]
+  },
+  {
+    "_id": "lava_tubes",
+    "name": "Pozo de Mare Tranquillitatis (Tubos de Lava y Subsuelo)",
+    "body": "Moon",
+    "description": "Claraboya volcánica colapsada (skylight pit) de ~100m de profundidad en basaltos de inundación lunar. Ofrece acceso a galerías subterráneas térmicamente estables con protección natural contra radiación cósmica y micrometeoritos.",
+    "priority": 2,
+    "dimensions": {
+      "relieve": {
+        "description": "Escarpes verticales de colapso, bloques de basalto y piso plano interior",
+        "unit": "grados (°)",
+        "mean": 45.0,
+        "p10": 5.0,
+        "p90": 85.0
+      },
+      "iluminacion": {
+        "description": "Iluminación interior de la caverna (oscuridad total salvo en la entrada cenital)",
+        "unit": "%",
+        "mean": 2.0,
+        "p10": 0.0,
+        "p90": 15.0
+      },
+      "frio": {
+        "description": "Temperatura estable en el interior de la cavidad volcánica",
+        "unit": "Celsius (°C)",
+        "mean": -20.0,
+        "p10": -22.0,
+        "p90": -17.0
+      },
+      "hielo": {
+        "description": "Hielo ausente en la cavidad ecuatorial; valor centrado en geología basáltica y regolito seco",
+        "unit": "% wt",
+        "mean": 0.0,
+        "p10": 0.0,
+        "p90": 0.1
+      },
+      "polvo": {
+        "description": "Tefra basáltica, bloques de colapso y polvo fino en el piso de la claraboya",
+        "unit": "índice adimensional [0-1]",
+        "mean": 0.65,
+        "p10": 0.30,
+        "p90": 0.90
+      }
+    },
+    "environmental_factors": {
+      "gravity": "0.165 g",
+      "atmosphere_pressure": "Vacío total",
+      "radiation": "Atenuación >95% de radiación dentro del tubo basáltico"
+    },
+    "key_instruments": ["LROC NAC (LRO)", "Mini-RF", "SELENE Kaguya TC"]
+  },
+  {
+    "_id": "mars_surface",
+    "name": "Marte (Jezero, Arcadia Planitia y Llanuras Eólicas)",
+    "body": "Mars",
+    "description": "Planicie y cuencas sedimentarias/volcánicas marcianas. Relevante para hábitats permanentes, aprovechamiento de hielo de permafrost somero, tormentas globales de polvo, dunas basálticas y depósitos de arcillas/sales evaporíticas.",
+    "priority": 3,
+    "dimensions": {
+      "relieve": {
+        "description": "Planicies sedimentarias, abanicos aluviales y campos de dunas eólicas",
+        "unit": "grados (°)",
+        "mean": 6.8,
+        "p10": 1.2,
+        "p90": 18.5
+      },
+      "iluminacion": {
+        "description": "Insolación solar atenuada por polvo atmosférico (tau óptico)",
+        "unit": "W/m²",
+        "mean": 590.0,
+        "p10": 120.0,
+        "p90": 715.0
+      },
+      "frio": {
+        "description": "Ciclo de temperatura diurna/nocturna de superficie marciana",
+        "unit": "Celsius (°C)",
+        "mean": -63.0,
+        "p10": -125.0,
+        "p90": 20.0
+      },
+      "hielo": {
+        "description": "Hielo de agua en subsuelo somero / permafrost (SWIM - Subsurface Water Ice Mapping)",
+        "unit": "profundidad de sobrecapa (m)",
+        "mean": 0.8,
+        "p10": 0.1,
+        "p90": 2.5
+      },
+      "polvo": {
+        "description": "Espesor óptico de aerosoles eólicos y tormentas de polvo mineral (MODIS MAIAC AOD 550 nm homólogo a tau marciano)",
+        "unit": "AOD 550 nm",
+        "mean": 0.35,
+        "p10": 0.12,
+        "p90": 0.85
+      }
+    },
+    "environmental_factors": {
+      "gravity": "0.38 g (3.72 m/s²)",
+      "atmosphere_pressure": "610 Pa (~0.6% de la Tierra, atmósfera de CO2)",
+      "radiation": "Exposición moderada-alta a radiación UV-C y GCR"
+    },
+    "key_instruments": ["MOLA (MGS)", "HiRISE (MRO)", "MCS (MRO)", "SHARAD (MRO)"]
+  }
+]
