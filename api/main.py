@@ -271,6 +271,28 @@ def get_datasets():
     return read_local_json("datasets.json")
 
 
+@app.get("/export", tags=["Sistema"])
+def export_all():
+    """Respaldo JSON completo de candidates + targets (compatibilidad feature/database)."""
+    client = get_mongo_client()
+    if client:
+        try:
+            db = client[DB_NAME]
+            return {
+                "database": DB_NAME,
+                "candidates": list(db["candidates"].find({})),
+                "targets": list(db["targets"].find({})),
+            }
+        except PyMongoError:
+            pass
+
+    return {
+        "database": DB_NAME,
+        "candidates": read_local_json("candidates.json"),
+        "targets": read_local_json("targets.json"),
+    }
+
+
 @app.get("/candidates", response_model=List[CandidateResponse], tags=["Candidatos Análogos"])
 def get_candidates(
     target: Optional[str] = Query(None, description="Filtrar por objetivo: moon_south_pole, moon_lava_tube o mars"),
@@ -319,6 +341,7 @@ def get_candidates_near(
     lat: float = Query(..., ge=-90.0, le=90.0, description="Latitud del punto de interés"),
     lon: float = Query(..., ge=-180.0, le=180.0, description="Longitud del punto de interés"),
     max_distance_km: float = Query(2000.0, ge=1.0, le=20000.0, description="Radio de búsqueda en km"),
+    radius_km: Optional[float] = Query(None, description="Alias de radio de búsqueda para compatibilidad"),
     target: Optional[str] = Query(None, description="Filtro opcional por objetivo planetario"),
     limit: int = Query(10, ge=1, le=50, description="Máximo de análogos cercanos a retornar"),
 ):
@@ -326,6 +349,7 @@ def get_candidates_near(
     Busca análogos planetarios cercanos a una coordenada (clic en el mapa).
     Utiliza el operador geoespacial $near de MongoDB o cálculo geodésico Haversine en modo fallback.
     """
+    search_dist_km = radius_km if radius_km is not None else max_distance_km
     client = get_mongo_client()
     results = []
 
@@ -339,7 +363,7 @@ def get_candidates_near(
                             "type": "Point",
                             "coordinates": [lon, lat],
                         },
-                        "$maxDistance": max_distance_km * 1000.0,  # En metros
+                        "$maxDistance": search_dist_km * 1000.0,  # En metros
                     }
                 }
             }
@@ -364,7 +388,7 @@ def get_candidates_near(
             continue
         coords = c.get("location", {}).get("coordinates", [0, 0])
         dist = haversine_km(lat, lon, coords[1], coords[0])
-        if dist <= max_distance_km:
+        if dist <= search_dist_km:
             c_copy = dict(c)
             c_copy["distance_km"] = round(dist, 2)
             c_copy["weighted_score"] = compute_weighted_score(c_copy.get("scores", {}), 1.0, 1.0, 1.0, 1.0)
