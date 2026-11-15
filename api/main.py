@@ -284,6 +284,37 @@ def get_datasets():
     return read_local_json("datasets.json")
 
 
+def clean_doc(doc: Any) -> Any:
+    """Convierte _id de MongoDB y valores no serializables a tipos compatibles con JSON."""
+    if isinstance(doc, dict):
+        return {str(k): clean_doc(v) if k != "_id" else str(v) for k, v in doc.items()}
+    if isinstance(doc, list):
+        return [clean_doc(x) for x in doc]
+    return doc
+
+
+@app.get("/export", tags=["Sistema"])
+def export_all():
+    """Respaldo JSON completo de candidates + targets (compatibilidad feature/database)."""
+    client = get_mongo_client()
+    if client:
+        try:
+            db = client[DB_NAME]
+            return {
+                "database": DB_NAME,
+                "candidates": [clean_doc(d) for d in db["candidates"].find({})],
+                "targets": [clean_doc(d) for d in db["targets"].find({})],
+            }
+        except PyMongoError:
+            pass
+
+    return {
+        "database": DB_NAME,
+        "candidates": read_local_json("candidates.json"),
+        "targets": read_local_json("targets.json"),
+    }
+
+
 @app.get("/candidates", response_model=List[CandidateResponse], tags=["Candidatos Análogos"])
 def get_candidates(
     target: Optional[str] = Query(None, description="Filtrar por objetivo: moon_south_pole, moon_lava_tube o mars"),
@@ -332,6 +363,7 @@ def get_candidates_near(
     lat: float = Query(..., ge=-90.0, le=90.0, description="Latitud del punto de interés"),
     lon: float = Query(..., ge=-180.0, le=180.0, description="Longitud del punto de interés"),
     max_distance_km: float = Query(2000.0, ge=1.0, le=20000.0, description="Radio de búsqueda en km"),
+    radius_km: Optional[float] = Query(None, description="Alias de radio de búsqueda para compatibilidad"),
     target: Optional[str] = Query(None, description="Filtro opcional por objetivo planetario"),
     limit: int = Query(10, ge=1, le=50, description="Máximo de análogos cercanos a retornar"),
 ):
@@ -339,6 +371,7 @@ def get_candidates_near(
     Busca análogos planetarios cercanos a una coordenada (clic en el mapa).
     Utiliza el operador geoespacial $near de MongoDB o cálculo geodésico Haversine en modo fallback.
     """
+    search_dist_km = radius_km if radius_km is not None else max_distance_km
     client = get_mongo_client()
     results = []
 
@@ -352,7 +385,7 @@ def get_candidates_near(
                             "type": "Point",
                             "coordinates": [lon, lat],
                         },
-                        "$maxDistance": max_distance_km * 1000.0,  # En metros
+                        "$maxDistance": search_dist_km * 1000.0,  # En metros
                     }
                 }
             }
@@ -377,7 +410,7 @@ def get_candidates_near(
             continue
         coords = c.get("location", {}).get("coordinates", [0, 0])
         dist = haversine_km(lat, lon, coords[1], coords[0])
-        if dist <= max_distance_km:
+        if dist <= search_dist_km:
             c_copy = dict(c)
             c_copy["distance_km"] = round(dist, 2)
             c_copy["weighted_score"] = compute_weighted_score(c_copy.get("scores", {}), 1.0, 1.0, 1.0, 1.0)
@@ -396,7 +429,7 @@ async def search_catalogs(
     bbox: str = Query("-90.1,13.1,-87.6,14.5", description="Bounding box en formato min_lon,min_lat,max_lon,max_lat"),
     start_date: str = Query("2026-10-01", description="Fecha de inicio YYYY-MM-DD"),
     end_date: str = Query("2026-11-10", description="Fecha fin YYYY-MM-DD"),
-    body: str = Query("earth", enum=["earth", "moon", "mars"], description="Cuerpo celeste"),
+    body: str = Query("earth", description="Cuerpo celeste: earth, moon, mars"),
     variable: str = Query("all", description="Variable temática"),
     limit: int = Query(5, ge=1, le=20, description="Límite de resultados"),
 ):
@@ -408,7 +441,7 @@ async def search_catalogs(
 
 @app.post("/api/process", tags=["Teledetección Multi-Agencia"])
 def process_scene(
-    mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
+    mode: str = Query("sar_db", description="Modo: sar_db, ndvi, ndwi, diviner_thermal, jaxa_precip"),
     bbox: str = Query("-90.1,13.1,-87.6,14.5"),
     sample_name: Optional[str] = Query(None),
 ):
@@ -425,7 +458,7 @@ def process_scene(
 
 @app.get("/api/export/geotiff", tags=["Teledetección Multi-Agencia"])
 def download_processed_geotiff(
-    mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
+    mode: str = Query("sar_db", description="Modo: sar_db, ndvi, ndwi, diviner_thermal, jaxa_precip"),
     bbox: str = Query("-90.1,13.1,-87.6,14.5"),
 ):
     """Exporta el ráster procesado a un archivo GeoTIFF binario para descarga."""

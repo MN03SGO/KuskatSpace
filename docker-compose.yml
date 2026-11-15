@@ -1,5 +1,5 @@
 services:
-  # API unificada (backend/main.py) — D7
+  # API unificada (api/main.py) — app única del equipo (D7)
   api:
     build:
       context: .
@@ -8,6 +8,9 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     env_file:
       - .env
     environment:

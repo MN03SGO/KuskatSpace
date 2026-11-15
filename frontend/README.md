@@ -1,63 +1,30 @@
 # TerraAnáloga — Frontend WebGIS
 
-React 19 + TypeScript + Vite 8 + Tailwind 4. El explorador tiene dos vistas:
-- **Globo 3D** (three.js, por defecto): esferas de la Tierra (Blue Marble, GIBS), la Luna (LRO WAC, Trek) y Marte (Viking MDIM 2.1, Trek). Arranca con una textura 2K local de `public/textures/` y luego carga el detalle en vivo. Para regenerar esas texturas: `pnpm bake:textures`.
-- **Mapa 2D** (Leaflet): Tierra en EPSG:3857 con NASA GIBS; Luna y Marte en EPSG:4326 con NASA Trek. El buscador de análogos (MapLibre, IFA, radar) llega en la Fase 2 de [`plan_P5_frontend_webgis.md`](../plan_P5_frontend_webgis.md).
+## Overview
+Aplicación cliente interactiva de visualización geoespacial desarrollada en React 19, TypeScript, Vite, Tailwind 4, Three.js y Leaflet con soporte de capas NASA GIBS y Trek. Provee visualización dual:
+- **Globo 3D Interactivo**: Esferas tridimensionales de la Tierra (Blue Marble, GIBS), la Luna (LRO WAC, Trek) y Marte (Viking MDIM 2.1, Trek) con texturas 2K precargadas en `public/textures/`.
+- **Mapa 2D**: Proyección de la Tierra en EPSG:3857 (Web Mercator) y Luna/Marte en EPSG:4326 con capas ráster procesadas.
+- **Soporte Bilingüe**: Internacionalización completa (i18n) en Español e Inglés (`src/i18n/es.json` y `src/i18n/en.json`).
 
-**Responsables:** P5 (desarrollo) + P6 (UI/UX y textos). Los textos de `src/i18n/*.json` y la paleta de `src/index.css` son borradores hasta que P6 los apruebe.
+## Interface
+- [frontend/src/App.tsx:App](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/App.tsx) - Componente raíz que orquesta los módulos `ExplorerView` y `AnalogsView`, selector de idioma `LangToggle` y banner de estado `StatusBanner`.
+- [frontend/src/modules/explorer/GlobeView.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/explorer/GlobeView.tsx) - Renderizador del globo 3D acelerado con Three.js mediante `globeEngine.ts`.
+- [frontend/src/modules/explorer/PlanetMap.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/explorer/PlanetMap.tsx) - Mapa 2D Leaflet para análisis cartográfico de teselas y selección de bounding box.
+- [frontend/src/modules/explorer/SearchPanel.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/explorer/SearchPanel.tsx) - Panel de búsqueda federada en catálogos espaciales.
+- [frontend/src/modules/explorer/ProcessingPanel.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/explorer/ProcessingPanel.tsx) - Panel de control para ejecución de pipelines ráster (SAR, NDVI, NDWI, Diviner).
+- [frontend/src/modules/analogs/AnalogsView.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/analogs/AnalogsView.tsx) - Módulo de análogos planetarios para visualización de candidatos y sliders.
+- [frontend/src/store/useExplorerStore.ts](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/store/useExplorerStore.ts) - Estado global reactivo con Zustand para cuerpo celeste, bounding box, filtros y resultados.
+- [frontend/src/api/explorer.ts](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/api/explorer.ts) - Cliente HTTP tipado con funciones `searchCatalogs`, `processScene` y `exportGeotiffUrl`.
 
-## Requisitos
-- Node.js LTS y **pnpm** (no usar npm ni yarn; solo se commitea `pnpm-lock.yaml`).
+## Invariants
+- La variable de entorno `VITE_API_BASE` (declarada en `frontend/.env.example`) apunta por defecto al backend en `http://localhost:8000`.
+- El cliente HTTP tipado (`src/api/http.ts`) impone un timeout preventivo de 30 000 ms para evitar que la UI se bloquee ante retrasos en APIs externas.
+- Si el backend no responde, la interfaz muestra advertencias contextuales amigables mediante `StatusBanner` sin lanzar excepciones no controladas.
 
-```bash
-pnpm install
-```
+## Side Effects
+- Disparo de peticiones HTTP de red asíncronas vía `fetch` hacia el backend unificado en `http://localhost:8000`.
+- Carga de texturas e imágenes satelitales externas desde servidores de NASA GIBS WMTS/WMS y NASA Trek.
+- Asignación de contextos WebGL para el renderizado del globo 3D y manipulación directa del DOM con Leaflet.
 
-```bash
-cp .env.example .env.local
-```
-
-## Scripts
-
-| Comando | Qué hace |
-| :--- | :--- |
-| `pnpm dev` | Servidor de desarrollo en http://localhost:5173 |
-| `pnpm build` | Revisión de tipos (`tsc`) + build de producción |
-| `pnpm test` | Pruebas unitarias (Vitest) |
-| `pnpm lint` | ESLint |
-| `pnpm preview` | Sirve el build localmente (respaldo para la demo) |
-
-## Backend
-El explorador consume la API de `back-AR` (`/api/search`, `/api/process`, `/api/export/geotiff`) en `VITE_API_BASE` (por defecto `http://localhost:8000`). Para levantarla en Windows, desde `backend/` (la primera vez crea el entorno con Python 3.13):
-
-```bash
-python -m venv .venv
-```
-
-```bash
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
-
-```bash
-.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
-```
-
-Hay que ejecutarlo desde `backend/`, porque las rutas a `sample_data/` son relativas.
-
-Sin backend, la interfaz muestra un aviso de conexión en el panel en lugar de romperse.
-
-## Estructura
-```
-src/
-├─ api/        http.ts (fetch con timeout y errores tipados) · explorer.ts (cliente back-AR)
-├─ config/     env.ts · bodies.ts · gibsLayers.ts · processModes.ts
-├─ lib/        bbox.ts (validación y conversiones Leaflet ↔ MapLibre)
-├─ store/      useExplorerStore.ts (zustand)
-├─ i18n/       es.json · en.json · useT.ts
-├─ types/      explorer.ts (contrato de la API)
-├─ components/ StatusBanner · LangToggle
-└─ modules/
-   ├─ explorer/ BodySelector · SearchPanel · ProcessingPanel · ResultsList · ExplorerView
-   │            GlobeView + globeEngine (3D) · PlanetMap (2D)
-   └─ analogs/  AnalogsView (en construcción)
-```
+## Verification
+- Run: `cd frontend && pnpm test && pnpm build`

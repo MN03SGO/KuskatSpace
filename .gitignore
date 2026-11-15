@@ -7,19 +7,19 @@ venv/
 env/
 ENV/
 
-# Cach├ö├Â┬úÔö¼┬½ y compilaci├ö├Â┬ú├ö├Â├®n de Python
+# CachÔö£├ÂÔö£├éÔö¼├║├ö├Â┬╝Ôö¼┬¢ y compilaciÔö£├ÂÔö£├éÔö¼├║Ôö£├ÂÔö£├éÔö£┬«n de Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# Distribuci├ö├Â┬ú├ö├Â├®n y empaquetado
+# DistribuciÔö£├ÂÔö£├éÔö¼├║Ôö£├ÂÔö£├éÔö£┬«n y empaquetado
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# Pruebas y an├ö├Â┬úÔö£┬ílisis est├ö├Â┬úÔö£┬ítico
+# Pruebas y anÔö£├ÂÔö£├éÔö¼├║├ö├Â┬úÔö¼├¡lisis estÔö£├ÂÔö£├éÔö¼├║├ö├Â┬úÔö¼├¡tico
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -67,14 +67,14 @@ lerna-debug.log*
 Thumbs.db
 
 # ==========================================
-# Herramientas de IA / configuraci├ö├Â┬ú├ö├Â├®n local
+# Herramientas de IA / configuraciÔö£├ÂÔö£├éÔö¼├║Ôö£├ÂÔö£├éÔö£┬«n local
 # ==========================================
 .claude/
 .cursor/
 .aider*
 
 # ==========================================
-# Cach├ö├Â┬úÔö¼┬½s y artefactos de build adicionales
+# CachÔö£├ÂÔö£├éÔö¼├║├ö├Â┬╝Ôö¼┬¢s y artefactos de build adicionales
 # ==========================================
 *.tsbuildinfo
 .vite/
@@ -95,7 +95,7 @@ coverage/
 develop-eggs/
 downloads/
 eggs/
-# Anclados a la raÔö£┬íz: sin la "/" inicial ignoraban tambiÔö£┬«n frontend/src/lib/ (cÔö£Ôöédigo TypeScript).
+# Anclados a la ra├ö├Â┬úÔö¼├¡z: sin la "/" inicial ignoraban tambi├ö├Â┬úÔö¼┬½n frontend/src/lib/ (c├ö├Â┬ú├ö├Â├®digo TypeScript).
 /lib/
 /lib64/
 parts/
@@ -152,3 +152,7 @@ frontend/node_modules/
 frontend/dist/
 *.env
 !backend/sample_data/*.tif
+
+# --- aportado por datos-planetarios (2391834) ---
+lib/
+lib64/
