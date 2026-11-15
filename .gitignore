@@ -7,19 +7,19 @@ venv/
 env/
 ENV/
 
-# Caché y compilación de Python
+# CachÔö£├ÂÔö£├éÔö¼├║├ö├Â┬╝Ôö¼┬¢ y compilaciÔö£├ÂÔö£├éÔö¼├║Ôö£├ÂÔö£├éÔö£┬«n de Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# Distribución y empaquetado
+# DistribuciÔö£├ÂÔö£├éÔö¼├║Ôö£├ÂÔö£├éÔö£┬«n y empaquetado
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# Pruebas y análisis estático
+# Pruebas y anÔö£├ÂÔö£├éÔö¼├║├ö├Â┬úÔö¼├¡lisis estÔö£├ÂÔö£├éÔö¼├║├ö├Â┬úÔö¼├¡tico
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -65,3 +65,94 @@ lerna-debug.log*
 # ==========================================
 .DS_Store
 Thumbs.db
+
+# ==========================================
+# Herramientas de IA / configuraciÔö£├ÂÔö£├éÔö¼├║Ôö£├ÂÔö£├éÔö£┬«n local
+# ==========================================
+.claude/
+.cursor/
+.aider*
+
+# ==========================================
+# CachÔö£├ÂÔö£├éÔö¼├║├ö├Â┬╝Ôö¼┬¢s y artefactos de build adicionales
+# ==========================================
+*.tsbuildinfo
+.vite/
+.eslintcache
+coverage/
+.pnpm-store/
+.cache/
+*.tmp
+*.bak
+
+# ==========================================
+# Backend (FastAPI / Mongo / Docker) - aportado por feature/database
+# ==========================================
+.env.*
+!.env.example
+!.env.sample
+.Python
+develop-eggs/
+downloads/
+eggs/
+# Anclados a la ra├ö├Â┬úÔö¼├¡z: sin la "/" inicial ignoraban tambi├ö├Â┬úÔö¼┬½n frontend/src/lib/ (c├ö├Â┬ú├ö├Â├®digo TypeScript).
+/lib/
+/lib64/
+parts/
+sdist/
+var/
+wheels/
+.installed.cfg
+*.egg
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+*.pid
+docker-compose.override.yml
+pgdata/
+miniodata/
+postgres-data/
+.docker/
+*.sql.gz
+*.dump
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+!.vscode/extensions.json
+!.vscode/settings.json.example
+*~
+*.sublime-project
+*.sublime-workspace
+*.temp
+tmp/
+temp/
+
+# ==========================================
+# Datos geoespaciales - aportado por datos-planetarios
+# ==========================================
+.env.local
+.env.*.local
+*.tif
+*.tiff
+*.geotiff
+*.nc
+*.hdf
+*.h5
+*.jp2
+data/cache_*.json
+
+# --- aportado por datos-planetarios (c4a66fe) ---
+frontend/node_modules/
+frontend/dist/
+*.env
+!backend/sample_data/*.tif
+
+# --- aportado por datos-planetarios (2391834) ---
+lib/
+lib64/

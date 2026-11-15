@@ -60,6 +60,11 @@ def _compute_matrix(mode: str, bbox: list[float], sample_path: str | None = None
     }
     target_path = sample_path or default_files.get(mode)
 
+    if target_path and not os.path.exists(target_path):
+        alt_path = os.path.join(os.path.dirname(__file__), target_path)
+        if os.path.exists(alt_path):
+            target_path = alt_path
+
     if target_path and os.path.exists(target_path):
         with rasterio.open(target_path) as src:
             b1 = src.read(1).astype(np.float32)
