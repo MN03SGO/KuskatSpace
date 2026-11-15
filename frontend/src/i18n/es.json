@@ -1,0 +1,154 @@
+{
+  "_status": "Versión revisada por P6 (T3, 2026-11-14), pendiente de aprobación del PM. Términos según docs/p6/glosario.md.",
+  "app": {
+    "title": "TerraAnáloga",
+    "tagline": "Análogos terrestres de la Luna y Marte",
+    "tabs": {
+      "label": "Módulos",
+      "analogs": "Buscador de análogos",
+      "explorer": "Explorador de datos"
+    },
+    "lang": {
+      "label": "Idioma",
+      "es": "ES",
+      "en": "EN"
+    }
+  },
+  "analogs": {
+    "placeholderTitle": "Estamos construyendo el buscador de análogos",
+    "placeholderBody": "Aquí podrás comparar sitios de la Tierra con la Luna y Marte (IFA, presets por zona, fichas y radar). Todavía no está disponible; mientras tanto, usa el Explorador de datos.",
+    "placeholderAction": "Ir al Explorador de datos"
+  },
+  "bodies": {
+    "label": "Cuerpo planetario",
+    "earth": { "label": "Tierra (Worldview)", "region": "Tierra · Región Mesoamérica" },
+    "moon": { "label": "Luna (LRO/Diviner)", "region": "Luna · Polo Sur / LRO Diviner" },
+    "mars": { "label": "Marte (PDS)", "region": "Marte · Cráter Gale / NASA PDS" }
+  },
+  "explorer": {
+    "mapLabel": "Mapa del explorador de datos",
+    "view": {
+      "label": "Tipo de vista",
+      "globe": "Globo 3D",
+      "map": "Mapa 2D"
+    },
+    "globe": {
+      "label": "Globo 3D del cuerpo seleccionado",
+      "hint": "Arrastra para girar · rueda o pellizco para acercar · clic o toque para mover el BBox",
+      "loading": "Cargando mosaico {loaded} de {total}",
+      "noWebgl": "Tu navegador no puede mostrar el globo 3D (WebGL no está disponible). Cambia al mapa 2D para seguir.",
+      "hintShort": "Arrastra para girar · toca o haz clic para mover el BBox",
+      "tileErrors": "Parte del detalle no cargó; se muestra la imagen base del globo."
+    },
+    "layers": {
+      "title": "Capas globales",
+      "hint": "Muestra una variable sobre toda la superficie visible.",
+      "temperature": "Mostrar temperatura",
+      "temperatureModel": "Mostrar temperatura (modelo)",
+      "humidity": "Mostrar humedad",
+      "precipitation": "Mostrar precipitación",
+      "names": {
+        "temperature": "temperatura",
+        "humidity": "humedad relativa",
+        "precipitation": "precipitación"
+      },
+      "unavailable": {
+        "moon": "La Luna casi no tiene atmósfera, así que no hay humedad ni lluvia. Solo está la temperatura, calculada con un modelo.",
+        "mars": "Esta aplicación no tiene datos globales de humedad ni de lluvia de Marte. Solo está la temperatura, calculada con un modelo."
+      },
+      "sources": {
+        "temperature": "NASA AIRS (satélite Aqua): temperatura del aire en superficie, pasada de día",
+        "humidity": "NASA AIRS (satélite Aqua): humedad relativa en superficie, pasada de día",
+        "precipitation": "NASA GPM IMERG: tasa de precipitación, un mapa por día"
+      },
+      "sourceEarth": "Datos de satélite: {source}. Fecha de la capa: {date}.",
+      "dateAdjusted": "La fecha elegida ({requested}) es muy reciente: se muestra la última que suele estar publicada.",
+      "gapsNote": "Las franjas vacías son zonas por donde el satélite no pasó ese día.",
+      "kelvinHint": "Kelvin (K): 273 K equivale a 0 °C.",
+      "sourceModel": "Modelo aproximado, calculado para este momento ({date} {time} UTC). No es una medición ni un dato de satélite.",
+      "modelBadge": "Capa de modelo: no es una medición",
+      "subsolar": "Punto subsolar (donde el Sol está justo encima): lat. {lat}°, lon. {lon}°",
+      "modelNote": {
+        "moon": "El modelo usa la posición del Sol y da unos 390 K bajo el Sol, unos 95 K de noche en el ecuador y unos 40 K en los polos. Ignora el relieve y la inercia térmica, y la posición del Sol tiene un error de unos 8°.",
+        "mars": "El modelo usa la posición del Sol y da unos 290 K bajo el Sol y entre 150 y 190 K de noche. Ignora el polvo, el relieve y la inercia térmica."
+      },
+      "legendLabel": "Escala de {name}: de {min} a {max} {unit}",
+      "legendLabelLog": "Escala logarítmica de {name}: de {min} a {max} {unit} o más",
+      "logScale": "escala logarítmica",
+      "opacity": "Opacidad de la capa: {value} %",
+      "loading": "Cargando capa {loaded} de {total}",
+      "failed": "No hay imagen de esta capa para esa fecha (algunos días no se publican). Prueba con otra fecha."
+    },
+    "mapHint": "Toca o haz clic en el mapa para mover el BBox",
+    "gibsDate": "Fecha de la capa NASA Worldview GIBS",
+    "bbox": "BBox: caja de coordenadas (lon. mín., lat. mín., lon. máx., lat. máx.)",
+    "bboxErrors": {
+      "format": "Escribe 4 números separados por comas, por ejemplo: -90.1,13.1,-87.6,14.5.",
+      "range": "Ajusta los valores: la longitud va de -180 a 180 y la latitud de -90 a 90.",
+      "order": "Revisa el orden: cada mínimo debe ser menor que su máximo."
+    },
+    "startDate": "Buscar desde",
+    "endDate": "Hasta",
+    "dateOrder": "Ajusta las fechas: la inicial debe ser anterior o igual a la final.",
+    "variable": "Filtrar por agencia o variable",
+    "variables": {
+      "all": "Todas las misiones (NASA, CSA, ESA, JAXA)",
+      "maritime": "CSA RCM (marítimo / desastres / ecosistemas)",
+      "sar_historical": "CSA RADARSAT-1 (archivo SAR abierto)",
+      "precipitation": "JAXA G-Portal (precipitación / nieve / vegetación)",
+      "land_ocean": "ESA Open Science y Copernicus",
+      "lunar": "NASA LRO (superficie y térmica lunar)",
+      "planetary": "NASA PDS (geociencia marciana)"
+    },
+    "search": "Buscar escenas en vivo",
+    "searching": "Consultando catálogos...",
+    "processing": {
+      "title": "Procesamiento con datos simulados",
+      "running": "Procesando...",
+      "modes": {
+        "sar_db": "Procesar SAR dB + filtro Lee",
+        "ndvi": "Calcular NDVI",
+        "ndwi": "Calcular NDWI (agua)",
+        "jaxa_precip": "Procesar precipitación simulada",
+        "diviner_thermal": "Procesar perfil térmico simulado"
+      }
+    },
+    "result": {
+      "unit": "Unidad",
+      "min": "Mín.",
+      "max": "Máx.",
+      "mean": "Media",
+      "opacity": "Opacidad: {value} %",
+      "download": "Descargar resultado GeoTIFF (.tif)",
+      "demoSample": "Datos simulados de demostración ({file}): no son mediciones de ninguna misión ni de esta zona. La imagen no se recorta al BBox; solo se coloca sobre él.",
+      "legendLow": "Bajo",
+      "legendHigh": "Alto"
+    },
+    "cryo": {
+      "title": "Ejemplo simulado: polo lunar frente a la Tierra",
+      "lunarMin": "Mínimo del perfil simulado (tipo Diviner): {value} K",
+      "earthAvg": "Media antártica de referencia: {value} K",
+      "colder": "El punto más frío de este perfil simulado está {delta} K por debajo de la media antártica de referencia.",
+      "warmer": "El punto más frío de este perfil simulado está {delta} K por encima de la media antártica de referencia."
+    },
+    "results": {
+      "hint": "Elige una escena para ubicarla y procesarla:",
+      "copernicus": "ESA Copernicus STAC en vivo ({count})",
+      "earthdata": "NASA Earthdata CMR en vivo ({count})",
+      "pds": "NASA PDS planetario en vivo ({count})",
+      "partners": "Agencias asociadas ({count})",
+      "empty": "Sin resultados o fuente no disponible. Prueba con otras fechas, otro BBox u otro filtro.",
+      "clouds": "Nubes: {value}",
+      "date": "Fecha: {value}",
+      "instrument": "Instrumento: {value}",
+      "approxLocation": "Ubicación aproximada",
+      "notAvailable": "sin dato"
+    }
+  },
+  "errors": {
+    "network": "No pudimos conectar con el servidor de datos ({api}). Comprueba que esté en marcha e inténtalo de nuevo.",
+    "timeout": "El servidor de datos tardó demasiado en responder. Inténtalo de nuevo en unos segundos.",
+    "http": "El servidor de datos respondió con un error ({status}): {detail}. Prueba con otra escena o inténtalo más tarde.",
+    "parse": "El servidor de datos envió una respuesta que no pudimos leer. Inténtalo de nuevo."
+  }
+}
