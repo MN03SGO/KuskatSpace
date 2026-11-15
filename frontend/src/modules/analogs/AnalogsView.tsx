@@ -1,8 +1,190 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Map as MapLibreMap,
+  NavigationControl,
+  Popup,
+  type GeoJSONSource,
+  type MapLayerMouseEvent,
+} from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
 import { focusRing } from '../../components/ui'
 import { API_BASE } from '../../config/env'
 import { useLang } from '../../i18n/useT'
+import { ensureMaplibreWorker } from '../../lib/maplibreSetup'
 import { useExplorerStore } from '../../store/useExplorerStore'
+import {
+  assertGridIfaParity,
+  computeGridIFA,
+  ifaColorExpr,
+  MARS_ARID_WEIGHTS,
+  MOON_PSR_WEIGHTS,
+  type GridCellProps,
+  type IfaMode,
+  type IfaWeights,
+} from './ifaColorExpr'
+
+ensureMaplibreWorker()
+
+/** Carto Dark Matter (vector) — sin API key; fondo oscuro espacial para resaltar la grilla IFA. */
+const CARTO_DARK_MATTER_STYLE =
+  'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
+
+/** NO usar ±90°: en Web Mercator lat=90 → y=Infinity y el mapa crashea. */
+const MERCATOR_MAX_LAT = 85.05112878
+
+const GRID_SOURCE_ID = 'grid'
+const GRID_LAYER_ID = 'grid-fill'
+const GRID_GEOJSON_URL = '/data/grid.geojson'
+
+const POINTS_SOURCE_ID = 'candidates-geojson'
+const POINTS_LAYER_ID = 'candidates-circles'
+
+type HeatmapLayer = 'combined' | 'moon_south_pole' | 'mars_surface'
+
+function layerToMode(layer: HeatmapLayer): IfaMode {
+  if (layer === 'moon_south_pole') return 'moon_psr'
+  if (layer === 'mars_surface') return 'mars_arid'
+  return 'global'
+}
+
+function modeDefaultWeights(mode: IfaMode, current: IfaWeights): IfaWeights {
+  if (mode === 'moon_psr') return { ...MOON_PSR_WEIGHTS }
+  if (mode === 'mars_arid') return { ...MARS_ARID_WEIGHTS }
+  return current
+}
+
+function readGridProps(raw: Record<string, unknown> | null | undefined): GridCellProps | null {
+  if (!raw) return null
+  const num = (k: string): number => {
+    const v = raw[k]
+    return typeof v === 'number' && Number.isFinite(v) ? v : Number(v) || 0
+  }
+  return {
+    relief: num('relief'),
+    illum: num('illum'),
+    cold: num('cold'),
+    ice: num('ice'),
+    dust: num('dust'),
+    valid: num('valid'),
+  }
+}
+
+/** Source + capa fill de grilla (antes de candidates-circles). */
+function ensureGridLayer(map: MapLibreMap, weights: IfaWeights, mode: IfaMode) {
+  if (!map.getSource(GRID_SOURCE_ID)) {
+    map.addSource(GRID_SOURCE_ID, {
+      type: 'geojson',
+      data: GRID_GEOJSON_URL,
+    })
+  }
+
+  const colorExpr = ifaColorExpr(weights, mode)
+  if (!map.getLayer(GRID_LAYER_ID)) {
+    const beforeId = map.getLayer(POINTS_LAYER_ID) ? POINTS_LAYER_ID : undefined
+    map.addLayer(
+      {
+        id: GRID_LAYER_ID,
+        type: 'fill',
+        source: GRID_SOURCE_ID,
+        paint: {
+          'fill-color': colorExpr as never,
+          'fill-opacity': 0.8,
+          'fill-outline-color': 'rgba(0,0,0,0)',
+        },
+      },
+      beforeId,
+    )
+  } else {
+    map.setPaintProperty(GRID_LAYER_ID, 'fill-color', colorExpr as never)
+  }
+
+  if (map.getLayer(POINTS_LAYER_ID) && map.getLayer(GRID_LAYER_ID)) {
+    map.moveLayer(GRID_LAYER_ID, POINTS_LAYER_ID)
+  }
+}
+
+type RankedPoint = {
+  id: string
+  name: string
+  lon: number
+  lat: number
+  ifa: number
+  rank: number
+  selected: 0 | 1
+  hasOrbital: 0 | 1
+}
+
+function toPointsGeoJSON(points: RankedPoint[]): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: points.map((p) => ({
+      type: 'Feature',
+      properties: {
+        id: p.id,
+        name: p.name,
+        ifa: p.ifa,
+        rank: p.rank,
+        selected: p.selected,
+        has_orbital: p.hasOrbital,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [p.lon, p.lat],
+      },
+    })),
+  }
+}
+
+/** Capa circle GPU (GeoJSON) — mucho más rápida que Marker HTML. */
+function upsertCandidatesCircles(map: MapLibreMap, points: RankedPoint[]) {
+  const data = toPointsGeoJSON(points)
+  const existing = map.getSource(POINTS_SOURCE_ID) as GeoJSONSource | undefined
+
+  if (existing) {
+    existing.setData(data)
+  } else {
+    map.addSource(POINTS_SOURCE_ID, {
+      type: 'geojson',
+      data,
+      // Reduce trabajo en pan/zoom
+      cluster: false,
+    })
+
+    map.addLayer({
+      id: POINTS_LAYER_ID,
+      type: 'circle',
+      source: POINTS_SOURCE_ID,
+      paint: {
+        'circle-radius': [
+          'case',
+          ['==', ['get', 'selected'], 1],
+          9,
+          ['<=', ['get', 'rank'], 3],
+          7,
+          5.5,
+        ],
+        'circle-color': [
+          'case',
+          ['==', ['get', 'selected'], 1],
+          '#38bdf8',
+          ['==', ['get', 'has_orbital'], 1],
+          '#34d399',
+          '#7dd3fc',
+        ],
+        'circle-stroke-width': ['case', ['==', ['get', 'selected'], 1], 2.5, 1],
+        'circle-stroke-color': '#f8fafc',
+        'circle-opacity': 0.95,
+      },
+    })
+  }
+
+  // Orden: basemap < grid-fill < círculos
+  if (map.getLayer(GRID_LAYER_ID) && map.getLayer(POINTS_LAYER_ID)) {
+    map.moveLayer(GRID_LAYER_ID, POINTS_LAYER_ID)
+  } else if (map.getLayer(POINTS_LAYER_ID)) {
+    map.moveLayer(POINTS_LAYER_ID)
+  }
+}
 
 interface CandidateScores {
   relieve: number
@@ -65,13 +247,6 @@ interface CandidateDoc {
 }
 
 type TargetFilter = 'all' | 'moon_south_pole' | 'mars_surface' | 'lava_tubes'
-type HeatmapLayer = 'combined' | 'moon_south_pole' | 'mars_surface'
-
-const HEATMAP_FILES: Record<HeatmapLayer, string> = {
-  combined: '/data/heatmap_analog_index.png',
-  moon_south_pole: '/data/heatmap_moon_psr.png',
-  mars_surface: '/data/heatmap_mars_arid.png',
-}
 
 interface Preset {
   id: string
@@ -164,7 +339,130 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     hielo: 0.2,
     polvo: 0.15,
   })
+  // Ranking/mapa solo se recalculan 150ms después de soltar el slider
+  const [debouncedWeights, setDebouncedWeights] = useState(weights)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const mapContainerRef = useRef<HTMLDivElement | null>(null)
+  const mapRef = useRef<MapLibreMap | null>(null)
+  const heatmapLayerRef = useRef<HeatmapLayer>(heatmapLayer)
+  const weightsRef = useRef(debouncedWeights)
+  const pointsRef = useRef<RankedPoint[]>([])
+  const popupRef = useRef<Popup | null>(null)
+  heatmapLayerRef.current = heatmapLayer
+  weightsRef.current = debouncedWeights
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setDebouncedWeights(weights), 150)
+    return () => window.clearTimeout(t)
+  }, [weights])
+
+  // Paridad IFA JS ↔ fórmula de la expresión MapLibre (2–3 celdas)
+  useEffect(() => {
+    assertGridIfaParity(debouncedWeights, layerToMode(heatmapLayer))
+  }, [debouncedWeights, heatmapLayer])
+
+  // Mapa base Carto Dark Matter; grilla GeoJSON + círculos en style.load
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return
+
+    const map = new MapLibreMap({
+      container: mapContainerRef.current,
+      style: CARTO_DARK_MATTER_STYLE,
+      center: [-20, 15],
+      zoom: 1.4,
+      minZoom: 1,
+      renderWorldCopies: false,
+    })
+
+    map.addControl(new NavigationControl({ showCompass: false }), 'top-right')
+    mapRef.current = map
+    popupRef.current = new Popup({
+      closeButton: true,
+      closeOnClick: true,
+      maxWidth: '260px',
+      className: 'grid-ifa-popup',
+    })
+
+    const remountCustomLayers = () => {
+      const mode = layerToMode(heatmapLayerRef.current)
+      ensureGridLayer(map, weightsRef.current, mode)
+      upsertCandidatesCircles(map, pointsRef.current)
+    }
+
+    const onPointClick = (e: MapLayerMouseEvent) => {
+      const id = e.features?.[0]?.properties?.id as string | undefined
+      if (id) setSelectedId(id)
+    }
+
+    const showGridPopup = (e: MapLayerMouseEvent) => {
+      const feat = e.features?.[0]
+      const props = readGridProps(feat?.properties as Record<string, unknown> | undefined)
+      if (!props || !e.lngLat) return
+      const mode = layerToMode(heatmapLayerRef.current)
+      const ifa = computeGridIFA(props, weightsRef.current, mode)
+      const html = `
+        <div style="font:12px/1.4 system-ui,sans-serif">
+          <strong>IFA ${(ifa * 100).toFixed(1)}%</strong>
+          <div style="margin-top:6px;display:grid;grid-template-columns:1fr auto;gap:2px 10px">
+            <span>relief</span><span>${(props.relief * 100).toFixed(0)}%</span>
+            <span>illum</span><span>${(props.illum * 100).toFixed(0)}%</span>
+            <span>cold</span><span>${(props.cold * 100).toFixed(0)}%</span>
+            <span>ice</span><span>${(props.ice * 100).toFixed(0)}%</span>
+            <span>dust</span><span>${(props.dust * 100).toFixed(0)}%</span>
+          </div>
+        </div>`
+      popupRef.current?.setLngLat(e.lngLat).setHTML(html).addTo(map)
+    }
+
+    const onGridEnter = () => {
+      map.getCanvas().style.cursor = 'pointer'
+    }
+    const onGridLeave = () => {
+      map.getCanvas().style.cursor = ''
+    }
+
+    map.on('load', remountCustomLayers)
+    map.on('style.load', remountCustomLayers)
+    map.on('click', POINTS_LAYER_ID, onPointClick)
+    map.on('click', GRID_LAYER_ID, showGridPopup)
+    map.on('mouseenter', GRID_LAYER_ID, onGridEnter)
+    map.on('mouseleave', GRID_LAYER_ID, onGridLeave)
+    map.on('mouseenter', POINTS_LAYER_ID, () => {
+      map.getCanvas().style.cursor = 'pointer'
+    })
+    map.on('mouseleave', POINTS_LAYER_ID, () => {
+      map.getCanvas().style.cursor = ''
+    })
+
+    return () => {
+      map.off('load', remountCustomLayers)
+      map.off('style.load', remountCustomLayers)
+      map.off('click', POINTS_LAYER_ID, onPointClick)
+      map.off('click', GRID_LAYER_ID, showGridPopup)
+      map.off('mouseenter', GRID_LAYER_ID, onGridEnter)
+      map.off('mouseleave', GRID_LAYER_ID, onGridLeave)
+      popupRef.current?.remove()
+      popupRef.current = null
+      map.remove()
+      mapRef.current = null
+    }
+  }, [])
+
+  // Pestañas Índice Global / Luna PSR / Marte Árido → solo setPaintProperty (sin PNG)
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    const mode = layerToMode(heatmapLayer)
+    const apply = () => {
+      if (!map.getLayer(GRID_LAYER_ID)) {
+        ensureGridLayer(map, debouncedWeights, mode)
+        return
+      }
+      map.setPaintProperty(GRID_LAYER_ID, 'fill-color', ifaColorExpr(debouncedWeights, mode) as never)
+    }
+    if (map.isStyleLoaded()) apply()
+    else map.once('load', apply)
+  }, [heatmapLayer, debouncedWeights])
 
   useEffect(() => {
     let active = true
@@ -219,20 +517,67 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
       })
       .map((c) => ({
         doc: c,
-        ifa: computeIFA(c.scores, weights),
+        ifa: computeIFA(c.scores, debouncedWeights),
       }))
       .sort((a, b) => b.ifa - a.ifa)
-  }, [candidates, targetFilter, onlyDiscoveries, weights])
+  }, [candidates, targetFilter, onlyDiscoveries, debouncedWeights])
 
   const selected = useMemo(() => {
     if (!ranked.length) return null
     return ranked.find((r) => r.doc._id === selectedId) ?? ranked[0]
   }, [ranked, selectedId])
 
+  // Sync GeoJSON circles (GPU) — solo cuando cambia ranking debounced o selección
+  useEffect(() => {
+    const map = mapRef.current
+    const points: RankedPoint[] = ranked.slice(0, 80).map(({ doc, ifa }, idx) => {
+      const [lon, lat] = doc.location.coordinates
+      return {
+        id: doc._id,
+        name: doc.name,
+        lon,
+        lat,
+        ifa,
+        rank: idx + 1,
+        selected: (selected?.doc._id === doc._id ? 1 : 0) as 0 | 1,
+        hasOrbital: (doc.orbital_previews ? 1 : 0) as 0 | 1,
+      }
+    })
+    pointsRef.current = points
+    if (!map || !map.isStyleLoaded()) return
+    upsertCandidatesCircles(map, points)
+  }, [ranked, selected])
+
+  // FlyTo solo al cambiar selección (no en cada tick del slider)
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !selected?.doc.location?.coordinates) return
+    const [lon, lat] = selected.doc.location.coordinates
+    if (
+      Number.isFinite(lon) &&
+      Number.isFinite(lat) &&
+      Math.abs(lat) <= MERCATOR_MAX_LAT &&
+      Math.abs(lon) <= 180
+    ) {
+      map.easeTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 3.5), duration: 450 })
+    }
+  }, [selectedId]) // eslint-disable-line react-hooks/exhaustive-deps -- intencional: no re-volar en cada ranked
+
   const applyPreset = (p: Preset) => {
     setTargetFilter(p.target)
     setHeatmapLayer(p.heatmap)
     setWeights(p.weights)
+    setDebouncedWeights(p.weights)
+  }
+
+  const applyHeatmapTab = (id: HeatmapLayer) => {
+    const mode = layerToMode(id)
+    const next = modeDefaultWeights(mode, weights)
+    setHeatmapLayer(id)
+    if (mode !== 'global') {
+      setWeights(next)
+      setDebouncedWeights(next)
+    }
   }
 
   const handleOpenInExplorer = (c: CandidateDoc) => {
@@ -435,7 +780,7 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
                 <button
                   key={id}
                   type="button"
-                  onClick={() => setHeatmapLayer(id)}
+                  onClick={() => applyHeatmapTab(id)}
                   className={`rounded px-2.5 py-1 text-xs ${focusRing} ${
                     heatmapLayer === id
                       ? 'bg-info font-bold text-canvas'
@@ -448,36 +793,22 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
             </div>
           </div>
 
-          <div className="relative aspect-[2/1] w-full overflow-hidden rounded border border-line bg-black">
-            <img
-              src={HEATMAP_FILES[heatmapLayer]}
-              alt="Global Analog Heatmap"
-              className="h-full w-full object-fill opacity-90"
-            />
-            {/* Marcadores equirectangulares WGS84 */}
-            {ranked.slice(0, 35).map(({ doc }) => {
-              const [lon, lat] = doc.location.coordinates
-              const leftPct = ((lon + 180) / 360) * 100
-              const topPct = ((90 - lat) / 180) * 100
-              const isSel = selected?.doc._id === doc._id
-              return (
-                <button
-                  key={doc._id}
-                  type="button"
-                  title={`${doc.name} (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`}
-                  onClick={() => setSelectedId(doc._id)}
-                  style={{ left: `${leftPct}%`, top: `${topPct}%` }}
-                  className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border transition ${
-                    isSel
-                      ? 'z-20 h-4 w-4 border-white bg-accent ring-2 ring-info'
-                      : doc.orbital_previews
-                        ? 'z-10 h-2.5 w-2.5 border-black bg-emerald-400 hover:scale-125'
-                        : 'h-2 w-2 border-black/80 bg-sky-300/90 hover:scale-125'
-                  }`}
-                />
-              )
-            })}
-          </div>
+          {/* Contenedor MapLibre: Carto Dark Matter + capa raster GEE encima */}
+          <div
+            ref={mapContainerRef}
+            className="relative aspect-[2/1] w-full overflow-hidden rounded border border-line"
+            style={{ minHeight: 280 }}
+            aria-label={
+              isEs
+                ? `Mapa Dark Matter con grilla IFA ${heatmapLayer}`
+                : `Dark Matter map with IFA grid ${heatmapLayer}`
+            }
+          />
+          <p className="mt-1.5 text-[11px] text-ink-muted">
+            {isEs
+              ? 'Fondo: Carto Dark Matter. Capa: polígonos GEE EASE-Grid (IFA en GPU). Clic en celda → popup.'
+              : 'Basemap: Carto Dark Matter. Layer: GEE EASE-Grid polygons (GPU IFA). Click a cell for popup.'}
+          </p>
         </div>
 
         {/* Ficha detallada del candidato seleccionado (Contrato §05) */}

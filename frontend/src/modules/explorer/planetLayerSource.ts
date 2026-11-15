@@ -18,8 +18,8 @@ export interface EarthLayerMosaic {
 const earthCache = new Map<string, EarthLayerMosaic>()
 
 /** Descarga (una vez por capa y fecha) las 15 teselas del nivel 2 y las compone en un lienzo 2048 × 1024. */
-export function getEarthLayerMosaic(gibsId: string, date: string): EarthLayerMosaic {
-  const key = `${gibsId}:${date}`
+export function getEarthLayerMosaic(gibsId: string, date: string, equirectMatrix = '2km'): EarthLayerMosaic {
+  const key = `${gibsId}:${date}:${equirectMatrix}`
   const cached = earthCache.get(key)
   if (cached) return cached
 
@@ -50,7 +50,7 @@ export function getEarthLayerMosaic(gibsId: string, date: string): EarthLayerMos
         mosaic.failed++
         done()
       }
-      img.src = gibsEquirectTileUrl(gibsId, date, row, col)
+      img.src = gibsEquirectTileUrl(gibsId, date, row, col, equirectMatrix)
     }
   }
   return mosaic

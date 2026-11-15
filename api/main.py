@@ -27,12 +27,39 @@ BACKEND_DIR = Path(__file__).resolve().parent.parent / "backend"
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
+# Separar imports: /api/search solo necesita connectors (httpx).
+# processor (rasterio/scipy) es opcional para /api/process y /api/export/geotiff.
+run_federated_search = None
+execute_pipeline = None
+export_geotiff_bytes = None
+CONNECTORS_AVAILABLE = False
+PROCESSOR_AVAILABLE = False
+REMOTE_SENSING_IMPORT_ERROR = None
+
 try:
-    from connectors import run_federated_search
-    from processor import execute_pipeline, export_geotiff_bytes
-    REMOTE_SENSING_AVAILABLE = True
-except Exception:
-    REMOTE_SENSING_AVAILABLE = False
+    from connectors import run_federated_search as _run_federated_search
+    run_federated_search = _run_federated_search
+    CONNECTORS_AVAILABLE = True
+    print("[teledetección] connectors OK (búsqueda federada disponible)")
+except Exception as e:
+    REMOTE_SENSING_IMPORT_ERROR = f"connectors: {type(e).__name__}: {e}"
+    print(f"Error: {e}")
+    print(f"[teledetección] Falló import de connectors → {REMOTE_SENSING_IMPORT_ERROR}")
+
+try:
+    from processor import execute_pipeline as _execute_pipeline
+    from processor import export_geotiff_bytes as _export_geotiff_bytes
+    execute_pipeline = _execute_pipeline
+    export_geotiff_bytes = _export_geotiff_bytes
+    PROCESSOR_AVAILABLE = True
+    print("[teledetección] processor OK (procesamiento ráster disponible)")
+except Exception as e:
+    print(f"Error: {e}")
+    print(f"[teledetección] Falló import de processor → {type(e).__name__}: {e}")
+    print("[teledetección] Tip: pip install httpx rasterio scipy numpy Pillow")
+
+# Compatibilidad con checks legacy
+REMOTE_SENSING_AVAILABLE = CONNECTORS_AVAILABLE and PROCESSOR_AVAILABLE
 
 # Cargar variables de entorno
 load_dotenv()
@@ -527,6 +554,47 @@ def get_p1_qc_report():
 # Endpoints de Teledetección y Procesamiento Ráster Multi-Agencia (back-AR)
 # ---------------------------------------------------------------------------
 
+def _mock_federated_search(
+    bbox: str,
+    start_date: str,
+    end_date: str,
+    body: str,
+    variable: str,
+    limit: int,
+) -> Dict[str, Any]:
+    """Mock de emergencia si connectors no carga (p. ej. falta httpx). No depende de GEE."""
+    coords = [float(x) for x in bbox.split(",")]
+    sample = {
+        "id": f"MOCK-{body.upper()}-001",
+        "title": f"Mock federated granule ({body})",
+        "date": start_date,
+        "source": "MOCK (connectors no disponible)",
+        "bbox": coords,
+        "recommended_mode": "ndvi" if body == "earth" else "diviner_thermal",
+        "note": REMOTE_SENSING_IMPORT_ERROR or "Import de connectors falló",
+    }
+    partner = [
+        {
+            "id": "MOCK-PARTNER",
+            "agency": "MOCK",
+            "mission": "Emergency fallback",
+            "body": body,
+            "variable": variable,
+            "instruments": "n/a",
+            "description": "Recurso de demostración mientras se instalan deps de backend/",
+            "recommended_mode": "sar_db",
+            "bbox": coords,
+        }
+    ][:limit]
+    return {
+        "live_earthdata": [sample] if body == "earth" else [],
+        "live_copernicus": [],
+        "live_pds_planetary": [sample] if body != "earth" else [],
+        "partner_resources": partner,
+        "fallback": True,
+    }
+
+
 @app.get("/api/search", tags=["Teledetección Multi-Agencia"])
 async def search_catalogs(
     bbox: str = Query("-90.1,13.1,-87.6,14.5", description="Bounding box en formato min_lon,min_lat,max_lon,max_lat"),
@@ -537,9 +605,19 @@ async def search_catalogs(
     limit: int = Query(5, ge=1, le=20, description="Límite de resultados"),
 ):
     """Búsqueda federada de capas satelitales en NASA, CSA, ESA y JAXA."""
-    if not REMOTE_SENSING_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Módulos de teledetección de backend/ no disponibles")
-    return await run_federated_search(bbox, start_date, end_date, body, variable, limit)
+    if CONNECTORS_AVAILABLE and run_federated_search is not None:
+        try:
+            return await run_federated_search(bbox, start_date, end_date, body, variable, limit)
+        except Exception as exc:
+            print(f"Error: {exc}")
+            print(f"[teledetección] run_federated_search falló en runtime → mock de emergencia")
+            return _mock_federated_search(bbox, start_date, end_date, body, variable, limit)
+
+    print(
+        f"[teledetección] /api/search usando mock "
+        f"(connectors no disponible: {REMOTE_SENSING_IMPORT_ERROR})"
+    )
+    return _mock_federated_search(bbox, start_date, end_date, body, variable, limit)
 
 
 @app.post("/api/process", tags=["Teledetección Multi-Agencia"])
@@ -549,8 +627,11 @@ def process_scene(
     sample_name: Optional[str] = Query(None),
 ):
     """Procesa rásteres: SAR (filtro Lee), NDVI, NDWI, precipitación JAXA y radiometría térmica Diviner."""
-    if not REMOTE_SENSING_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Módulos de teledetección de backend/ no disponibles")
+    if not PROCESSOR_AVAILABLE or execute_pipeline is None:
+        raise HTTPException(
+            status_code=503,
+            detail="processor no disponible. Instalá: pip install rasterio scipy numpy Pillow",
+        )
     try:
         coords = [float(x) for x in bbox.split(",")]
         file_path = os.path.join(str(BACKEND_DIR), "sample_data", sample_name) if sample_name else None
@@ -565,8 +646,11 @@ def download_processed_geotiff(
     bbox: str = Query("-92.5,11.5,-83.0,17.5"),
 ):
     """Exporta el ráster procesado a un archivo GeoTIFF binario para descarga."""
-    if not REMOTE_SENSING_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Módulos de teledetección de backend/ no disponibles")
+    if not PROCESSOR_AVAILABLE or export_geotiff_bytes is None:
+        raise HTTPException(
+            status_code=503,
+            detail="processor no disponible. Instalá: pip install rasterio scipy numpy Pillow",
+        )
     coords = [float(x) for x in bbox.split(",")]
     tif_bytes = export_geotiff_bytes(mode=mode, bbox=coords)
     return Response(

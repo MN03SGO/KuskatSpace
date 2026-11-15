@@ -20,5 +20,8 @@ describe('planetLayers', () => {
       'https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/IMERG_Precipitation_Rate/default/2026-11-12/2km/2/1/4.png',
     )
     expect(gibsMercatorTemplate('X', '2026-11-12')).toContain('/X/default/2026-11-12/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png')
+    expect(gibsMercatorTemplate('MODIS_Terra_L3_Land_Surface_Temp_8Day_Day', '2026-10-16', 7)).toContain(
+      '/MODIS_Terra_L3_Land_Surface_Temp_8Day_Day/default/2026-10-16/GoogleMapsCompatible_Level7/{z}/{y}/{x}.png',
+    )
   })
 })

@@ -28,14 +28,22 @@ export interface EarthLayerDef {
   legend: LegendSpec
   /** El producto tiene franjas sin datos entre pasadas del satélite. */
   hasSwathGaps: boolean
+  /** Nivel max del TileMatrixSet GoogleMapsCompatible_LevelN (EPSG:3857). Default 6. */
+  mercatorMaxLevel?: number
+  /** TileMatrixSet EPSG:4326 para el mosaico del globo (p. ej. '2km' | '1km'). Default '2km'. */
+  equirectMatrix?: string
 }
 
 // Paradas muestreadas de los colormaps oficiales de GIBS (8 colores).
 export const EARTH_LAYERS: Record<PlanetLayerId, EarthLayerDef> = {
   temperature: {
-    gibsId: 'AIRS_L3_Surface_Air_Temperature_Daily_Day',
-    lagDays: 7,
-    hasSwathGaps: true,
+    // AIRS L3 en GIBS solo ofrece Daily/Monthly (sin 8_Day). El compuesto de 8 días
+    // que rellena franjas orbitales es MODIS Terra LST L3 8-Day Day (MOD11A2).
+    gibsId: 'MODIS_Terra_L3_Land_Surface_Temp_8Day_Day',
+    lagDays: 16,
+    hasSwathGaps: false,
+    mercatorMaxLevel: 7,
+    equirectMatrix: '1km',
     legend: {
       stops: [
         'rgb(227,245,255)',
@@ -108,13 +116,19 @@ const GIBS_3857 = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best'
 /** Rejilla del TileMatrixSet "2km" de GIBS EPSG:4326, nivel 2: 5 × 3 teselas de 512 px y 72°. */
 export const GIBS_EQUIRECT_GRID = { z: 2, cols: 5, rows: 3, tileDeg: 72 } as const
 
-export function gibsEquirectTileUrl(gibsId: string, date: string, row: number, col: number): string {
-  return `${GIBS_4326}/${gibsId}/default/${date}/2km/${GIBS_EQUIRECT_GRID.z}/${row}/${col}.png`
+export function gibsEquirectTileUrl(
+  gibsId: string,
+  date: string,
+  row: number,
+  col: number,
+  matrix = '2km',
+): string {
+  return `${GIBS_4326}/${gibsId}/default/${date}/${matrix}/${GIBS_EQUIRECT_GRID.z}/${row}/${col}.png`
 }
 
-/** Plantilla {z}/{y}/{x} para el mapa 2D (Leaflet, EPSG:3857). */
-export function gibsMercatorTemplate(gibsId: string, date: string): string {
-  return `${GIBS_3857}/${gibsId}/default/${date}/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png`
+/** Plantilla {z}/{y}/{x} para el mapa 2D (MapLibre/Leaflet, EPSG:3857). */
+export function gibsMercatorTemplate(gibsId: string, date: string, maxLevel = 6): string {
+  return `${GIBS_3857}/${gibsId}/default/${date}/GoogleMapsCompatible_Level${maxLevel}/{z}/{y}/{x}.png`
 }
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)

@@ -55,13 +55,22 @@ def load_env() -> None:
         os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
+# Project ID de Google Cloud / Earth Engine (cuenta autenticada del equipo)
+DEFAULT_GEE_PROJECT = "gen-lang-client-0793724758"
+
+
 def init_ee():
+    """Inicializa Earth Engine. No traga excepciones: si falla, se propaga."""
     import ee
 
     load_env()
-    project = os.environ.get("GEE_PROJECT_ID")
-    if not project:
-        raise RuntimeError("Falta GEE_PROJECT_ID en el entorno/.env")
-    ee.Initialize(project=project, opt_url="https://earthengine-highvolume.googleapis.com")
+    # Preferí env si está; si no, el Project ID autenticado del hackathon
+    project = os.environ.get("GEE_PROJECT_ID") or DEFAULT_GEE_PROJECT
+    print(f"[GEE] Inicializando Earth Engine con project='{project}' …")
+    ee.Initialize(
+        project=project,
+        opt_url="https://earthengine-highvolume.googleapis.com",
+    )
+    print(f"[GEE] OK — ee.Initialize(project='{project}')")
     return ee
 

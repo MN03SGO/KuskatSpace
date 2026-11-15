@@ -22,6 +22,8 @@ export type ActivePlanetLayer =
       requestedDate: string
       legend: LegendSpec
       hasSwathGaps: boolean
+      mercatorMaxLevel: number
+      equirectMatrix: string
       key: string
     }
   | {
@@ -66,6 +68,8 @@ export function resolvePlanetLayer(
       requestedDate: gibsDate,
       legend: def.legend,
       hasSwathGaps: def.hasSwathGaps,
+      mercatorMaxLevel: def.mercatorMaxLevel ?? 6,
+      equirectMatrix: def.equirectMatrix ?? '2km',
       key: `${def.gibsId}:${date}`,
     }
   }

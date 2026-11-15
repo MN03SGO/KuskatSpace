@@ -97,7 +97,7 @@ export default function GlobeView() {
       setLayerProgress(null)
       return
     }
-    const mosaic = getEarthLayerMosaic(layer.gibsId, layer.date)
+    const mosaic = getEarthLayerMosaic(layer.gibsId, layer.date, layer.equirectMatrix)
     const update = () => {
       engine.setPlanetLayer(mosaic.canvas)
       setLayerProgress({ loaded: mosaic.loaded, total: mosaic.total, failed: mosaic.failed })

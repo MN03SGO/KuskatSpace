@@ -8,6 +8,7 @@ import { gibsMercatorTemplate } from '../../config/planetLayers'
 import { useT } from '../../i18n/useT'
 import { type BBox, type LeafletBounds, bboxAroundPoint, toLeafletBounds } from '../../lib/bbox'
 import { useExplorerStore } from '../../store/useExplorerStore'
+import { EarthMapLibre } from './EarthMapLibre'
 import { renderModelCanvas } from './planetLayerSource'
 import { useActivePlanetLayer } from './usePlanetLayer'
 
@@ -48,7 +49,6 @@ export default function PlanetMap() {
   const layer = useActivePlanetLayer()
 
   const cfg = BODIES[body]
-  const isEarth = body === 'earth'
   const bounds = useMemo(() => toLeafletBounds(bbox), [bbox])
   const tiles = useMemo(() => baseTiles(body, gibsDate), [body, gibsDate])
   // Luna/Marte: la imagen del modelo se recalcula una vez por minuto (layer.key).
@@ -58,18 +58,23 @@ export default function PlanetMap() {
     [layer?.key],
   )
 
+  // Tierra: MapLibre + overlay georreferenciado de /api/process (NDVI, térmico…)
+  if (body === 'earth') {
+    return <EarthMapLibre />
+  }
+
   return (
     <div className="h-full w-full" role="region" aria-label={t('explorer.mapLabel')}>
       <MapContainer
         key={body}
-        crs={isEarth ? L.CRS.EPSG3857 : L.CRS.EPSG4326}
+        crs={L.CRS.EPSG4326}
         center={cfg.center}
         zoom={cfg.zoom}
         minZoom={2}
         maxZoom={cfg.maxZoom}
-        maxBounds={isEarth ? undefined : WORLD_BOUNDS}
-        maxBoundsViscosity={isEarth ? 0 : 1}
-        worldCopyJump={isEarth}
+        maxBounds={WORLD_BOUNDS}
+        maxBoundsViscosity={1}
+        worldCopyJump={false}
         className="h-full w-full"
         style={{ height: '100%', width: '100%', background: '#050811' }}
       >
@@ -80,15 +85,15 @@ export default function PlanetMap() {
             attribution={tile.attribution}
             maxNativeZoom={tile.maxNativeZoom}
             opacity={tile.opacity ?? 1}
-            noWrap={!isEarth}
-            bounds={isEarth ? undefined : WORLD_BOUNDS}
+            noWrap
+            bounds={WORLD_BOUNDS}
           />
         ))}
 
         {layer?.kind === 'gibs' && (
           <TileLayer
             key={layer.key}
-            url={gibsMercatorTemplate(layer.gibsId, layer.date)}
+            url={gibsMercatorTemplate(layer.gibsId, layer.date, layer.mercatorMaxLevel)}
             attribution={GIBS_ATTRIBUTION}
             maxNativeZoom={6}
             opacity={layerOpacity}
@@ -102,7 +107,7 @@ export default function PlanetMap() {
         <ClickToBBox maxLat={cfg.maxClickLat} onSelect={setBbox} />
         <Rectangle bounds={bounds} pathOptions={{ color: '#38bdf8', weight: 2, fillOpacity: 0.05 }} />
 
-        {/* B17: la clave depende de la escena procesada, no del bbox actual. */}
+        {/* Luna/Marte: overlay de proceso (si aplica) en Leaflet */}
         {scene && (
           <ImageOverlay
             key={scene.id}

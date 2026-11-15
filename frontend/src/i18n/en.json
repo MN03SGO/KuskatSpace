@@ -57,7 +57,7 @@
         "mars": "This app has no global humidity or rain data for Mars. Only temperature is available, calculated with a model."
       },
       "sources": {
-        "temperature": "NASA AIRS (Aqua satellite): surface air temperature, daytime pass",
+        "temperature": "NASA MODIS Terra LST (8-day daytime composite): land surface temperature — no orbital swath gaps",
         "humidity": "NASA AIRS (Aqua satellite): surface relative humidity, daytime pass",
         "precipitation": "NASA GPM IMERG: precipitation rate, one map per day"
       },

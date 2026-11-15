@@ -57,7 +57,7 @@
         "mars": "Esta aplicación no tiene datos globales de humedad ni de lluvia de Marte. Solo está la temperatura, calculada con un modelo."
       },
       "sources": {
-        "temperature": "NASA AIRS (satélite Aqua): temperatura del aire en superficie, pasada de día",
+        "temperature": "NASA MODIS Terra LST (compuesto 8 días, día): temperatura de superficie — sin franjas orbitales",
         "humidity": "NASA AIRS (satélite Aqua): humedad relativa en superficie, pasada de día",
         "precipitation": "NASA GPM IMERG: tasa de precipitación, un mapa por día"
       },
