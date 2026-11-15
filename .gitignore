@@ -1,23 +1,59 @@
-# Entornos virtuales
+# ==========================================
+# Entornos Virtuales y Python
+# ==========================================
+nasa/
 venv/
 .venv/
 env/
 ENV/
-nasa/
 
-# Python cache & bytecode
+# Caché y compilación de Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# Variables de entorno y credenciales (NUNCA subir a git)
+# Pruebas y análisis estático
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Distribución y empaquetado
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ==========================================
+# Frontend (Node / Vite / React)
+# ==========================================
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+dist-ssr/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ==========================================
+# Variables de Entorno y Credenciales
+# ==========================================
 .env
 .env.local
 .env.*.local
+*.env
 
-# Archivos Geoespaciales y Datos Pesados Temporales
-*.tif
+# ==========================================
+# Archivos Geoespaciales Pesados Temporales
+# ==========================================
 *.tiff
 *.geotiff
 *.nc
@@ -26,16 +62,16 @@ __pycache__/
 *.jp2
 data/cache_*.json
 
-# Distribución y empaquetado
-build/
-dist/
-*.egg-info/
-.eggs/
+# Permitir las muestras de prueba en backend/sample_data
+!backend/sample_data/*.tif
 
-# IDEs y SO
+# ==========================================
+# Editores, IDEs y Sistema Operativo
+# ==========================================
 .vscode/
 .idea/
+*.swp
+*.swo
+*.suo
 .DS_Store
 Thumbs.db
-*.log
-.pytest_cache/
