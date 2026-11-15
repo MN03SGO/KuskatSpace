@@ -145,6 +145,15 @@ def list_targets() -> list[dict[str, Any]]:
         raise HTTPException(status_code=500, detail=f"Error de MongoDB: {exc}") from exc
 
 
+@router.get("/datasets")
+def list_datasets() -> list[dict[str, Any]]:
+    """Catálogo de datasets citados en las fichas (colección `datasets`)."""
+    try:
+        return [serialize_doc(doc) for doc in get_db()["datasets"].find({})]  # type: ignore[misc]
+    except PyMongoError as exc:
+        raise HTTPException(status_code=500, detail=f"Error de MongoDB: {exc}") from exc
+
+
 @router.get("/export")
 def export_all() -> JSONResponse:
     """Respaldo JSON de `candidates` + `targets` (sirve para el Plan B estático)."""
@@ -154,6 +163,7 @@ def export_all() -> JSONResponse:
             "database": DB_NAME,
             "candidates": [serialize_doc(doc) for doc in database["candidates"].find({})],
             "targets": [serialize_doc(doc) for doc in database["targets"].find({})],
+            "datasets": [serialize_doc(doc) for doc in database["datasets"].find({})],
         }
         return JSONResponse(content=payload)
     except PyMongoError as exc:

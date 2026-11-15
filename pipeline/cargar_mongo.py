@@ -1,4 +1,4 @@
-"""
+﻿"""
 Carga e Indexación Geoespacial en MongoDB Atlas / Local
 ======================================================
 Proyecto: TerraAnáloga - NASA Space Apps Challenge 2026
@@ -7,7 +7,7 @@ Reto: Identify Earth Locations that Analog Permanent Moon Base & Mars
 Este script:
 1. Lee MONGO_URI desde el archivo .env.
 2. Carga data/targets.json, data/candidates.json y data/datasets.json.
-3. Realiza upsert en la base de datos 'analogos' para colecciones 'targets',
+3. Realiza upsert en la base de datos 'nasa_space' para colecciones 'targets',
    'candidates' y 'datasets'.
 4. Crea el índice 2dsphere en candidates.location y un índice en candidates.target.
 """
@@ -26,7 +26,7 @@ from pymongo.errors import PyMongoError, ServerSelectionTimeoutError
 load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI", "")
-DB_NAME = "analogos"
+DB_NAME = "nasa_space"
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 
@@ -82,7 +82,7 @@ def main():
 
     if not MONGO_URI or "cluster.mongodb.net" in MONGO_URI and "<usuario>" in MONGO_URI:
         print("[!] ERROR: MONGO_URI no está configurada o contiene credenciales de ejemplo en .env.")
-        print("[!] Por favor actualiza MONGO_URI en tu .env o usa mongodb://localhost:27017/analogos")
+        print("[!] Por favor actualiza MONGO_URI en tu .env o usa mongodb://localhost:27017/nasa_space")
         sys.exit(1)
 
     print(f"[*] Conectando a MongoDB...")

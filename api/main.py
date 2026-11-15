@@ -1,4 +1,4 @@
-"""
+﻿"""
 TerraAnáloga REST API - NASA Space Apps Challenge 2026
 ======================================================
 Reto: Identify Earth Locations that Analog Permanent Moon Base & Mars
@@ -23,7 +23,7 @@ from pymongo.errors import PyMongoError
 load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI", "")
-DB_NAME = "analogos"
+DB_NAME = "nasa_space"
 
 app = FastAPI(
     title="TerraAnáloga API",

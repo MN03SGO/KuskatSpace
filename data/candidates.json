@@ -8,7 +8,10 @@
     "is_understudied": false,
     "location": {
       "type": "Point",
-      "coordinates": [162.50, -77.50]
+      "coordinates": [
+        162.5,
+        -77.5
+      ]
     },
     "scores": {
       "relieve": 0.82,
@@ -16,23 +19,39 @@
       "frio": 0.88,
       "hielo": 0.84
     },
-    "similar_values": [
-      "temperaturas medias de invierno < -40°C",
-      "humedad relativa < 10%",
-      "pendientes de morrenas y valles glaciares entre 8° y 22°"
-    ],
     "similar_processes": [
       "sublimación directa de hielo bajo regolito hiperárido sin fase líquida",
       "atrapamiento térmico topográfico en depresiones glaciares",
       "meteorización física por sales y crioclastia"
     ],
-    "earth_limits": [
+    "similar_properties": [
+      "temperaturas medias de invierno < -40°C",
+      "humedad relativa < 10%",
+      "pendientes de morrenas y valles glaciares entre 8° y 22°"
+    ],
+    "differences_and_limits": [
       "gravedad terrestre 1.0g frente a 0.165g lunar",
       "presencia de atmósfera presurizada (aire polar denso)",
       "ausencia de bombardeo continuo de micrometeoritos"
     ],
-    "exploration_use": "Validación de perforadoras criogénicas ISRU, rovers de prospección autónoma y muestreo de hielo prístino.",
-    "datasets": ["copernicus_dem_glo90", "modis_lst_terra_aqua", "meteomatics_weather_era5", "nasa_lro_lola", "nasa_lro_diviner"]
+    "datasets_used": [
+      "copernicus_dem_glo90",
+      "modis_lst_terra_aqua",
+      "meteomatics_weather_era5",
+      "nasa_lro_lola",
+      "nasa_lro_diviner"
+    ],
+    "region_type": "known_analog",
+    "analog_category": [
+      "Proceso"
+    ],
+    "exploration_use_cases": [
+      "Validación de perforadoras criogénicas ISRU, rovers de prospección autónoma y muestreo de hielo prístino."
+    ],
+    "subsurface_and_biology": {
+      "subsurface_potential": "No documentado (pendiente P3)",
+      "extremophiles_note": "No documentado (pendiente P3)"
+    }
   },
   {
     "_id": "site_02",
@@ -43,42 +62,63 @@
     "is_understudied": false,
     "location": {
       "type": "Point",
-      "coordinates": [-89.68, 75.38]
+      "coordinates": [
+        -89.68,
+        75.38
+      ]
     },
     "scores": {
       "relieve": 0.89,
-      "iluminacion": 0.70,
+      "iluminacion": 0.7,
       "frio": 0.79,
       "hielo": 0.73
     },
-    "similar_values": [
-      "diámetro de impacto de ~23 km con pico central colapsado",
-      "brechas de impacto hidrotérmicas y regolito fragmentado",
-      "noche polar continua y solsticio de baja elevación solar (< 15°)"
-    ],
     "similar_processes": [
       "morfometría de cráteres de impacto complejos sobre basamento silíceo",
       "patrones de sombras rasantes análogos a la iluminación polar lunar",
       "permafrost continuo en roca fracturada"
     ],
-    "earth_limits": [
+    "similar_properties": [
+      "diámetro de impacto de ~23 km con pico central colapsado",
+      "brechas de impacto hidrotérmicas y regolito fragmentado",
+      "noche polar continua y solsticio de baja elevación solar (< 15°)"
+    ],
+    "differences_and_limits": [
       "erosión hídrica y glaciar post-impacto inexistente en la Luna",
       "presencia de biosfera bacteriana y líquenes árticos",
       "campo magnético protector de radiación GCR"
     ],
-    "exploration_use": "Entrenamiento de astronautas en geología de impacto, pruebas de trajes EVA y conducción de rovers presurizados en terreno quebrado.",
-    "datasets": ["copernicus_dem_glo90", "csa_rcm_sar", "csa_radarsat1_archive", "nasa_lro_lola"]
+    "datasets_used": [
+      "copernicus_dem_glo90",
+      "csa_rcm_sar",
+      "csa_radarsat1_archive",
+      "nasa_lro_lola"
+    ],
+    "region_type": "known_analog",
+    "analog_category": [
+      "Morfológico"
+    ],
+    "exploration_use_cases": [
+      "Entrenamiento de astronautas en geología de impacto, pruebas de trajes EVA y conducción de rovers presurizados en terreno quebrado."
+    ],
+    "subsurface_and_biology": {
+      "subsurface_potential": "No documentado (pendiente P3)",
+      "extremophiles_note": "No documentado (pendiente P3)"
+    }
   },
   {
     "_id": "site_03",
     "name": "Cuenca Hiperárida de Qaidam",
     "country": "Meseta Tibetana, China",
-    "target": "mars",
+    "target": "mars_surface",
     "analog_type": "process",
     "is_understudied": true,
     "location": {
       "type": "Point",
-      "coordinates": [94.50, 37.20]
+      "coordinates": [
+        94.5,
+        37.2
+      ]
     },
     "scores": {
       "relieve": 0.79,
@@ -86,23 +126,38 @@
       "frio": 0.74,
       "hielo": 0.81
     },
-    "similar_values": [
-      "yardangs eólicos gigantescos de arcilla y sal (hasta 30m de alto)",
-      "temperaturas medias anuales de 2°C con mínimas de -32°C",
-      "lagos salados evaporíticos y costras poligonales de sulfatos/cloruros"
-    ],
     "similar_processes": [
       "deflación eólica extrema y migración de polvo atmosférico fino",
       "preservación de biomarcadores en halita y yeso similar a Marte primitivo",
       "desecación progresiva de paleolagos en clima frío"
     ],
-    "earth_limits": [
+    "similar_properties": [
+      "yardangs eólicos gigantescos de arcilla y sal (hasta 30m de alto)",
+      "temperaturas medias anuales de 2°C con mínimas de -32°C",
+      "lagos salados evaporíticos y costras poligonales de sulfatos/cloruros"
+    ],
+    "differences_and_limits": [
       "presión atmosférica ~650 hPa (alta altitud terrestre) vs 6 hPa marcianos",
       "oxígeno atmosférico presente (~14% efectivo en altura)",
       "aporte hídrico estival residual por deshielo montañoso"
     ],
-    "exploration_use": "Calibración de espectrómetros Raman y NIR para búsqueda de vida fósil, y pruebas de movilidad de rovers en yardangs.",
-    "datasets": ["copernicus_dem_glo90", "modis_lst_terra_aqua", "esa_sentinel2_msi", "meteomatics_weather_era5"]
+    "datasets_used": [
+      "copernicus_dem_glo90",
+      "modis_lst_terra_aqua",
+      "esa_sentinel2_msi",
+      "meteomatics_weather_era5"
+    ],
+    "region_type": "understudied_discovery",
+    "analog_category": [
+      "Proceso"
+    ],
+    "exploration_use_cases": [
+      "Calibración de espectrómetros Raman y NIR para búsqueda de vida fósil, y pruebas de movilidad de rovers en yardangs."
+    ],
+    "subsurface_and_biology": {
+      "subsurface_potential": "No documentado (pendiente P3)",
+      "extremophiles_note": "No documentado (pendiente P3)"
+    }
   },
   {
     "_id": "site_04",
@@ -113,7 +168,10 @@
     "is_understudied": true,
     "location": {
       "type": "Point",
-      "coordinates": [-73.67, 61.28]
+      "coordinates": [
+        -73.67,
+        61.28
+      ]
     },
     "scores": {
       "relieve": 0.94,
@@ -121,34 +179,52 @@
       "frio": 0.76,
       "hielo": 0.69
     },
-    "similar_values": [
-      "cráter simple prístino de 3.44 km de diámetro con perfil de tazón",
-      "pendiente de borde de cráter entre 25° y 35°",
-      "profundidad relativa con lago interior ultra-oligotrófico de 267m"
-    ],
     "similar_processes": [
       "conservación geométrica casi intacta de eyecciones de impacto",
       "microclima de confinamiento y sombra en paredes internas",
       "fracturamiento radial de roca cristalina por ondas de choque"
     ],
-    "earth_limits": [
+    "similar_properties": [
+      "cráter simple prístino de 3.44 km de diámetro con perfil de tazón",
+      "pendiente de borde de cráter entre 25° y 35°",
+      "profundidad relativa con lago interior ultra-oligotrófico de 267m"
+    ],
+    "differences_and_limits": [
       "lago de agua líquida en el fondo del cráter (imposible en superficie lunar)",
       "ciclo estacional de deshielo y congelación superficial",
       "gravedad terrestre 1.0g"
     ],
-    "exploration_use": "Pruebas de descenso por cuerdas/cabrestantes en paredes de cráteres de borde empinado y calibración de LiDAR altimétrico.",
-    "datasets": ["copernicus_dem_glo90", "csa_rcm_sar", "nasa_lro_lola", "modis_lst_terra_aqua"]
+    "datasets_used": [
+      "copernicus_dem_glo90",
+      "csa_rcm_sar",
+      "nasa_lro_lola",
+      "modis_lst_terra_aqua"
+    ],
+    "region_type": "understudied_discovery",
+    "analog_category": [
+      "Morfológico"
+    ],
+    "exploration_use_cases": [
+      "Pruebas de descenso por cuerdas/cabrestantes en paredes de cráteres de borde empinado y calibración de LiDAR altimétrico."
+    ],
+    "subsurface_and_biology": {
+      "subsurface_potential": "No documentado (pendiente P3)",
+      "extremophiles_note": "No documentado (pendiente P3)"
+    }
   },
   {
     "_id": "site_05",
     "name": "Campo Volcánico de San Salvador / El Boquerón",
     "country": "El Salvador (Centroamérica)",
-    "target": "moon_lava_tube",
+    "target": "lava_tubes",
     "analog_type": "lithologic",
     "is_understudied": true,
     "location": {
       "type": "Point",
-      "coordinates": [-89.29, 13.73]
+      "coordinates": [
+        -89.29,
+        13.73
+      ]
     },
     "scores": {
       "relieve": 0.88,
@@ -156,34 +232,51 @@
       "frio": 0.35,
       "hielo": 0.15
     },
-    "similar_values": [
-      "flujos de lava basáltica estratificados y coladas escoriáceas de 1917",
-      "cavidades subsuperficiales y conductos de enfriamiento de lava",
-      "paredes de cráter vertical con exposición de capas magmáticas"
-    ],
     "similar_processes": [
       "formación de tubos de lava por drenaje de conductos basálticos",
       "estabilidad geotécnica de bóvedas volcánicas bajo esfuerzo tensional",
       "desgasificación magmática y texturas rugosas de 'a'ā y pāhoehoe"
     ],
-    "earth_limits": [
+    "similar_properties": [
+      "flujos de lava basáltica estratificados y coladas escoriáceas de 1917",
+      "cavidades subsuperficiales y conductos de enfriamiento de lava",
+      "paredes de cráter vertical con exposición de capas magmáticas"
+    ],
+    "differences_and_limits": [
       "clima tropical húmedo con intensa meteorización química y vegetación",
       "humedad relativa alta (> 75%) frente al vacío absoluto de Mare Tranquillitatis",
       "temperatura cálida constante (~18°C a 24°C)"
     ],
-    "exploration_use": "Exploración espeleológica robótica autónoma, mapeo SLAM 3D en conductos oscuros y pruebas de comunicaciones a través de basalto.",
-    "datasets": ["copernicus_dem_glo90", "esa_sentinel2_msi", "meteomatics_weather_era5"]
+    "datasets_used": [
+      "copernicus_dem_glo90",
+      "esa_sentinel2_msi",
+      "meteomatics_weather_era5"
+    ],
+    "region_type": "understudied_discovery",
+    "analog_category": [
+      "Litológico"
+    ],
+    "exploration_use_cases": [
+      "Exploración espeleológica robótica autónoma, mapeo SLAM 3D en conductos oscuros y pruebas de comunicaciones a través de basalto."
+    ],
+    "subsurface_and_biology": {
+      "subsurface_potential": "No documentado (pendiente P3)",
+      "extremophiles_note": "No documentado (pendiente P3)"
+    }
   },
   {
     "_id": "site_06",
     "name": "Salar de Arizaro (Puna de Atacama)",
     "country": "Salta, Argentina / Chile",
-    "target": "mars",
+    "target": "mars_surface",
     "analog_type": "process",
     "is_understudied": true,
     "location": {
       "type": "Point",
-      "coordinates": [-67.75, -24.60]
+      "coordinates": [
+        -67.75,
+        -24.6
+      ]
     },
     "scores": {
       "relieve": 0.78,
@@ -191,22 +284,37 @@
       "frio": 0.81,
       "hielo": 0.72
     },
-    "similar_values": [
-      "radiación ultravioleta extrema (índice UV > 20 en verano)",
-      "altitud de 3460 m s. n. m. con gradiente térmico diario de 35°C",
-      "precipitación media anual inferior a 30 mm"
-    ],
     "similar_processes": [
       "formación de costras salinas hiperbáricas de halita y sulfatos",
       "nichos endolíticos microbianos protegidos de la radiación UV dentro de cristales",
       "transporte eólico de arenas volcánicas oscuras sobre mantos salinos"
     ],
-    "earth_limits": [
+    "similar_properties": [
+      "radiación ultravioleta extrema (índice UV > 20 en verano)",
+      "altitud de 3460 m s. n. m. con gradiente térmico diario de 35°C",
+      "precipitación media anual inferior a 30 mm"
+    ],
+    "differences_and_limits": [
       "atmósfera con presencia de ozono y oxígeno (aunque reducida por altitud)",
       "gravedad terrestre 1.0g",
       "humedad freática profunda residual en cuenca endorreica"
     ],
-    "exploration_use": "Simulación de misiones de perforación biológica en evaporitas marcianas y ensayo de durabilidad de paneles solares contra UV y polvo.",
-    "datasets": ["copernicus_dem_glo90", "modis_lst_terra_aqua", "esa_sentinel2_msi", "meteomatics_weather_era5"]
+    "datasets_used": [
+      "copernicus_dem_glo90",
+      "modis_lst_terra_aqua",
+      "esa_sentinel2_msi",
+      "meteomatics_weather_era5"
+    ],
+    "region_type": "understudied_discovery",
+    "analog_category": [
+      "Proceso"
+    ],
+    "exploration_use_cases": [
+      "Simulación de misiones de perforación biológica en evaporitas marcianas y ensayo de durabilidad de paneles solares contra UV y polvo."
+    ],
+    "subsurface_and_biology": {
+      "subsurface_potential": "No documentado (pendiente P3)",
+      "extremophiles_note": "No documentado (pendiente P3)"
+    }
   }
 ]

@@ -35,6 +35,7 @@ Sin `MONGO_URI` la app **arranca igual**: solo los endpoints de datos responden 
 | GET | `/candidates` | A — datos Mongo |
 | GET | `/candidates/near?lat&lon&radius_km` | A — datos Mongo |
 | GET | `/targets` | A — datos Mongo |
+| GET | `/datasets` | A — catálogo de datasets |
 | GET | `/export` | A — respaldo JSON (Plan B) |
 | GET | `/api/search` | B — búsqueda federada |
 | POST | `/api/process` | B — pipeline SAR/NDVI/NDWI/Diviner/precipitación |
@@ -49,6 +50,21 @@ Sin `MONGO_URI` la app **arranca igual**: solo los endpoints de datos responden 
 # Carga los datos de ejemplo (todavía NO cumplen el contrato §05)
 .\.venv\Scripts\python.exe seed_mongo.py
 ```
+
+## Cargar los datos reales (§05)
+
+Los datos viven en `data/` (raíz del repo) y se cargan con el pipeline:
+
+```powershell
+# 1. Normaliza data/candidates.json al contrato §05 (idempotente)
+python pipeline/normalizar_contrato.py
+
+# 2. Upsert en Mongo (BD nasa_space) + índice 2dsphere
+python pipeline/cargar_mongo.py
+```
+
+`cargar_mongo.py` sube `targets`, `candidates` y `datasets` a la BD **`nasa_space`**.
+El original sin normalizar queda en `data/candidates.raw.json`.
 
 ## Pendiente
 
