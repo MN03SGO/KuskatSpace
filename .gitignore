@@ -152,7 +152,3 @@ frontend/node_modules/
 frontend/dist/
 *.env
 !backend/sample_data/*.tif
-
-# --- aportado por datos-planetarios (2391834) ---
-lib/
-lib64/
