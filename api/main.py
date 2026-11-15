@@ -6,6 +6,7 @@ Backend FastAPI con Soporte Híbrido MongoDB Atlas + Fallback Local JSON
 """
 
 import os
+import sys
 import json
 import math
 from pathlib import Path
@@ -14,10 +15,23 @@ from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, Query, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 import pymongo
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
+
+# Asegurar importación de módulos de teledetección de backend/
+BACKEND_DIR = Path(__file__).resolve().parent.parent / "backend"
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
+try:
+    from connectors import run_federated_search
+    from processor import execute_pipeline, export_geotiff_bytes
+    REMOTE_SENSING_AVAILABLE = True
+except Exception:
+    REMOTE_SENSING_AVAILABLE = False
 
 # Cargar variables de entorno
 load_dotenv()
@@ -358,6 +372,59 @@ def get_candidates_near(
 
     filtered.sort(key=lambda x: x.get("distance_km", 999999))
     return filtered[:limit]
+
+
+# ---------------------------------------------------------------------------
+# Endpoints de Teledetección y Procesamiento Ráster Multi-Agencia (back-AR)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/search", tags=["Teledetección Multi-Agencia"])
+async def search_catalogs(
+    bbox: str = Query("-90.1,13.1,-87.6,14.5", description="Bounding box en formato min_lon,min_lat,max_lon,max_lat"),
+    start_date: str = Query("2026-10-01", description="Fecha de inicio YYYY-MM-DD"),
+    end_date: str = Query("2026-11-10", description="Fecha fin YYYY-MM-DD"),
+    body: str = Query("earth", enum=["earth", "moon", "mars"], description="Cuerpo celeste"),
+    variable: str = Query("all", description="Variable temática"),
+    limit: int = Query(5, ge=1, le=20, description="Límite de resultados"),
+):
+    """Búsqueda federada de capas satelitales en NASA, CSA, ESA y JAXA."""
+    if not REMOTE_SENSING_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Módulos de teledetección de backend/ no disponibles")
+    return await run_federated_search(bbox, start_date, end_date, body, variable, limit)
+
+
+@app.post("/api/process", tags=["Teledetección Multi-Agencia"])
+def process_scene(
+    mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
+    bbox: str = Query("-90.1,13.1,-87.6,14.5"),
+    sample_name: Optional[str] = Query(None),
+):
+    """Procesa rásteres: SAR (filtro Lee), NDVI, NDWI, precipitación JAXA y radiometría térmica Diviner."""
+    if not REMOTE_SENSING_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Módulos de teledetección de backend/ no disponibles")
+    try:
+        coords = [float(x) for x in bbox.split(",")]
+        file_path = os.path.join(str(BACKEND_DIR), "sample_data", sample_name) if sample_name else None
+        return execute_pipeline(mode=mode, bbox=coords, sample_path=file_path)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/api/export/geotiff", tags=["Teledetección Multi-Agencia"])
+def download_processed_geotiff(
+    mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
+    bbox: str = Query("-90.1,13.1,-87.6,14.5"),
+):
+    """Exporta el ráster procesado a un archivo GeoTIFF binario para descarga."""
+    if not REMOTE_SENSING_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Módulos de teledetección de backend/ no disponibles")
+    coords = [float(x) for x in bbox.split(",")]
+    tif_bytes = export_geotiff_bytes(mode=mode, bbox=coords)
+    return Response(
+        content=tif_bytes,
+        media_type="image/tiff",
+        headers={"Content-Disposition": f"attachment; filename=resultado_{mode}.tif"},
+    )
 
 
 # ---------------------------------------------------------------------------
