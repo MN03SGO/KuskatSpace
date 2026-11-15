@@ -7,19 +7,19 @@ venv/
 env/
 ENV/
 
-# CachÔö£┬« y compilaciÔö£Ôöén de Python
+# Cach├ö├Â┬úÔö¼┬½ y compilaci├ö├Â┬ú├ö├Â├®n de Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# DistribuciÔö£Ôöén y empaquetado
+# Distribuci├ö├Â┬ú├ö├Â├®n y empaquetado
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# Pruebas y anÔö£├¡lisis estÔö£├¡tico
+# Pruebas y an├ö├Â┬úÔö£┬ílisis est├ö├Â┬úÔö£┬ítico
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -67,14 +67,14 @@ lerna-debug.log*
 Thumbs.db
 
 # ==========================================
-# Herramientas de IA / configuraciÔö£Ôöén local
+# Herramientas de IA / configuraci├ö├Â┬ú├ö├Â├®n local
 # ==========================================
 .claude/
 .cursor/
 .aider*
 
 # ==========================================
-# CachÔö£┬«s y artefactos de build adicionales
+# Cach├ö├Â┬úÔö¼┬½s y artefactos de build adicionales
 # ==========================================
 *.tsbuildinfo
 .vite/
@@ -95,7 +95,7 @@ coverage/
 develop-eggs/
 downloads/
 eggs/
-# Anclados a la ra├¡z: sin la "/" inicial ignoraban tambi├®n frontend/src/lib/ (c├│digo TypeScript).
+# Anclados a la raÔö£┬íz: sin la "/" inicial ignoraban tambiÔö£┬«n frontend/src/lib/ (cÔö£Ôöédigo TypeScript).
 /lib/
 /lib64/
 parts/
@@ -146,3 +146,9 @@ temp/
 *.h5
 *.jp2
 data/cache_*.json
+
+# --- aportado por datos-planetarios (c4a66fe) ---
+frontend/node_modules/
+frontend/dist/
+*.env
+!backend/sample_data/*.tif
