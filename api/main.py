@@ -295,7 +295,7 @@ def clean_doc(doc: Any) -> Any:
 
 @app.get("/export", tags=["Sistema"])
 def export_all():
-    """Respaldo JSON completo de candidates + targets (compatibilidad feature/database)."""
+    """Respaldo JSON completo de candidates + targets + datasets (Plan B / compatibilidad)."""
     client = get_mongo_client()
     if client:
         try:
@@ -304,6 +304,7 @@ def export_all():
                 "database": DB_NAME,
                 "candidates": [clean_doc(d) for d in db["candidates"].find({})],
                 "targets": [clean_doc(d) for d in db["targets"].find({})],
+                "datasets": [clean_doc(d) for d in db["datasets"].find({})],
             }
         except PyMongoError:
             pass
@@ -312,6 +313,7 @@ def export_all():
         "database": DB_NAME,
         "candidates": read_local_json("candidates.json"),
         "targets": read_local_json("targets.json"),
+        "datasets": read_local_json("datasets.json"),
     }
 
 

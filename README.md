@@ -19,7 +19,7 @@ La arquitectura combina pipelines de extracción geoespacial y climatológica of
 - **Normalización de Ponderación**: En el cálculo de similitud de análogos, la suma de pesos de los sliders de los usuarios se normaliza sobre $[0.0, 1.0]$; ante una entrada con todos los pesos en cero, el denominador se estabiliza a 1.0.
 
 ## Global Side Effects
-- Mutación de documentos e índices espaciales en la base de datos `analogos` en MongoDB Atlas o contenedor Docker local.
+- Mutación de documentos e índices espaciales en la base de datos `nasa_space` en MongoDB Atlas o contenedor Docker local.
 - Conexiones de red salientes hacia servicios de agencias espaciales: NASA CMR, Microsoft Planetary Computer STAC y Meteomatics Weather API.
 - Despliegue de puertos locales de red `8000:8000` (FastAPI), `27017:27017` (MongoDB), `5432:5432` (PostGIS) y `9000/9001` (MinIO) orquestados mediante Docker Compose.
 
