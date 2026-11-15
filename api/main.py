@@ -68,6 +68,16 @@ class GeoLocation(BaseModel):
     coordinates: List[float] = Field(..., description="[longitud, latitud] en WGS84")
 
 
+# Scores por defecto para docs NASA/Mongo incompletos (sin IFA 5D)
+DEFAULT_SCORES: Dict[str, float] = {
+    "relieve": 0.0,
+    "iluminacion": 0.0,
+    "frio": 0.0,
+    "hielo": 0.0,
+    "polvo": 0.0,
+}
+
+
 class Scores(BaseModel):
     relieve: float = Field(..., ge=0.0, le=1.0)
     iluminacion: float = Field(..., ge=0.0, le=1.0)
@@ -82,7 +92,8 @@ class CandidateResponse(BaseModel):
     country: Optional[str] = None
     target: str
     location: GeoLocation
-    scores: Scores
+    # Dict flexible: docs reales de NASA pueden no traer el esquema Scores completo
+    scores: Dict[str, float] = Field(default_factory=dict)
     weighted_score: Optional[float] = None
     distance_km: Optional[float] = None
 
@@ -371,9 +382,12 @@ def get_candidates(
             candidates = raw_candidates
 
     # Recálculo dinámico ponderado de similitud (5 dimensiones)
+    # Fail-safe: docs NASA sin scores → inyectar ceros para no romper response_model / frontend
     for c in candidates:
-        scores = c.get("scores", {})
-        c["weighted_score"] = compute_weighted_score(scores, relieve, iluminacion, frio, hielo, polvo)
+        c["scores"] = c.get("scores") or dict(DEFAULT_SCORES)
+        c["weighted_score"] = compute_weighted_score(
+            c["scores"], relieve, iluminacion, frio, hielo, polvo
+        )
 
     # Ordenar descendentemente por el puntaje resultante
     candidates.sort(key=lambda x: x.get("weighted_score", 0.0), reverse=True)
@@ -421,8 +435,9 @@ def get_candidates_near(
             for doc in mongo_results:
                 coords = doc.get("location", {}).get("coordinates", [0, 0])
                 doc["distance_km"] = round(haversine_km(lat, lon, coords[1], coords[0]), 2)
+                doc["scores"] = doc.get("scores") or dict(DEFAULT_SCORES)
                 # 5D (incl. polvo) + clean_doc para serializar ObjectId
-                doc["weighted_score"] = compute_weighted_score(doc.get("scores", {}), 1.0, 1.0, 1.0, 1.0, 1.0)
+                doc["weighted_score"] = compute_weighted_score(doc["scores"], 1.0, 1.0, 1.0, 1.0, 1.0)
                 results.append(clean_doc(doc))
             return results
         except PyMongoError:
@@ -439,7 +454,8 @@ def get_candidates_near(
         if dist <= search_dist_km:
             c_copy = dict(c)
             c_copy["distance_km"] = round(dist, 2)
-            c_copy["weighted_score"] = compute_weighted_score(c_copy.get("scores", {}), 1.0, 1.0, 1.0, 1.0, 1.0)
+            c_copy["scores"] = c_copy.get("scores") or dict(DEFAULT_SCORES)
+            c_copy["weighted_score"] = compute_weighted_score(c_copy["scores"], 1.0, 1.0, 1.0, 1.0, 1.0)
             filtered.append(clean_doc(c_copy))
 
     filtered.sort(key=lambda x: x.get("distance_km", 999999))
