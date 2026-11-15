@@ -1,0 +1,4 @@
+# Entrypoint FastAPI para el servicio Vercel `api` (root = repositorio).
+# Complementa vercel.json → services.api.entrypoint.
+[tool.vercel]
+entrypoint = "api.main:app"

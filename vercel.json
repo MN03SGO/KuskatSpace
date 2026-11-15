@@ -1,0 +1,30 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite"
+    },
+    "api": {
+      "root": ".",
+      "framework": "fastapi",
+      "entrypoint": "api/main.py",
+      "functions": {
+        "api/main.py": {
+          "maxDuration": 60
+        }
+      }
+    }
+  },
+  "rewrites": [
+    { "source": "/health", "destination": { "service": "api" } },
+    { "source": "/candidates", "destination": { "service": "api" } },
+    { "source": "/candidates/(.*)", "destination": { "service": "api" } },
+    { "source": "/targets", "destination": { "service": "api" } },
+    { "source": "/datasets", "destination": { "service": "api" } },
+    { "source": "/export", "destination": { "service": "api" } },
+    { "source": "/data/(.*)", "destination": { "service": "api" } },
+    { "source": "/api/(.*)", "destination": { "service": "api" } },
+    { "source": "/(.*)", "destination": { "service": "frontend" } }
+  ]
+}
