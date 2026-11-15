@@ -8,13 +8,15 @@ const TONE_CLASSES: Record<Tone, string> = {
   info: 'border-info/60 bg-info/10 text-info',
 }
 
-/** Mensaje en el panel en lugar de alert() (B4). */
-export function StatusBanner({ tone, children }: { tone: Tone; children: ReactNode }) {
+/**
+ * Mensaje en el panel en lugar de alert() (B4).
+ * `live={false}` evita que un aviso que se vuelve a pintar (p. ej. cada minuto)
+ * se anuncie una y otra vez en el lector de pantalla (N4 de la auditoría).
+ */
+export function StatusBanner({ tone, children, live = true }: { tone: Tone; children: ReactNode; live?: boolean }) {
+  const role = !live ? undefined : tone === 'error' ? 'alert' : 'status'
   return (
-    <div
-      role={tone === 'error' ? 'alert' : 'status'}
-      className={`rounded-md border-l-4 px-3 py-2 text-xs leading-relaxed ${TONE_CLASSES[tone]}`}
-    >
+    <div role={role} className={`rounded-md border-l-4 px-3 py-2 text-xs leading-relaxed ${TONE_CLASSES[tone]}`}>
       {children}
     </div>
   )

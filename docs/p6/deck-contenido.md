@@ -90,7 +90,7 @@ Por diapositiva: título (ES/EN), **máximo 3 viñetas**, visual sugerido y nota
 
 **Visual sugerido:** el video de ≤ 30 s ([guion-video.md](guion-video.md)) a pantalla completa. Plan B: capturas de los planos 3 y 4.
 
-**Notas del orador (≈ 30 s + video):** Narrar lo que se ve, no lo que se espera. El aviso ámbar "Datos simulados de demostración" debe quedar legible, igual que el título "Ejemplo simulado: polo lunar frente a la Tierra". Si la búsqueda en vivo tarda, pasar al video grabado. La demo **no cambia** con la integración de Mongo: el módulo A sigue sin funcionar y no se muestran candidatos.
+**Notas del orador (≈ 30 s + video):** Narrar lo que se ve, no lo que se espera. El aviso ámbar "Datos simulados de demostración" debe quedar legible, igual que el título "Ejemplo simulado: polo lunar frente a la Tierra". Si la búsqueda en vivo tarda, pasar al video grabado. La demo **no cambia** con la integración de Mongo: el módulo A sigue sin funcionar y no se muestran candidatos. Si se muestran las **capas globales**: en la Tierra son datos de satélite de NASA (AIRS, GPM IMERG vía GIBS); en la Luna y Marte, siempre "modelo aproximado", nunca una medición.
 
 ---
 

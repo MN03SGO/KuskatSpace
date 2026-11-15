@@ -9,7 +9,7 @@ export function BodySelector() {
   const setBody = useExplorerStore((s) => s.setBody)
 
   return (
-    <div role="group" aria-label={t('bodies.label')} className="grid grid-cols-3 overflow-hidden rounded-md border border-line">
+    <div role="group" aria-label={t('bodies.label')} className="grid grid-cols-3 overflow-hidden rounded-md border border-ink-muted/70">
       {BODY_ORDER.map((id) => (
         <button key={id} type="button" aria-pressed={body === id} onClick={() => setBody(id)} className={segmentClass(body === id)}>
           {t(`bodies.${id}.label`)}

@@ -154,6 +154,11 @@ export default function GlobeView() {
         )}
       </div>
 
+      {/* N5: el aviso de modelo se ve sobre la imagen, también en móvil. */}
+      {layer?.kind === 'model' && (
+        <p className={`absolute top-16 left-3 border-l-4 border-warn ${mapLabel}`}>{t('explorer.layers.modelBadge')}</p>
+      )}
+
       <p className={`absolute right-2 bottom-2 ${mapLabel}`}>{GLOBE_TEXTURES[body].attribution}</p>
     </div>
   )

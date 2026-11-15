@@ -102,3 +102,17 @@ Estos pasos del guion de demo (P5 §9.3) **no se pueden filmar hoy** y no están
 1. ~~**Voz del plano 4:** dice "simulada"…~~ **RESUELTA:** la interfaz ya dice "Datos simulados de demostración" (`explorer.result.demoSample`), así que la voz y el rótulo en pantalla coinciden. El PM pidió mantener "simulada" en la voz.
 2. **`PENDIENTE (P4)`:** arreglo de B10; si llega antes de grabar, el plano 3 puede decir "NASA y ESA en vivo".
 3. **`PENDIENTE (equipo)`:** quién pone la voz y en qué idioma se entrega primero; hora real de H0 y fecha de `candidates.json`.
+
+---
+
+## 5. Opción: mostrar las capas del planeta (S4, sin cambiar el corte de 30 s)
+
+El PM añadió las **capas globales** (temperatura, humedad y precipitación). **El corte de 30 s no cambia**: caben, como mucho, sustituyendo el plano 2 (selector de cuerpo) si el PM lo prefiere. Reglas si se muestran:
+
+| Qué se ve | Cómo se presenta | Regla |
+| :--- | :--- | :--- |
+| Tierra + **Mostrar temperatura** (o humedad o precipitación) | "Datos de satélite de NASA" | Es **dato real de satélite** (NASA AIRS / GPM IMERG vía GIBS), con la fecha de la capa visible |
+| Luna o Marte + **Mostrar temperatura** | **Siempre** "modelo aproximado" y el aviso ámbar visible; nunca "temperatura de la Luna" a secas | Regla 5: no es una medición. Pendiente de T9: el botón pasará a "Mostrar temperatura (modelo)" y habrá un rótulo sobre el globo |
+| Humedad y precipitación en Luna o Marte | **No mostrarlas**: aparecen desactivadas | Solo existen para la Tierra |
+
+**Voz sugerida si sustituye al plano 2 (≈ 4 s):** ES "Cubre el planeta con temperatura de satélite." (6 palabras → 1,5 palabras/s) · EN "Cover the planet with satellite temperature." (6 palabras). `PENDIENTE: decisión del PM y comprobar el día de la grabación que la capa carga con la fecha elegida (N3 de auditoria-ux.md)`.

@@ -24,7 +24,7 @@ export function PlanetLayersPanel() {
         <p className="mt-1 text-xs text-ink-muted">{t('explorer.layers.hint')}</p>
       </div>
 
-      <div role="group" aria-labelledby="layers-title" className="grid grid-cols-3 overflow-hidden rounded-md border border-line">
+      <div role="group" aria-labelledby="layers-title" className="grid grid-cols-3 overflow-hidden rounded-md border border-ink-muted/70">
         {PLANET_LAYER_ORDER.map((id) => {
           const available = isLayerAvailable(body, id)
           return (
@@ -37,7 +37,7 @@ export function PlanetLayersPanel() {
               title={available ? undefined : t(`explorer.layers.unavailable.${body}`)}
               className={segmentClass(selected === id)}
             >
-              {t(`explorer.layers.${id}`)}
+              {t(id === 'temperature' && body !== 'earth' ? 'explorer.layers.temperatureModel' : `explorer.layers.${id}`)}
             </button>
           )
         })}
@@ -66,7 +66,12 @@ function LayerLegend({ layer }: { layer: ActivePlanetLayer }) {
       <div>
         <div
           role="img"
-          aria-label={t('explorer.layers.legendLabel', { name, min: minLabel, max: maxLabel, unit: legend.unit })}
+          aria-label={t(legend.log ? 'explorer.layers.legendLabelLog' : 'explorer.layers.legendLabel', {
+            name,
+            min: minLabel,
+            max: num(legend.max),
+            unit: legend.unit,
+          })}
           className="h-3 rounded-sm"
           style={{ background: cssGradient(legend.stops) }}
         />
@@ -89,11 +94,15 @@ function LayerLegend({ layer }: { layer: ActivePlanetLayer }) {
               date: layer.date,
             })}
           </p>
+          {layer.date !== layer.requestedDate && (
+            <p className="text-ink-muted">{t('explorer.layers.dateAdjusted', { requested: layer.requestedDate })}</p>
+          )}
           {EARTH_LAYERS[layer.id].hasSwathGaps && <p className="text-ink-muted">{t('explorer.layers.gapsNote')}</p>}
+          {layer.id === 'temperature' && <p className="text-ink-muted">{t('explorer.layers.kelvinHint')}</p>}
         </>
       ) : (
         <>
-          <StatusBanner tone="warn">
+          <StatusBanner tone="warn" live={false}>
             {t('explorer.layers.sourceModel', {
               time: layer.time.toISOString().slice(11, 16),
               date: layer.time.toISOString().slice(0, 10),

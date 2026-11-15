@@ -24,8 +24,11 @@ export function segmentClass(active: boolean, extra = ''): string {
   } disabled:cursor-not-allowed disabled:opacity-50 ${extra}`
 }
 
-/** Botón secundario de acción dentro de un panel. */
-export const secondaryButton = `min-h-10 rounded bg-surface px-2 py-2 text-xs text-ink ring-1 ring-ink-muted/40 hover:bg-line ${focusRing} disabled:cursor-not-allowed disabled:opacity-50 aria-pressed:bg-accent aria-pressed:ring-2 aria-pressed:ring-ink aria-pressed:font-bold`
+/** Contenedor de un control segmentado: borde con contraste ≥ 3:1 frente al panel (N1). */
+export const segmentGroup = 'overflow-hidden rounded-md border border-ink-muted/70'
+
+/** Botón secundario de acción dentro de un panel (anillo ≥ 3:1, N2). */
+export const secondaryButton = `min-h-10 rounded bg-surface px-2 py-2 text-xs text-ink ring-1 ring-ink-muted/70 hover:bg-line ${focusRing} disabled:cursor-not-allowed disabled:opacity-50 aria-pressed:bg-accent aria-pressed:ring-2 aria-pressed:ring-ink aria-pressed:font-bold`
 
 /** Campo de texto o select; borde con contraste ≥ 3:1 (B29). */
 export const inputClass = `min-h-10 w-full rounded border border-ink-muted/70 bg-surface px-2 py-2 text-sm text-ink ${focusRing} aria-invalid:border-danger`

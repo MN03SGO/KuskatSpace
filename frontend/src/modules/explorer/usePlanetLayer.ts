@@ -18,6 +18,8 @@ export type ActivePlanetLayer =
       body: 'earth'
       gibsId: string
       date: string
+      /** Fecha elegida por la persona; distinta de `date` si se recortó (N3 de la auditoría). */
+      requestedDate: string
       legend: LegendSpec
       hasSwathGaps: boolean
       key: string
@@ -61,6 +63,7 @@ export function resolvePlanetLayer(
       body,
       gibsId: def.gibsId,
       date,
+      requestedDate: gibsDate,
       legend: def.legend,
       hasSwathGaps: def.hasSwathGaps,
       key: `${def.gibsId}:${date}`,

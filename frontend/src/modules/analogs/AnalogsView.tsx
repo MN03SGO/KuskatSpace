@@ -6,7 +6,7 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
   return (
     <div className="flex flex-1 items-center justify-center p-6">
       <div className="max-w-md space-y-3 text-center">
-        <h2 className="text-lg font-semibold">{t('analogs.placeholderTitle')}</h2>
+        <h2 className="text-lg font-bold">{t('analogs.placeholderTitle')}</h2>
         <p className="text-sm text-ink-muted">{t('analogs.placeholderBody')}</p>
         <button
           type="button"

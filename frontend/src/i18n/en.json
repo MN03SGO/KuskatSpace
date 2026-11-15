@@ -37,13 +37,14 @@
       "hint": "Drag to rotate · scroll or pinch to zoom · click or tap to move the BBox",
       "loading": "Loading mosaic {loaded} of {total}",
       "noWebgl": "Your browser cannot show the 3D globe (WebGL is not available). Switch to the 2D map to continue.",
-      "hintShort": "Drag to rotate · tap to move the BBox",
-      "tileErrors": "Some detail did not load; showing the local texture."
+      "hintShort": "Drag to rotate · tap or click to move the BBox",
+      "tileErrors": "Some detail did not load; showing the base image of the globe."
     },
     "layers": {
-      "title": "Planet layers",
-      "hint": "Show one variable over the whole visible planet.",
+      "title": "Global layers",
+      "hint": "Show one variable over the whole visible surface.",
       "temperature": "Show temperature",
+      "temperatureModel": "Show temperature (model)",
       "humidity": "Show humidity",
       "precipitation": "Show precipitation",
       "names": {
@@ -52,27 +53,31 @@
         "precipitation": "precipitation"
       },
       "unavailable": {
-        "moon": "The Moon has no atmosphere: there is no humidity or rain. Only temperature (model) is available.",
-        "mars": "There is no daily global humidity or rain data for Mars. Only temperature (model) is available."
+        "moon": "The Moon has almost no atmosphere, so there is no humidity or rain. Only temperature is available, calculated with a model.",
+        "mars": "This app has no global humidity or rain data for Mars. Only temperature is available, calculated with a model."
       },
       "sources": {
-        "temperature": "NASA AIRS, surface air temperature (daytime pass)",
-        "humidity": "NASA AIRS, surface relative humidity (daytime pass)",
-        "precipitation": "NASA GPM IMERG, daily precipitation rate"
+        "temperature": "NASA AIRS (Aqua satellite): surface air temperature, daytime pass",
+        "humidity": "NASA AIRS (Aqua satellite): surface relative humidity, daytime pass",
+        "precipitation": "NASA GPM IMERG: precipitation rate, one map per day"
       },
-      "sourceEarth": "Satellite data: {source}. Date: {date} (latest published).",
+      "sourceEarth": "Satellite data: {source}. Layer date: {date}.",
+      "dateAdjusted": "The chosen date ({requested}) is very recent: the latest date that is usually published is shown.",
       "gapsNote": "Empty stripes are areas the satellite did not pass over that day.",
-      "sourceModel": "Approximate thermal model for now ({date} {time} UTC). This is not a measurement.",
-      "subsolar": "Subsolar point: lat. {lat}°, lon. {lon}°",
+      "kelvinHint": "Kelvin (K): 273 K equals 0 °C.",
+      "sourceModel": "Approximate model, calculated for this moment ({date} {time} UTC). It is not a measurement or satellite data.",
+      "modelBadge": "Model layer: not a measurement",
+      "subsolar": "Subsolar point (where the Sun is directly overhead): lat. {lat}°, lon. {lon}°",
       "modelNote": {
-        "moon": "Computed from the Sun's position: about 390 K under the Sun, about 95 K at night and about 40 K at the poles. It ignores relief and thermal inertia.",
-        "mars": "Computed from the Sun's position: about 290 K under the Sun and 150–190 K at night. It ignores dust, relief and thermal inertia."
+        "moon": "The model uses the Sun's position and gives about 390 K under the Sun, about 95 K at night at the equator and about 40 K at the poles. It ignores relief and thermal inertia, and the Sun's position has an error of about 8°.",
+        "mars": "The model uses the Sun's position and gives about 290 K under the Sun and 150–190 K at night. It ignores dust, relief and thermal inertia."
       },
       "legendLabel": "{name} scale: from {min} to {max} {unit}",
+      "legendLabelLog": "Logarithmic scale of {name}: from {min} to {max} {unit} or more",
       "logScale": "logarithmic scale",
       "opacity": "Layer opacity: {value}%",
       "loading": "Loading layer {loaded} of {total}",
-      "failed": "The layer could not be loaded for that date. Try another date."
+      "failed": "There is no image of this layer for that date (some days are not published). Try another date."
     },
     "mapHint": "Tap or click the map to move the BBox",
     "gibsDate": "NASA Worldview GIBS layer date",

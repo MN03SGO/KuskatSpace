@@ -22,7 +22,7 @@ function ViewToggle() {
     <div
       role="group"
       aria-label={t('explorer.view.label')}
-      className="absolute top-3 right-3 z-[1000] flex overflow-hidden rounded-md border border-line shadow-lg"
+      className="absolute top-3 right-3 z-[1000] flex overflow-hidden rounded-md border border-ink-muted/70 shadow-lg"
     >
       {VIEWS.map((v) => (
         <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={segmentClass(view === v)}>

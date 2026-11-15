@@ -63,6 +63,12 @@ Fuentes: plan maestro (§01–§05), plan P5 (§4–§5), código de `frontend/s
 | **NDWI** | **NDWI** | Índice que indica cuánta agua hay. |
 | **SAR** | **SAR** | Radar de satélite que forma imágenes de la superficie de día y de noche, con nubes o sin ellas. |
 | **dB** | **dB** | Decibelios: unidad en la que se expresa la señal del radar. |
+| **capa global** | **global layer** | Variable (temperatura, humedad o precipitación) pintada sobre toda la superficie visible del globo o del mapa. En la Tierra viene de un satélite; en la Luna y Marte es un modelo. Se enciende con los botones "Mostrar …". |
+| **modelo térmico aproximado** | **approximate thermal model** | Cálculo sencillo de la temperatura a partir de la posición del Sol. **No es una medición ni un dato de satélite**; ignora el relieve y la inercia térmica. Se usa solo para la Luna y Marte. |
+| **punto subsolar** | **subsolar point** | Lugar de la superficie donde el Sol está justo encima. El modelo lo usa para saber qué lado es de día. |
+| **escala logarítmica** | **logarithmic scale** | Escala de color en la que cada paso multiplica el valor (en vez de sumarlo); permite ver a la vez lluvia débil y lluvia fuerte. |
+| **AIRS / IMERG** | **AIRS / IMERG** | AIRS: instrumento del satélite Aqua (NASA) que mide temperatura y humedad. IMERG: producto de la misión GPM (NASA y JAXA) que estima la precipitación. Ambos llegan por NASA GIBS. |
+| **"Mostrar" frente a "Procesar"** | **"Show" vs. "Process"** | "Mostrar …" enciende una capa global (satélite o modelo). "Procesar / Calcular …" lanza el procesamiento con datos simulados. No mezclar los dos verbos. |
 
 ## 4. Fuentes de datos (nombres propios: no se traducen)
 
