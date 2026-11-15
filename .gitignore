@@ -65,3 +65,22 @@ lerna-debug.log*
 # ==========================================
 .DS_Store
 Thumbs.db
+
+# ==========================================
+# Herramientas de IA / configuración local
+# ==========================================
+.claude/
+.cursor/
+.aider*
+
+# ==========================================
+# Cachés y artefactos de build adicionales
+# ==========================================
+*.tsbuildinfo
+.vite/
+.eslintcache
+coverage/
+.pnpm-store/
+.cache/
+*.tmp
+*.bak

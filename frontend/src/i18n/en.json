@@ -1,0 +1,112 @@
+{
+  "_status": "P5 draft translation. Final copy owned by P6.",
+  "app": {
+    "title": "TerraAnáloga",
+    "tagline": "Earth analogs of the Moon and Mars",
+    "tabs": {
+      "label": "Modules",
+      "analogs": "Analog finder",
+      "explorer": "Data explorer"
+    },
+    "lang": {
+      "label": "Language",
+      "es": "ES",
+      "en": "EN"
+    }
+  },
+  "analogs": {
+    "placeholderTitle": "Analog finder under construction",
+    "placeholderBody": "This module (IFA, zone presets, site cards and radar) arrives in Phase 2. In the meantime, use the Data explorer."
+  },
+  "bodies": {
+    "label": "Planetary body",
+    "earth": { "label": "Earth (Worldview)", "region": "Earth - Mesoamerica region" },
+    "moon": { "label": "Moon (LRO/Diviner)", "region": "Moon - South Pole / LRO Diviner" },
+    "mars": { "label": "Mars (PDS)", "region": "Mars - Gale Crater / NASA PDS" }
+  },
+  "explorer": {
+    "mapLabel": "Data explorer map",
+    "view": {
+      "label": "View type",
+      "globe": "3D globe",
+      "map": "2D map"
+    },
+    "globe": {
+      "label": "3D globe of the selected body",
+      "hint": "Drag to rotate · scroll or pinch to zoom · click to move the BBox",
+      "loading": "Loading mosaic {loaded}/{total}",
+      "noWebgl": "This browser cannot show the 3D globe (WebGL unavailable). Use the 2D map."
+    },
+    "mapHint": "Click anywhere on the map to move the BBox",
+    "gibsDate": "NASA Worldview GIBS layer date",
+    "bbox": "BBox (minLon, minLat, maxLon, maxLat)",
+    "bboxErrors": {
+      "format": "Enter 4 numbers separated by commas.",
+      "range": "Longitude ranges from -180 to 180 and latitude from -90 to 90.",
+      "order": "Each minimum must be lower than its maximum."
+    },
+    "startDate": "Search from",
+    "endDate": "To",
+    "dateOrder": "The start date must be on or before the end date.",
+    "variable": "Agency / variable filter",
+    "variables": {
+      "all": "All missions (NASA, CSA, ESA, JAXA)",
+      "maritime": "CSA RCM (maritime / disasters / ecosystems)",
+      "sar_historical": "CSA RADARSAT-1 (open SAR archive)",
+      "precipitation": "JAXA G-Portal (precipitation / snow / vegetation)",
+      "land_ocean": "ESA Open Science and Copernicus",
+      "lunar": "NASA LRO (lunar surface and thermal)",
+      "planetary": "NASA PDS (Mars geoscience)"
+    },
+    "search": "Search live scenes",
+    "searching": "Querying catalogs...",
+    "processing": {
+      "title": "On-demand processing",
+      "running": "Processing...",
+      "modes": {
+        "sar_db": "SAR dB + Lee (CSA)",
+        "ndvi": "NDVI index (ESA/NASA)",
+        "ndwi": "NDWI index (water)",
+        "jaxa_precip": "Precipitation (JAXA)",
+        "diviner_thermal": "LRO Diviner thermal"
+      }
+    },
+    "result": {
+      "unit": "Unit",
+      "min": "Min",
+      "max": "Max",
+      "mean": "Mean",
+      "opacity": "Opacity: {value}%",
+      "download": "Download GeoTIFF result (.tif)",
+      "demoSample": "Demo sample: {file}. The image is not clipped to the bbox; it is only placed over it.",
+      "legendLow": "Low",
+      "legendHigh": "High"
+    },
+    "cryo": {
+      "title": "Lunar pole vs. Earth",
+      "lunarMin": "Lunar pole min. (Diviner): {value} K",
+      "earthAvg": "Antarctica average (Earth): {value} K",
+      "colder": "The coldest point in this sample is {delta} K below the Antarctic average.",
+      "warmer": "The coldest point in this sample is {delta} K above the Antarctic average."
+    },
+    "results": {
+      "hint": "Click a scene to locate and process it:",
+      "copernicus": "ESA Copernicus STAC live ({count})",
+      "earthdata": "NASA Earthdata CMR live ({count})",
+      "pds": "NASA PDS planetary live ({count})",
+      "partners": "Partner agencies ({count})",
+      "empty": "No results or source unavailable.",
+      "clouds": "Clouds: {value}",
+      "date": "Date: {value}",
+      "instrument": "Instrument: {value}",
+      "approxLocation": "Approximate location",
+      "notAvailable": "N/A"
+    }
+  },
+  "errors": {
+    "network": "Could not reach the backend ({api}). Check that it is running.",
+    "timeout": "The backend took too long to respond. Please try again.",
+    "http": "The backend returned an error ({status}): {detail}",
+    "parse": "The backend returned a response that could not be read."
+  }
+}
