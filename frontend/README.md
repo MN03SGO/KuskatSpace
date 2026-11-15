@@ -1,24 +1,30 @@
-# Frontend WebGIS y Panel de Control
+# TerraAnáloga — Frontend WebGIS
 
 ## Overview
-El paquete `frontend` provee la aplicación cliente interactiva desarrollada en React con Vite, Leaflet y soporte para capas satelitales NASA GIBS (Global Imagery Browse Services). Permite conmutar la visualización entre la Tierra, la Luna y Marte, ejecutar búsquedas federadas multi-agencia, controlar opacidades y renderizar sobrecapas de teledetección procesadas.
+Aplicación cliente interactiva de visualización geoespacial desarrollada en React 19, TypeScript, Vite, Tailwind 4, Three.js y Leaflet con soporte de capas NASA GIBS y Trek. Provee visualización dual:
+- **Globo 3D Interactivo**: Esferas tridimensionales de la Tierra (Blue Marble, GIBS), la Luna (LRO WAC, Trek) y Marte (Viking MDIM 2.1, Trek) con texturas 2K precargadas en `public/textures/`.
+- **Mapa 2D**: Proyección de la Tierra en EPSG:3857 (Web Mercator) y Luna/Marte en EPSG:4326 con capas ráster procesadas.
+- **Soporte Bilingüe**: Internacionalización completa (i18n) en Español e Inglés (`src/i18n/es.json` y `src/i18n/en.json`).
 
 ## Interface
-- [frontend/src/App.jsx:App](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/App.jsx#L32) - Componente raíz de la interfaz gráfica que gestiona el estado de selección de cuerpo celeste (`earth`, `moon`, `mars`), bounding box activo, filtros temáticos y resultados de procesamiento.
-- [frontend/src/App.jsx:MapController](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/App.jsx#L9) - Controlador de cámara Leaflet que sincroniza de forma fluida (`flyToBounds`) los límites visuales del mapa al cambiar de objetivo o seleccionar un resultado.
-- [frontend/src/App.jsx:MapClickSelector](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/App.jsx#L19) - Manejador de eventos de interacción sobre el mapa que calcula y acota automáticamente una caja delimitadora (bounding box) de $\pm 1.5^\circ \times \pm 1.0^\circ$ alrededor del punto cliqueado.
-- [frontend/src/App.jsx:handleFederatedSearch](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/App.jsx#L65) - Disparador de peticiones asíncronas hacia el endpoint `/api/search` del backend.
-- [frontend/src/App.jsx:handleRunProcessing](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/App.jsx#L83) - Disparador de procesamiento ráster hacia el endpoint `/api/process` del backend.
-- [frontend/src/main.jsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/main.jsx#L1) - Punto de entrada del árbol React montado sobre el elemento DOM `#root`.
+- [frontend/src/App.tsx:App](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/App.tsx) - Componente raíz que orquesta los módulos `ExplorerView` y `AnalogsView`, selector de idioma `LangToggle` y banner de estado `StatusBanner`.
+- [frontend/src/modules/explorer/GlobeView.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/explorer/GlobeView.tsx) - Renderizador del globo 3D acelerado con Three.js mediante `globeEngine.ts`.
+- [frontend/src/modules/explorer/PlanetMap.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/explorer/PlanetMap.tsx) - Mapa 2D Leaflet para análisis cartográfico de teselas y selección de bounding box.
+- [frontend/src/modules/explorer/SearchPanel.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/explorer/SearchPanel.tsx) - Panel de búsqueda federada en catálogos espaciales.
+- [frontend/src/modules/explorer/ProcessingPanel.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/explorer/ProcessingPanel.tsx) - Panel de control para ejecución de pipelines ráster (SAR, NDVI, NDWI, Diviner).
+- [frontend/src/modules/analogs/AnalogsView.tsx](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/modules/analogs/AnalogsView.tsx) - Módulo de análogos planetarios para visualización de candidatos y sliders.
+- [frontend/src/store/useExplorerStore.ts](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/store/useExplorerStore.ts) - Estado global reactivo con Zustand para cuerpo celeste, bounding box, filtros y resultados.
+- [frontend/src/api/explorer.ts](file:///c:/Users/andres/Documents/GitHub/NASA_SPACE/frontend/src/api/explorer.ts) - Cliente HTTP tipado con funciones `searchCatalogs`, `processScene` y `exportGeotiffUrl`.
 
 ## Invariants
-- La latitud geográfica delimitada por clics en el mapa está restringida al rango $[-85^\circ, 85^\circ]$ para prevenir distorsiones singulares en la proyección Web Mercator de Leaflet.
-- La variable `API_BASE` se conecta por defecto a `http://localhost:8000`, coincidente con el puerto expuesto por el contenedor Docker `terraanaloga_api`.
+- La variable de entorno `VITE_API_BASE` (declarada en `frontend/.env.example`) apunta por defecto al backend en `http://localhost:8000`.
+- El cliente HTTP tipado (`src/api/http.ts`) impone un timeout preventivo de 30 000 ms para evitar que la UI se bloquee ante retrasos en APIs externas.
+- Si el backend no responde, la interfaz muestra advertencias contextuales amigables mediante `StatusBanner` sin lanzar excepciones no controladas.
 
 ## Side Effects
-- Disparo de solicitudes HTTP de red vía `fetch` hacia el backend en `http://localhost:8000`.
-- Carga de teselas de mapas base e imágenes satelitales externas desde servidores de OpenStreetMap y NASA GIBS WMTS/WMS.
-- Manipulación directa del DOM y renderizado acelerado en lienzo mediante Leaflet.
+- Disparo de peticiones HTTP de red asíncronas vía `fetch` hacia el backend unificado en `http://localhost:8000`.
+- Carga de texturas e imágenes satelitales externas desde servidores de NASA GIBS WMTS/WMS y NASA Trek.
+- Asignación de contextos WebGL para el renderizado del globo 3D y manipulación directa del DOM con Leaflet.
 
 ## Verification
-- Run: `cd frontend && pnpm build` (o `npm run build`)
+- Run: `cd frontend && pnpm test && pnpm build`

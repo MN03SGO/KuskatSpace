@@ -6,6 +6,18 @@ venv/
 .venv/
 env/
 ENV/
+.Python
+develop-eggs/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+.installed.cfg
+*.egg
 
 # Caché y compilación de Python
 __pycache__/
@@ -17,6 +29,13 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+coverage/
 
 # Distribución y empaquetado
 build/
@@ -25,7 +44,7 @@ dist/
 .eggs/
 
 # ==========================================
-# Frontend (Node / Vite / React)
+# Frontend (Node / Vite / React / TypeScript)
 # ==========================================
 node_modules/
 frontend/node_modules/
@@ -33,10 +52,16 @@ dist/
 frontend/dist/
 dist-ssr/
 *.local
+*.tsbuildinfo
+.vite/
+.eslintcache
+.pnpm-store/
+.cache/
 
 # Logs
 logs/
 *.log
+*.pid
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -47,12 +72,13 @@ lerna-debug.log*
 # Variables de Entorno y Credenciales
 # ==========================================
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+!.env.sample
 *.env
 
 # ==========================================
-# Archivos Geoespaciales Pesados Temporales
+# Archivos Geoespaciales y Datos Pesados Temporales
 # ==========================================
 *.tiff
 *.geotiff
@@ -61,17 +87,43 @@ lerna-debug.log*
 *.h5
 *.jp2
 data/cache_*.json
+*.sql.gz
+*.dump
+pgdata/
+miniodata/
+postgres-data/
 
 # Permitir las muestras de prueba en backend/sample_data
 !backend/sample_data/*.tif
 
 # ==========================================
-# Editores, IDEs y Sistema Operativo
+# Editores, IDEs, Herramientas de IA y SO
 # ==========================================
 .vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
 .idea/
+.claude/
+.cursor/
+.aider*
 *.swp
 *.swo
 *.suo
+*~
+*.sublime-project
+*.sublime-workspace
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.tmp
+*.temp
+*.bak
+tmp/
+temp/
+docker-compose.override.yml
+.docker/
