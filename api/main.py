@@ -9,11 +9,12 @@ import os
 import sys
 import json
 import math
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Query, HTTPException, status
+from fastapi import FastAPI, Query, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
@@ -39,10 +40,33 @@ load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI", "")
 DB_NAME = "analogos"
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Inicializa MongoClient una sola vez al arrancar la aplicación (sin ping por request)."""
+    client: Optional[MongoClient] = None
+    if MONGO_URI and "<usuario>" not in MONGO_URI:
+        try:
+            client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2500)
+            client.admin.command("ping")
+        except Exception:
+            if client is not None:
+                client.close()
+            client = None
+    app.state.mongo_client = client
+    try:
+        yield
+    finally:
+        if app.state.mongo_client is not None:
+            app.state.mongo_client.close()
+            app.state.mongo_client = None
+
+
 app = FastAPI(
     title="TerraAnáloga API",
     description="API Geoespacial de Análogos Planetarios Terrestres (Luna y Marte) - NASA Space Apps Challenge 2026",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # Configuración obligatoria de CORS para permitir peticiones desde cualquier frontend (Leaflet, MapLibre, React, Vite)
@@ -77,7 +101,9 @@ class CandidateResponse(BaseModel):
     target: str
     analog_type: str
     is_understudied: Optional[bool] = False
+    is_curated: Optional[bool] = False
     location: GeoLocation
+    metrics: Optional[Dict[str, Any]] = None
     scores: Scores
     weighted_score: Optional[float] = None
     distance_km: Optional[float] = None
@@ -152,15 +178,8 @@ def read_local_json(filename: str) -> List[Dict[str, Any]]:
 
 
 def get_mongo_client() -> Optional[MongoClient]:
-    """Intenta inicializar el cliente MongoDB con timeout rápido para no bloquear."""
-    if not MONGO_URI or "<usuario>" in MONGO_URI:
-        return None
-    try:
-        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
-        client.admin.command("ping")
-        return client
-    except Exception:
-        return None
+    """Devuelve el cliente MongoDB singleton inicializado en lifespan."""
+    return getattr(app.state, "mongo_client", None)
 
 
 def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -309,7 +328,7 @@ def get_candidates(
     iluminacion: float = Query(1.0, ge=0.0, le=5.0, description="Peso dinámico para iluminación / insolación"),
     frio: float = Query(1.0, ge=0.0, le=5.0, description="Peso dinámico para frío extremo"),
     hielo: float = Query(1.0, ge=0.0, le=5.0, description="Peso dinámico para agua / hielo / permafrost"),
-    limit: int = Query(50, ge=1, le=200, description="Límite máximo de resultados"),
+    limit: int = Query(200, ge=1, le=500, description="Límite máximo de resultados"),
 ):
     """
     Recalcula el puntaje de similitud en tiempo real según los sliders del usuario y
