@@ -81,15 +81,14 @@ def generate_previews(out_dir: Path, half_deg: float = 0.18) -> dict:
                       .filterBounds(region)
                       .filterDate("2019-01-01", "2024-11-01"))
             if abs(lat) > 65:
-                # Ártico/Antártida: solo verano iluminado + umbral de nubes más flexible.
-                # SH: calendarRange(12, 2) NO envuelve el año → 0 imágenes.
-                # Usar Dic OR Ene–Feb (verano austral que cruza el año).
+                # Ártico/Antártida: verano iluminado. SH: Dic OR Ene–Feb
+                # (calendarRange(12, 2) no envuelve el año → 0 imágenes).
                 if lat > 0:
                     season = ee.Filter.calendarRange(6, 8, "month")
                 else:
                     season = ee.Filter.Or(
-                        ee.Filter.calendarRange(12, 12, "month"),  # diciembre
-                        ee.Filter.calendarRange(1, 2, "month"),    # enero–febrero
+                        ee.Filter.calendarRange(12, 12, "month"),
+                        ee.Filter.calendarRange(1, 2, "month"),
                     )
                 s2_col = (s2_col
                           .filter(season)

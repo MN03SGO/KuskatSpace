@@ -92,10 +92,13 @@ class CandidateResponse(BaseModel):
     country: Optional[str] = None
     target: str
     location: GeoLocation
-    # Dict flexible: docs reales de NASA pueden no traer el esquema Scores completo
+    # Dict flexible + default vacío: docs NASA sin scores no rompen response_model
     scores: Dict[str, float] = Field(default_factory=dict)
     weighted_score: Optional[float] = None
     distance_km: Optional[float] = None
+    # Campos de datos-planetarios (métricas crudas / curaduría)
+    metrics: Optional[Dict[str, Any]] = None
+    is_curated: Optional[bool] = False
 
     # --- Contrato §05 (plan maestro) ---
     region_type: Optional[str] = None
@@ -470,33 +473,54 @@ if DATA_DIR.exists():
     app.mount("/data", StaticFiles(directory=str(DATA_DIR)), name="data")
 
 
+def _sanitize_json(obj: Any) -> Any:
+    """Reemplaza NaN/Infinity por None para serialización JSON estricta."""
+    if isinstance(obj, float):
+        return obj if math.isfinite(obj) else None
+    if isinstance(obj, dict):
+        return {k: _sanitize_json(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize_json(v) for v in obj]
+    return obj
+
+
 @app.get("/api/p1/heatmaps", tags=["Pipeline Terrestre P1 (GEE)"])
 def get_p1_heatmaps():
-    """Devuelve `data/heatmap_bounds.json` con metadatos, bounds (Leaflet/MapLibre) y capas PNG en base64."""
-    bounds_file = DATA_DIR / "heatmap_bounds.json"
-    if not bounds_file.exists():
-        raise HTTPException(status_code=404, detail="heatmap_bounds.json no encontrado")
-    return json.loads(bounds_file.read_text(encoding="utf-8"))
+    """Devuelve heatmap_bounds.json (data/ o Plan B en frontend/public/data/)."""
+    for candidate_path in (
+        DATA_DIR / "heatmap_bounds.json",
+        DATA_DIR.parent / "frontend" / "public" / "data" / "heatmap_bounds.json",
+    ):
+        if candidate_path.exists():
+            return json.loads(candidate_path.read_text(encoding="utf-8"))
+    raise HTTPException(status_code=404, detail="heatmap_bounds.json no encontrado")
 
 
 @app.get("/api/p1/orbital-previews", tags=["Pipeline Terrestre P1 (GEE)"])
 def get_p1_orbital_previews():
-    """Devuelve el catálogo `data/orbital_previews/orbital_previews.json` (Sentinel-2 RGB + Sentinel-1 SAR con filtro Lee)."""
-    previews_file = DATA_DIR / "orbital_previews" / "orbital_previews.json"
-    if not previews_file.exists():
-        raise HTTPException(status_code=404, detail="orbital_previews.json no encontrado")
-    return json.loads(previews_file.read_text(encoding="utf-8"))
+    """Devuelve orbital_previews.json (Sentinel-2 RGB + Sentinel-1 SAR con filtro Lee)."""
+    for candidate_path in (
+        DATA_DIR / "orbital_previews" / "orbital_previews.json",
+        DATA_DIR.parent / "frontend" / "public" / "data" / "orbital_previews" / "orbital_previews.json",
+    ):
+        if candidate_path.exists():
+            return json.loads(candidate_path.read_text(encoding="utf-8"))
+    raise HTTPException(status_code=404, detail="orbital_previews.json no encontrado")
 
 
 @app.get("/api/p1/qc-report", tags=["Pipeline Terrestre P1 (GEE)"])
 def get_p1_qc_report():
-    """Devuelve el reporte de control de calidad `data/qc_report.json` y `data/metadata.json`."""
+    """Devuelve qc_report.json + metadata.json (con fallback a frontend/public/data/)."""
     qc_file = DATA_DIR / "qc_report.json"
+    if not qc_file.exists():
+        qc_file = DATA_DIR.parent / "frontend" / "public" / "data" / "qc_report.json"
     meta_file = DATA_DIR / "metadata.json"
-    return {
+    if not meta_file.exists():
+        meta_file = DATA_DIR.parent / "frontend" / "public" / "data" / "metadata.json"
+    return _sanitize_json({
         "qc_report": json.loads(qc_file.read_text(encoding="utf-8")) if qc_file.exists() else {},
         "metadata": json.loads(meta_file.read_text(encoding="utf-8")) if meta_file.exists() else {},
-    }
+    })
 
 
 # ---------------------------------------------------------------------------

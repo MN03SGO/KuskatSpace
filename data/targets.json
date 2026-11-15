@@ -3,43 +3,57 @@
     "_id": "moon_south_pole",
     "name": "Polo Sur Lunar (Crestas Iluminadas y PSR)",
     "body": "Moon",
-    "description": "Región objetivo de Artemis III (Shackleton, Malapert, Faustini). Caracterizada por picos de iluminación cuasi-permanente adyacentes a Regiones en Sombra Permanente (PSR) que funcionan como trampas frías reteniendo volátiles y hielo de agua.",
+    "description": "Región objetivo de Artemis (Shackleton, Malapert, Faustini). Banco de referencia extraterrestre para evaluar sitios terrestres análogos donde validar operaciones en pendientes de crestas, iluminación rasante polar, frío extremo y prospección de volátiles/hielo.",
     "priority": 1,
-    "dimensions": {
+    "scoring_params": {
       "relieve": {
-        "description": "Pendientes de crestas de cráteres de impacto y rugosidad a microescala",
-        "unit": "grados (°)",
-        "mean": 14.5,
-        "p10": 4.2,
-        "p90": 26.8
+        "mode": "direct",
+        "slope_deg": 8.0,
+        "sigma": 5.0
       },
       "iluminacion": {
-        "description": "Porcentaje de iluminación solar a lo largo del año anomalístico",
-        "unit": "%",
-        "mean": 68.0,
-        "p10": 0.0,
-        "p90": 92.4
+        "mode": "direct",
+        "svf_target": 0.90,
+        "svf_sigma": 0.15,
+        "lat_target": 85.0,
+        "lat_sigma": 15.0,
+        "weights": { "svf": 0.6, "lat": 0.4 }
       },
       "frio": {
-        "description": "Temperatura de superficie en trampas frías PSR y fondos de cráteres",
-        "unit": "Kelvin (K)",
-        "mean": 85.0,
-        "p10": 40.0,
-        "p90": 130.0
+        "mode": "relative_minmax",
+        "direction": "lower_is_better",
+        "unit": "K"
       },
       "hielo": {
-        "description": "Firma espectral de hielo de agua superficial y subsuperficial ISRU",
-        "unit": "fracción en peso (% wt eq.)",
-        "mean": 5.5,
-        "p10": 0.8,
-        "p90": 12.0
+        "mode": "relative_minmax",
+        "direction": "higher_is_better",
+        "unit": "fraction"
+      }
+    },
+    "dimensions": {
+      "relieve": {
+        "description": "Pendiente media de crestas y bordes de cráteres comparada con pendientes terrestres (DEM 90 m)",
+        "unit": "grados (°)",
+        "target": 8.0,
+        "sigma": 5.0
       },
-      "polvo": {
-        "description": "Fracción de regolito fino abrasivo sin cubierta orgánica/vegetal (homólogo a polvo electrostático lunar)",
-        "unit": "índice adimensional [0-1]",
-        "mean": 0.85,
-        "p10": 0.60,
-        "p90": 0.98
+      "iluminacion": {
+        "description": "Apertura topográfica (SVF) y régimen solar rasante por latitud absoluta",
+        "unit": "SVF [0-1] / |lat| (°)",
+        "svf_target": 0.90,
+        "svf_sigma": 0.15,
+        "lat_target": 85.0,
+        "lat_sigma": 15.0
+      },
+      "frio": {
+        "description": "Normalización relativa terrestre sobre temperatura superficial MODIS LST (menor LST = 1.0)",
+        "unit": "Kelvin (K) -> relativo [0-1]",
+        "mode": "relative_minmax"
+      },
+      "hielo": {
+        "description": "Normalización relativa terrestre sobre persistencia anual de nieve/hielo MODIS 10A2 (mayor persistencia = 1.0)",
+        "unit": "fracción [0-1] -> relativo [0-1]",
+        "mode": "relative_minmax"
       }
     },
     "environmental_factors": {
@@ -50,96 +64,128 @@
     "key_instruments": ["LOLA (LRO)", "Diviner Radiometer (LRO)", "LEND (LRO)", "Mini-RF"]
   },
   {
-    "_id": "lava_tubes",
-    "name": "Pozo de Mare Tranquillitatis (Tubos de Lava y Subsuelo)",
+    "_id": "moon_lava_tube",
+    "name": "Tubo de Lava Lunar (Mare Tranquillitatis / Subsuelo)",
     "body": "Moon",
-    "description": "Claraboya volcánica colapsada (skylight pit) de ~100m de profundidad en basaltos de inundación lunar. Ofrece acceso a galerías subterráneas térmicamente estables con protección natural contra radiación cósmica y micrometeoritos.",
+    "description": "Claraboya volcánica colapsada (skylight pit) y galerías basálticas subterráneas. Perfil de referencia para identificar terrenos volcánicos terrestres donde probar movilidad en escarpes, comunicaciones en oquedades y estabilidad térmica.",
     "priority": 2,
-    "dimensions": {
+    "scoring_params": {
       "relieve": {
-        "description": "Escarpes verticales de colapso, bloques de basalto y piso plano interior",
-        "unit": "grados (°)",
-        "mean": 45.0,
-        "p10": 5.0,
-        "p90": 85.0
+        "mode": "direct",
+        "slope_deg": 15.0,
+        "sigma": 10.0
       },
       "iluminacion": {
-        "description": "Iluminación interior de la caverna (oscuridad total salvo en la entrada cenital)",
-        "unit": "%",
-        "mean": 2.0,
-        "p10": 0.0,
-        "p90": 15.0
+        "mode": "direct",
+        "svf_target": 0.05,
+        "svf_sigma": 0.15,
+        "lat_target": 8.5,
+        "lat_sigma": 25.0,
+        "weights": { "svf": 0.6, "lat": 0.4 }
       },
       "frio": {
-        "description": "Temperatura estable en el interior de la cavidad volcánica",
-        "unit": "Celsius (°C)",
-        "mean": -20.0,
-        "p10": -22.0,
-        "p90": -17.0
+        "mode": "direct",
+        "temp_target_k": 253.15,
+        "sigma": 25.0,
+        "unit": "K"
       },
       "hielo": {
-        "description": "Hielo ausente en la cavidad ecuatorial; valor centrado en geología basáltica y regolito seco",
-        "unit": "% wt",
-        "mean": 0.0,
-        "p10": 0.0,
-        "p90": 0.1
+        "mode": "direct",
+        "ice_target": 0.0,
+        "sigma": 0.10,
+        "unit": "fraction"
+      }
+    },
+    "dimensions": {
+      "relieve": {
+        "description": "Pendientes de escarpes basálticos y colapsos volcánicos (DEM 90 m)",
+        "unit": "grados (°)",
+        "target": 15.0,
+        "sigma": 10.0
       },
-      "polvo": {
-        "description": "Tefra basáltica, bloques de colapso y polvo fino en el piso de la claraboya",
-        "unit": "índice adimensional [0-1]",
-        "mean": 0.65,
-        "p10": 0.30,
-        "p90": 0.90
+      "iluminacion": {
+        "description": "Oclusión topográfica (SVF bajo en depresiones/cavernas) y latitud ecuatorial/baja",
+        "unit": "SVF [0-1] / |lat| (°)",
+        "svf_target": 0.05,
+        "svf_sigma": 0.15,
+        "lat_target": 8.5,
+        "lat_sigma": 25.0
+      },
+      "frio": {
+        "description": "Estabilidad térmica subsuperficial (~-20 °C = 253.15 K) comparada directamente con MODIS LST",
+        "unit": "Kelvin (K)",
+        "target": 253.15,
+        "sigma": 25.0
+      },
+      "hielo": {
+        "description": "Sequedad superficial (ausencia de cobertura nival/glaciar en basaltos ecuatoriales)",
+        "unit": "fracción [0-1]",
+        "target": 0.0,
+        "sigma": 0.10
       }
     },
     "environmental_factors": {
-      "gravity": "0.165 g",
-      "atmosphere_pressure": "Vacío total",
-      "radiation": "Atenuación >95% de radiación dentro del tubo basáltico"
+      "gravity": "0.165 g (1.62 m/s²)",
+      "atmosphere_pressure": "10^-10 Pa (Vacío total)",
+      "radiation": "Atenuación >95% de radiación dentro del tubo basáltico; exposición total en superficie"
     },
     "key_instruments": ["LROC NAC (LRO)", "Mini-RF", "SELENE Kaguya TC"]
   },
   {
-    "_id": "mars_surface",
+    "_id": "mars",
     "name": "Marte (Jezero, Arcadia Planitia y Llanuras Eólicas)",
     "body": "Mars",
-    "description": "Planicie y cuencas sedimentarias/volcánicas marcianas. Relevante para hábitats permanentes, aprovechamiento de hielo de permafrost somero, tormentas globales de polvo, dunas basálticas y depósitos de arcillas/sales evaporíticas.",
+    "description": "Cuencas sedimentarias, planicies volcánicas y depósitos de permafrost somero marcianos. Perfil de referencia para validar rovers autónomos, perforación en regolito seco/helado y sistemas de polvo en análogos terrestres.",
     "priority": 3,
-    "dimensions": {
+    "scoring_params": {
       "relieve": {
-        "description": "Planicies sedimentarias, abanicos aluviales y campos de dunas eólicas",
-        "unit": "grados (°)",
-        "mean": 6.8,
-        "p10": 1.2,
-        "p90": 18.5
+        "mode": "direct",
+        "slope_deg": 5.0,
+        "sigma": 4.0
       },
       "iluminacion": {
-        "description": "Insolación solar atenuada por polvo atmosférico (tau óptico)",
-        "unit": "W/m²",
-        "mean": 590.0,
-        "p10": 120.0,
-        "p90": 715.0
+        "mode": "direct",
+        "svf_target": 0.85,
+        "svf_sigma": 0.20,
+        "lat_target": 30.0,
+        "lat_sigma": 25.0,
+        "weights": { "svf": 0.6, "lat": 0.4 }
       },
       "frio": {
-        "description": "Ciclo de temperatura diurna/nocturna de superficie marciana",
-        "unit": "Celsius (°C)",
-        "mean": -63.0,
-        "p10": -125.0,
-        "p90": 20.0
+        "mode": "relative_minmax",
+        "direction": "lower_is_better",
+        "unit": "K"
       },
       "hielo": {
-        "description": "Hielo de agua en subsuelo somero / permafrost (SWIM - Subsurface Water Ice Mapping)",
-        "unit": "profundidad de sobrecapa (m)",
-        "mean": 0.8,
-        "p10": 0.1,
-        "p90": 2.5
+        "mode": "relative_minmax",
+        "direction": "higher_is_better",
+        "unit": "fraction"
+      }
+    },
+    "dimensions": {
+      "relieve": {
+        "description": "Planicies sedimentarias, abanicos aluviales y campos de dunas (DEM 90 m)",
+        "unit": "grados (°)",
+        "target": 5.0,
+        "sigma": 4.0
       },
-      "polvo": {
-        "description": "Espesor óptico de aerosoles eólicos y tormentas de polvo mineral (MODIS MAIAC AOD 550 nm homólogo a tau marciano)",
-        "unit": "AOD 550 nm",
-        "mean": 0.35,
-        "p10": 0.12,
-        "p90": 0.85
+      "iluminacion": {
+        "description": "Horizonte despejado (SVF) y latitud media subtropical/templada",
+        "unit": "SVF [0-1] / |lat| (°)",
+        "svf_target": 0.85,
+        "svf_sigma": 0.20,
+        "lat_target": 30.0,
+        "lat_sigma": 25.0
+      },
+      "frio": {
+        "description": "Normalización relativa terrestre sobre temperatura superficial MODIS LST (menor LST = 1.0)",
+        "unit": "Kelvin (K) -> relativo [0-1]",
+        "mode": "relative_minmax"
+      },
+      "hielo": {
+        "description": "Normalización relativa terrestre sobre persistencia anual de nieve/hielo MODIS 10A2 (mayor persistencia = 1.0)",
+        "unit": "fracción [0-1] -> relativo [0-1]",
+        "mode": "relative_minmax"
       }
     },
     "environmental_factors": {

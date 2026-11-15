@@ -4,283 +4,70 @@
     "name": "Valles Secos de McMurdo (Taylor & Wright)",
     "country": "Antártida",
     "target": "moon_south_pole",
-    "region_type": "known_analog",
-    "is_understudied": false,
     "analog_type": "process",
-    "analog_category": [
-      "Proceso (criosférico/hiperárido)",
-      "Propiedad (frío extremo/sombra polar)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        161.85,
-        -77.55
-      ]
-    },
-    "similar_properties": [
-      "Temperaturas superficiales invernales < 215 K (MODIS LST) y humedad relativa < 10%",
-      "Fracción de sombra solar máxima = 1.0 en solsticio austral (geometría rasante homóloga a PSR lunar)",
-      "Pendientes de valles glaciares y paredes de artesa a escala homóloga de 240 m (Copernicus DEM)"
-    ],
-    "similar_processes": [
-      "Sublimación directa de hielo enterrado bajo regolito seco sin fase líquida",
-      "Atrapamiento térmico topográfico en depresiones polares y crioclastia por sales",
-      "Transporte catabático de partículas finas sobre pavimento desértico polar"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g lunar)",
-      "Atmósfera polar densa (~980 hPa) frente al ultra-vacío lunar (10^-10 Pa)",
-      "Ausencia de micrometeoritos y blindaje ante radiación cósmica galáctica (GCR)"
-    ],
-    "exploration_use_cases": [
-      "Validación de perforadoras criogénicas ISRU (tipo TRIDENT/VIPER) en permafrost cementado",
-      "Pruebas de rovers autónomos y sistemas de energía en transición luz rasante / sombra total"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Medio — mesa de hielo cementado a 10–50 cm bajo pavimento detrítico seco",
-      "extremophiles_note": "Comunidades criptoendolíticas e hipolíticas en areniscas Beacon; referencia estándar para bioprotección"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "sentinel1_sar",
-      "sentinel2_sr",
-      "nasa_lro_lola",
-      "nasa_lro_diviner"
-    ],
-    "scores": {
-      "relieve": 0.89,
-      "iluminacion": 0.97,
-      "frio": 0.54,
-      "hielo": 0.83,
-      "polvo": 0.82
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E60_r-120_c260",
-      "lat": -77.6193,
-      "lon": 161.9919,
-      "elev_m": 1607.38,
-      "slope_mean_deg": 9.568,
-      "slope_p90_deg": 25.562,
-      "relief_local_m": 621.51,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 242.91,
-      "lst_min_k": 234.68,
-      "lst_max_k": 257.45,
-      "lst_amp_k": 1.85,
-      "snow_persist": 0.9815,
-      "aod_mean": null,
-      "aod_p90": null,
-      "ndvi_mean": null,
-      "ndvi_max": null,
-      "qc_flag": 24
-    },
-    "orbital_previews": {
-      "site_id": "mcmurdo_dry_valleys",
-      "sentinel2_rgb_url": "/data/orbital_previews/mcmurdo_dry_valleys_s2_rgb.png",
-      "sentinel1_sar_url": "/data/orbital_previews/mcmurdo_dry_valleys_s1_sar.png",
-      "sar_sensor": "Sentinel-1 C-Band GRD (VV) — sustituto RADARSAT-1/RCM (filtro Lee 5x5)",
-      "sar_stats_db": {
-        "min": -22.41,
-        "mean": -9.28,
-        "max": 0.0
-      }
-    }
-  },
-  {
-    "_id": "site_02",
-    "name": "Cráter Haughton (Devon Island)",
-    "country": "Nunavut, Canadá",
-    "target": "moon_south_pole",
-    "region_type": "known_analog",
     "is_understudied": false,
-    "analog_type": "morphologic",
-    "analog_category": [
-      "Morfológico (impacto complejo)",
-      "Proceso (permafrost/iluminación polar)"
-    ],
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -89.68,
-        75.38
+        162.5,
+        -77.5
       ]
     },
-    "similar_properties": [
-      "Estructura de impacto compleja de ~23 km en desierto polar ártico (75.4° N)",
-      "Brechas de impacto carbonatadas/gnaísicas con alta rugosidad radar en banda C (Sentinel-1 / RCM)",
-      "Persistencia criosférica > 85% del año (MOD10A2) y sol rasante en equinoccios"
+    "metrics": {
+      "worldcover_coverage": false,
+      "vegetation_fraction": 0.0,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 977.91,
+      "elevation_min_m": 196.21,
+      "elevation_max_m": 1914.23,
+      "slope_mean_deg": 30.61,
+      "slope_p90_deg": 57.23,
+      "roughness_m": 429.38,
+      "svf": 0.7861,
+      "lst_mean_k": 249.31,
+      "lst_min_k": 226.33,
+      "lst_day_mean_k": 250.0,
+      "lst_night_mean_k": 248.61,
+      "ice_persistence": 0.8945
+    },
+    "scores": {
+      "relieve": 0.0109,
+      "iluminacion": 0.5234,
+      "frio": 0.8723,
+      "hielo": 0.8616
+    },
+    "similar_values": [
+      "temperaturas superficiales invernales extremas y sublimación hiperárida",
+      "pendientes de morrenas y valles glaciares comparables a crestas lunares",
+      "alta latitud polar con régimen solar rasante"
     ],
     "similar_processes": [
-      "Morfometría de paredes, terrazas colapsadas y eyecta homóloga a cráteres polares lunares",
-      "Sombras topográficas extensas bajo ángulos cenitales solares > 75°",
-      "Criosolifluxión y retención de hielo intersticial en regolito brechado"
+      "sublimación directa de hielo bajo regolito hiperárido sin fase líquida",
+      "atrapamiento térmico topográfico en depresiones frías",
+      "meteorización física crioclástica en ausencia de lluvia"
     ],
-    "differences_and_limits": [
-      "Erosión glaciar y periglaciar post-impacto ausente en la Luna",
-      "Deshielo superficial estival breve (julio-agosto) con escorrentía efímera",
-      "Gravedad terrestre (1.0 g) y protección magnetosférica"
+    "earth_limits": [
+      "gravedad terrestre 1.0g frente a 0.165g lunar",
+      "presencia de atmósfera polar densa frente a vacío ultra-alto",
+      "ausencia de bombardeo de micrometeoritos y radiación GCR directa"
     ],
-    "exploration_use_cases": [
-      "Entrenamiento de operaciones EVA geológicas, navegación de rovers presurizados y teleoperación con retardo",
-      "Calibración de radares de penetración terrestre (GPR) y polarimetría SAR (comparación con Mini-RF)"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Alto para hielo intersticial en brechas fracturadas; sin tubos de lava",
-      "extremophiles_note": "Cianobacterias endolíticas en rocas evaporíticas chocadas por impacto"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "sentinel1_sar",
-      "sentinel2_sr",
-      "csa_rcm_sar",
-      "nasa_lro_lola"
-    ],
-    "scores": {
-      "relieve": 0.41,
-      "iluminacion": 0.97,
-      "frio": 0.59,
-      "hielo": 0.64,
-      "polvo": 0.95
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r473_c-577",
-      "lat": 75.3812,
-      "lon": -89.6241,
-      "elev_m": 147.43,
-      "slope_mean_deg": 2.586,
-      "slope_p90_deg": 7.039,
-      "relief_local_m": 110.22,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 253.05,
-      "lst_min_k": 230.62,
-      "lst_max_k": 286.25,
-      "lst_amp_k": 2.39,
-      "snow_persist": 0.6736,
-      "aod_mean": 0.2466,
-      "aod_p90": 0.2662,
-      "ndvi_mean": -0.0007,
-      "ndvi_max": 0.1709,
-      "qc_flag": 0
-    },
-    "orbital_previews": {
-      "site_id": "devon_island_haughton",
-      "sentinel2_rgb_url": "/data/orbital_previews/devon_island_haughton_s2_rgb.png",
-      "sentinel1_sar_url": "/data/orbital_previews/devon_island_haughton_s1_sar.png",
-      "sar_sensor": "Sentinel-1 C-Band GRD (HH) — sustituto RADARSAT-1/RCM (filtro Lee 5x5)",
-      "sar_stats_db": {
-        "min": -21.27,
-        "mean": -8.99,
-        "max": -0.1
-      }
-    }
+    "exploration_use": "Validación de perforadoras criogénicas ISRU, rovers de prospección autónoma y muestreo de hielo prístino.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
     "_id": "site_03",
-    "name": "Depresión Eólica Norte, Cuenca de Qaidam",
-    "country": "Meseta Tibetana, China",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (eólico/evaporítico)",
-      "Propiedad (aridez extrema/polvo/altitud)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        92.45,
-        38.12
-      ]
-    },
-    "similar_properties": [
-      "Elevación media ~2.700–3.000 m con NDVI máximo < 0.08 (ausencia total de cubierta vegetal)",
-      "Alta carga de polvo mineral (MODIS MAIAC AOD p90 = 0.33) y amplitud térmica diurna > 27 K",
-      "Campos de yardangs, dunas lineales y costras poligonales de sulfatos ( MgSO4 / yeso ) y halita"
-    ],
-    "similar_processes": [
-      "Deflación eólica intensa y abrasión por tormentas de polvo sobre paleolagos desecados",
-      "Precipitación secuencial de sales hidratadas análoga al tránsito Noéico-Hespérico marciano",
-      "Ciclo térmico diurno severo sobre sustrato salino hiperárido"
-    ],
-    "differences_and_limits": [
-      "Presión atmosférica ~700 hPa (frente a ~6 hPa de CO2 en Marte)",
-      "Gravedad 1.0 g (frente a 0.38 g marciana)",
-      "Ausencia de percloratos ubicuos en concentraciones tóxicas marcianas"
-    ],
-    "exploration_use_cases": [
-      "Ensayo de sellos mecánicos, paneles solares y juntas robóticas frente a polvo salino abrasivo",
-      "Calibración de espectrómetros Raman/IR (tipo SHERLOC/SuperCam) para detección de sulfatos y biofirmas"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Bajo para cavidades; alto para estratigrafía de salmueras subsuperficiales",
-      "extremophiles_note": "Arqueas halófilas extremas atrapadas en inclusiones fluidas de halita y yeso"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_aod",
-      "modis_ndvi",
-      "sentinel1_sar",
-      "sentinel2_sr"
-    ],
-    "scores": {
-      "relieve": 0.55,
-      "iluminacion": 0.93,
-      "frio": 0.71,
-      "hielo": 0.94,
-      "polvo": 0.99
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r301_c594",
-      "lat": 38.1461,
-      "lon": 92.4225,
-      "elev_m": 2703.79,
-      "slope_mean_deg": 0.276,
-      "slope_p90_deg": 0.501,
-      "relief_local_m": 19.82,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 283.52,
-      "lst_min_k": 252.23,
-      "lst_max_k": 316.1,
-      "lst_amp_k": 27.04,
-      "snow_persist": 0.0014,
-      "aod_mean": 0.2261,
-      "aod_p90": 0.4473,
-      "ndvi_mean": 0.054,
-      "ndvi_max": 0.0706,
-      "qc_flag": 0
-    },
-    "orbital_previews": {
-      "site_id": "qaidam_basin",
-      "sentinel2_rgb_url": "/data/orbital_previews/qaidam_basin_s2_rgb.png",
-      "sentinel1_sar_url": "/data/orbital_previews/qaidam_basin_s1_sar.png",
-      "sar_sensor": "Sentinel-1 C-Band GRD (VV) — sustituto RADARSAT-1/RCM (filtro Lee 5x5)",
-      "sar_stats_db": {
-        "min": -16.2,
-        "mean": -8.79,
-        "max": -5.33
-      }
-    }
-  },
-  {
-    "_id": "site_04",
-    "name": "Cráter Pingualuit (Escudo de Nunavik)",
+    "name": "Cráter Pingualuit (Nunavik)",
     "country": "Quebec, Canadá",
     "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
     "analog_type": "morphologic",
-    "analog_category": [
-      "Morfológico (cráter simple prístino)",
-      "Proceso (sombra/criósfera subártica)"
-    ],
+    "is_understudied": true,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
@@ -288,4203 +75,1054 @@
         61.28
       ]
     },
-    "similar_properties": [
-      "Cráter de impacto simple de 3,44 km de diámetro en basamento cristalino anortosítico/granítico",
-      "Relación diámetro/diámetro de transición (D/Dt) homóloga a cráteres simples lunares de 15–20 km",
-      "Persistencia de nieve/hielo del 68% anual (MOD10A2) y temperaturas mínimas de 238 K"
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.0521,
+      "permanent_ice_fraction": 0.0002,
+      "elevation_mean_m": 516.34,
+      "elevation_min_m": 482.36,
+      "elevation_max_m": 652.53,
+      "slope_mean_deg": 3.42,
+      "slope_p90_deg": 6.4,
+      "roughness_m": 26.41,
+      "svf": 0.9144,
+      "lst_mean_k": 252.44,
+      "lst_min_k": 238.36,
+      "lst_day_mean_k": 255.25,
+      "lst_night_mean_k": 249.82,
+      "ice_persistence": 0.9427
+    },
+    "scores": {
+      "relieve": 0.4001,
+      "iluminacion": 0.6274,
+      "frio": 0.7967,
+      "hielo": 0.9249
+    },
+    "similar_values": [
+      "cráter simple circular de ~3.4 km con borde elevado prístino",
+      "pendientes internas de pared de cráter y persistencia nival invernal",
+      "basamento cristalino de escasa cobertura vegetal en latitud subártica"
     ],
     "similar_processes": [
-      "Conservación del borde elevado circular y taludes internos empinados (25°–35°)",
-      "Sombra topográfica rasante durante el solsticio invernal subártico",
-      "Fracturamiento radial por onda de choque en roca ígnea cristalina"
+      "geometría de cráter simple sin pico central análoga a cráteres polares menores",
+      "acumulación fría protegida por geometría de borde"
     ],
-    "differences_and_limits": [
-      "Lago ultra-oligotrófico en el interior de la cuenca (imposible en el vacío lunar)",
-      "Cobertura estacional de tundra subártica en las laderas exteriores",
-      "Gravedad terrestre (1.0 g)"
+    "earth_limits": [
+      "presencia de lago líquido estacional en el interior (inexistente en la Luna)",
+      "gravedad 1.0g y atmósfera terrestre",
+      "precipitación nival atmosférica frente a implantación/migración de volátiles"
     ],
-    "exploration_use_cases": [
-      "Pruebas de descenso robótico con cabrestante (tipo Axel/DuAxel) en paredes de cráter empinadas",
-      "Validación de algoritmos LiDAR de aterrizaje preciso con peligro topográfico (Hazard Detection)"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Bajo para cuevas; fracturas de impacto profundas en escudo cristalino",
-      "extremophiles_note": "Microbiota psicrófila aislada en sedimentos lacustres subglaciares antiguos"
+    "exploration_use": "Pruebas de navegación autónoma en bordes de cráteres simples y descenso con inclinómetro.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
+  },
+  {
+    "_id": "site_04",
+    "name": "Volcán Licancabur / Meseta de Chajnantor",
+    "country": "Antofagasta, Chile / Bolivia",
+    "target": "moon_south_pole",
+    "analog_type": "process",
+    "is_understudied": true,
+    "is_curated": true,
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        -67.88,
+        -22.83
+      ]
     },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "sentinel1_sar",
-      "sentinel2_sr",
-      "csa_rcm_sar",
-      "nasa_lro_lola"
-    ],
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.1503,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 4536.7,
+      "elevation_min_m": 3665.81,
+      "elevation_max_m": 5915.68,
+      "slope_mean_deg": 16.53,
+      "slope_p90_deg": 32.08,
+      "roughness_m": 419.75,
+      "svf": 0.8168,
+      "lst_mean_k": 285.43,
+      "lst_min_k": 267.77,
+      "lst_day_mean_k": 298.66,
+      "lst_night_mean_k": 272.21,
+      "ice_persistence": 0.2391
+    },
     "scores": {
-      "relieve": 0.35,
-      "iluminacion": 0.23,
-      "frio": 0.5,
-      "hielo": 0.61,
-      "polvo": 0.44
+      "relieve": 0.1816,
+      "iluminacion": 0.3509,
+      "frio": 0.0,
+      "hielo": 0.0
     },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r428_c-474",
-      "lat": 61.2026,
-      "lon": -73.6115,
-      "elev_m": 495.37,
-      "slope_mean_deg": 1.018,
-      "slope_p90_deg": 1.757,
-      "relief_local_m": 54.31,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 263.17,
-      "lst_min_k": 238.51,
-      "lst_max_k": 292.25,
-      "lst_amp_k": 6.56,
-      "snow_persist": 0.6771,
-      "aod_mean": null,
-      "aod_p90": null,
-      "ndvi_mean": 0.086,
-      "ndvi_max": 0.4958,
-      "qc_flag": 8
-    },
-    "orbital_previews": {
-      "site_id": "pingualuit_crater",
-      "sentinel2_rgb_url": "/data/orbital_previews/pingualuit_crater_s2_rgb.png",
-      "sentinel1_sar_url": "/data/orbital_previews/pingualuit_crater_s1_sar.png",
-      "sar_sensor": "Sentinel-1 C-Band GRD (VV) — sustituto RADARSAT-1/RCM (filtro Lee 5x5)",
-      "sar_stats_db": {
-        "min": -18.08,
-        "mean": -11.97,
-        "max": -1.0
-      }
-    }
+    "similar_values": [
+      "altitud > 5,000 m con baja presión atmosférica relativa y radiación UV extrema",
+      "pendientes volcánicas despejadas y baja humedad superficial",
+      "oscilación térmica diurna pronunciada"
+    ],
+    "similar_processes": [
+      "desecación extrema y estabilidad de volátiles en altura",
+      "operación óptica y solar con cielo despejado (alto SVF)"
+    ],
+    "earth_limits": [
+      "latitud tropical (sin noche polar ni sol rasante continuo)",
+      "gravedad 1.0g y ~50% de presión atmosférica terrestre"
+    ],
+    "exploration_use": "Pruebas de sistemas fotovoltaicos, óptica de navegación y trajes presurizados en alta montaña.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
     "_id": "site_05",
-    "name": "Complejo Volcánico Santa Ana – Izalco – El Boquerón",
-    "country": "El Salvador (Centroamérica)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
+    "name": "Monte Erebus (Isla de Ross)",
+    "country": "Antártida",
+    "target": "moon_south_pole",
+    "analog_type": "process",
     "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Litológico (basaltos/coladas)",
-      "Morfológico (conductos y cráteres de colapso)"
-    ],
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -89.63,
-        13.85
+        167.15,
+        -77.53
       ]
     },
-    "similar_properties": [
-      "Relieve local abrupto de 1.064 m en ventana homóloga de 5 km y pendiente p90 de 27,2° (Copernicus DEM 240 m)",
-      "Coladas basálticas jóvenes (1917 y siglo XX) con texturas 'a'ā/pāhoehoe de alta retrodispersión SAR banda C",
-      "Cráteres anidados de paredes subverticales y cavidades de drenaje magmático"
+    "metrics": {
+      "worldcover_coverage": false,
+      "vegetation_fraction": 0.0,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 2655.97,
+      "elevation_min_m": 1445.59,
+      "elevation_max_m": 3775.97,
+      "slope_mean_deg": 34.64,
+      "slope_p90_deg": 53.91,
+      "roughness_m": 554.36,
+      "svf": 0.8319,
+      "lst_mean_k": 244.02,
+      "lst_min_k": 221.93,
+      "lst_day_mean_k": 244.47,
+      "lst_night_mean_k": 243.58,
+      "ice_persistence": 0.9908
+    },
+    "scores": {
+      "relieve": 0.0049,
+      "iluminacion": 0.6241,
+      "frio": 1.0,
+      "hielo": 0.9882
+    },
+    "similar_values": [
+      "latitud polar extrema (~77.5°S) con sol rasante",
+      "terreno volcánico basáltico/fonolítico cubierto de hielo",
+      "temperaturas superficiales sub-cero permanentes"
     ],
     "similar_processes": [
-      "Formación de conductos y techos basálticos por enfriamiento superficial y drenaje de lava",
-      "Colapso gravitacional de bóvedas volcánicas (análogo mecánico a claraboyas tipo Mare Tranquillitatis)",
-      "Alteración fumarólica ácida de basaltos (análogo geoquímico de vulcanismo marciano)"
+      "interacción hielo-roca volcánica en régimen criogénico polar",
+      "sombras topográficas prolongadas en crestas de alta pendiente"
     ],
-    "differences_and_limits": [
-      "Clima tropical con vegetación circundante densa (NDVI > 0.75 fuera de las coladas recientes)",
-      "Meteorización química acelerada por precipitación pluvial y humedad > 75%",
-      "Gravedad 1.0 g (los tubos lunares pueden alcanzar escalas 3–6 veces mayores sin colapsar)"
+    "earth_limits": [
+      "actividad fumarólica e hidrotermal activa inexistente en la Luna actual",
+      "gravedad 1.0g y atmósfera terrestre"
     ],
-    "exploration_use_cases": [
-      "Zoom regional accesible para pruebas de robots cuadrúpedos/drones SLAM en terrenos volcánicos escarpados",
-      "Ensayo de enlaces de radiofrecuencia subsuperficial y georradar a través de basalto vesicular"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Alto — cavidades basálticas, grietas de tensión y escarpes de colapso",
-      "extremophiles_note": "Comunidades quimiolitótrofas acidófilas en fumarolas y biopelículas de cuevas volcánicas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_aod",
-      "sentinel1_sar",
-      "sentinel2_sr",
-      "nasa_lro_lola"
-    ],
-    "scores": {
-      "relieve": 0.95,
-      "iluminacion": 0.99,
-      "frio": 0.72,
-      "hielo": 0.9,
-      "polvo": 0.83
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r116_c-577",
-      "lat": 13.8284,
-      "lon": -89.6241,
-      "elev_m": 1692.33,
-      "slope_mean_deg": 17.272,
-      "slope_p90_deg": 27.16,
-      "relief_local_m": 1063.76,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 292.0,
-      "lst_min_k": 287.59,
-      "lst_max_k": 295.9,
-      "lst_amp_k": 7.66,
-      "snow_persist": 0.0047,
-      "aod_mean": 0.0931,
-      "aod_p90": 0.1568,
-      "ndvi_mean": 0.7887,
-      "ndvi_max": 0.8888,
-      "qc_flag": 0
-    },
-    "orbital_previews": {
-      "site_id": "central_america_volcanic",
-      "sentinel2_rgb_url": "/data/orbital_previews/central_america_volcanic_s2_rgb.png",
-      "sentinel1_sar_url": "/data/orbital_previews/central_america_volcanic_s1_sar.png",
-      "sar_sensor": "Sentinel-1 C-Band GRD (VV) — sustituto RADARSAT-1/RCM (filtro Lee 5x5)",
-      "sar_stats_db": {
-        "min": -21.73,
-        "mean": -8.34,
-        "max": -0.53
-      }
-    }
+    "exploration_use": "Validación de rovers en laderas heladas de alta pendiente y sensores térmicos en entornos polares.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
     "_id": "site_06",
-    "name": "Puna de Atacama / Salar de Arizaro y Antofalla",
-    "country": "Argentina / Chile",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (evaporítico/eólico de gran altitud)",
-      "Propiedad (UV extremo/amplitud térmica)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -67.85,
-        -25.15
-      ]
-    },
-    "similar_properties": [
-      "Altitud extrema de 4.716 m s. n. m. con desnivel local de 742 m en ventana de 5 km (Copernicus DEM)",
-      "Amplitud térmica superficial día-noche de 32,6 K (MODIS LST) y NDVI máximo de 0,066",
-      "Atmósfera ultra-limpia y delgada con radiación UV solar récord en la Tierra"
-    ],
-    "similar_processes": [
-      "Formación de mega-yardangs en ignimbritas y campos de grava eólica (gravel ripples)",
-      "Criodesecación y precipitación de evaporitas en cuencas volcano-tectónicas cerradas",
-      "Interacción viento-topografía en atmósfera enrarecida de alta montaña"
-    ],
-    "differences_and_limits": [
-      "Presión atmosférica ~570 hPa con 21% O2 (frente a ~6 hPa de CO2 en Marte)",
-      "Gravedad terrestre (1.0 g frente a 0.38 g en Marte)",
-      "Eventos esporádicos de nieve invernal (persistencia nival del 8,7% en MOD10A2)"
-    ],
-    "exploration_use_cases": [
-      "Pruebas de rovers marcianos y helicópteros en atmósfera de baja densidad a casi 5.000 m",
-      "Perforación astrobiológica en estromatolitos modernos de altura y costras de halita"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Medio — acuíferos hipersalinos someros y permafrost discontinuo de alta montaña",
-      "extremophiles_note": "Tapetes microbianos resistentes a UV extremo, arsénico y desecación"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi",
-      "sentinel1_sar",
-      "sentinel2_sr"
-    ],
-    "scores": {
-      "relieve": 0.74,
-      "iluminacion": 0.99,
-      "frio": 0.68,
-      "hielo": 0.97,
-      "polvo": 0.43
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r-208_c-437",
-      "lat": -25.1808,
-      "lon": -67.8594,
-      "elev_m": 4715.91,
-      "slope_mean_deg": 10.069,
-      "slope_p90_deg": 17.773,
-      "relief_local_m": 742.46,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 283.11,
-      "lst_min_k": 262.92,
-      "lst_max_k": 310.05,
-      "lst_amp_k": 32.59,
-      "snow_persist": 0.0872,
-      "aod_mean": 0.0141,
-      "aod_p90": 0.0141,
-      "ndvi_mean": 0.0556,
-      "ndvi_max": 0.0661,
-      "qc_flag": 0
-    },
-    "orbital_previews": {
-      "site_id": "puna_atacama_salar",
-      "sentinel2_rgb_url": "/data/orbital_previews/puna_atacama_salar_s2_rgb.png",
-      "sentinel1_sar_url": "/data/orbital_previews/puna_atacama_salar_s1_sar.png",
-      "sar_sensor": "Sentinel-1 C-Band GRD (VV) — sustituto RADARSAT-1/RCM (filtro Lee 5x5)",
-      "sar_stats_db": {
-        "min": -20.45,
-        "mean": -11.3,
-        "max": -0.29
-      }
-    }
-  },
-  {
-    "_id": "cand_atacama_core_07",
-    "name": "Núcleo Hiperárido de Atacama (Yungay / María Elena)",
-    "country": "Chile",
-    "target": "mars_surface",
-    "region_type": "known_analog",
-    "is_understudied": false,
-    "analog_type": "process",
-    "analog_category": [
-      "Propiedad (hiperaridez/suelos oxidados)",
-      "Proceso (acumulación de sales y percloratos)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -69.0,
-        -23.0
-      ]
-    },
-    "similar_properties": [
-      "Suelo regolítico desprovisto de vegetación (NDVI medio = 0,067) y persistencia de nieve 0,0%",
-      "Amplitud térmica superficial media de 33,6 K con máximas diurnas de 316,6 K (MODIS LST)",
-      "Carga persistente de polvo y aerosoles desérticos (MODIS MAIAC AOD p90 = 0,222)"
-    ],
-    "similar_processes": [
-      "Acumulación atmosférica milenaria de nitratos, iodatos y percloratos sin lixiviación hídrica",
-      "Oxidación fotoquímica de materia orgánica en el regolito superficial",
-      "Delicuescencia higroscópica de halita como único mecanismo de actividad de agua"
-    ],
-    "differences_and_limits": [
-      "Temperaturas diurnas cálidas (~43 °C en superficie) superiores al promedio marciano",
-      "Presión atmosférica ~750 hPa y gravedad 1.0 g",
-      "Ingreso ocasional de niebla costera (camanchaca) en los márgenes occidentales"
-    ],
-    "exploration_use_cases": [
-      "Banco de pruebas histórico de los taladros y laboratorios de Viking, Phoenix, Curiosity, Perseverance y ExoMars",
-      "Evaluación de límites de detección de vida en suelos hiperoxidados"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Bajo para cavidades; horizontes de sulfatos/arcillas a 0.5–2 m de profundidad",
-      "extremophiles_note": "Bacterias endolíticas en nódulos de halita y horizonte subsuperficial 'biomining' bajo capa estéril"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_aod",
-      "modis_ndvi",
-      "sentinel1_sar",
-      "sentinel2_sr"
-    ],
-    "scores": {
-      "relieve": 0.66,
-      "iluminacion": 0.99,
-      "frio": 0.61,
-      "hielo": 0.94,
-      "polvo": 0.79
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r-191_c-444",
-      "lat": -22.9961,
-      "lon": -68.9476,
-      "elev_m": 2701.44,
-      "slope_mean_deg": 2.301,
-      "slope_p90_deg": 2.985,
-      "relief_local_m": 198.75,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 293.18,
-      "lst_min_k": 273.57,
-      "lst_max_k": 316.61,
-      "lst_amp_k": 33.64,
-      "snow_persist": 0.0,
-      "aod_mean": 0.1441,
-      "aod_p90": 0.2221,
-      "ndvi_mean": 0.0671,
-      "ndvi_max": 0.0744,
-      "qc_flag": 0
-    },
-    "orbital_previews": {
-      "site_id": "atacama_hyperarid",
-      "sentinel2_rgb_url": "/data/orbital_previews/atacama_hyperarid_s2_rgb.png",
-      "sentinel1_sar_url": "/data/orbital_previews/atacama_hyperarid_s1_sar.png",
-      "sar_sensor": "Sentinel-1 C-Band GRD (VV) — sustituto RADARSAT-1/RCM (filtro Lee 5x5)",
-      "sar_stats_db": {
-        "min": -21.23,
-        "mean": -11.01,
-        "max": -1.04
-      }
-    }
-  },
-  {
-    "_id": "cand_iceland_askja_08",
-    "name": "Tierras Altas de Islandia (Caldera Askja y Holuhraun)",
-    "country": "Islandia",
+    "name": "Adventdalen / Meseta de Platåberget (Svalbard)",
+    "country": "Svalbard, Noruega",
     "target": "moon_south_pole",
-    "region_type": "known_analog",
-    "is_understudied": false,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Litológico (basaltos/tefra)",
-      "Proceso (interacción vulcano-criosférica e iluminación rasante)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -16.75,
-        64.85
-      ]
-    },
-    "similar_properties": [
-      "Sombra solar invernal del 100% en laderas (shadow_frac_d4 = 1.0) y persistencia nival del 88% (MOD10A2)",
-      "Campos de lava basáltica, escoria y tefra sin vegetación (NDVI medio = -0.049)",
-      "Pendientes suaves en mesetas inter-cráter (2,2° media) con paredes de caldera abruptas"
-    ],
-    "similar_processes": [
-      "Transporte eólico de arenas basálticas vítreas en clima subpolar frío",
-      "Interacción entre coladas de lava, tubos volcánicos y hielo subsuperficial",
-      "Iluminación solar rasante de alta latitud (64.8° N)"
-    ],
-    "differences_and_limits": [
-      "Alta precipitación nival/pluvial y actividad hidrotermal activa",
-      "Atmósfera densa con vientos intensos y gravedad 1.0 g",
-      "Basaltos toleíticos hidratados frente a anortositas/basaltos anhidros lunares"
-    ],
-    "exploration_use_cases": [
-      "Entrenamiento geológico de astronautas (tradición Apollo y Artemis) en muestreo de basaltos y brechas",
-      "Pruebas de rovers de excavación de regolito basáltico congelado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Alto — extensos tubos de lava basáltica con formaciones de hielo perenne (ej. Lofthellir)",
-      "extremophiles_note": "Comunidades quimiolitótrofas en vidrio basáltico subglacial y cuevas de hielo"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "sentinel1_sar",
-      "sentinel2_sr"
-    ],
-    "scores": {
-      "relieve": 0.44,
-      "iluminacion": 0.97,
-      "frio": 0.32,
-      "hielo": 0.68,
-      "polvo": 0.83
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r442_c-108",
-      "lat": 64.7902,
-      "lon": -16.7122,
-      "elev_m": 833.43,
-      "slope_mean_deg": 2.215,
-      "slope_p90_deg": 2.964,
-      "relief_local_m": 192.12,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 267.62,
-      "lst_min_k": 259.57,
-      "lst_max_k": 279.07,
-      "lst_amp_k": 4.1,
-      "snow_persist": 0.8797,
-      "aod_mean": 0.0643,
-      "aod_p90": 0.1585,
-      "ndvi_mean": -0.049,
-      "ndvi_max": 0.157,
-      "qc_flag": 0
-    },
-    "orbital_previews": {
-      "site_id": "iceland_highlands",
-      "sentinel2_rgb_url": "/data/orbital_previews/iceland_highlands_s2_rgb.png",
-      "sentinel1_sar_url": "/data/orbital_previews/iceland_highlands_s1_sar.png",
-      "sar_sensor": "Sentinel-1 C-Band GRD (VV) — sustituto RADARSAT-1/RCM (filtro Lee 5x5)",
-      "sar_stats_db": {
-        "min": -19.63,
-        "mean": -11.87,
-        "max": -0.89
-      }
-    }
-  },
-  {
-    "_id": "cand_lanzarote_corona_09",
-    "name": "Tubo Volcánico de La Corona y Malpaís de Lanzarote",
-    "country": "Islas Canarias, España",
-    "target": "lava_tubes",
-    "region_type": "known_analog",
-    "is_understudied": false,
-    "analog_type": "morphologic",
-    "analog_category": [
-      "Morfológico (tubo de lava de gran diámetro)",
-      "Litológico (basalto alcalino árido)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -13.49,
-        29.16
-      ]
-    },
-    "similar_properties": [
-      "Conducto subterráneo de > 7 km de longitud con galerías de hasta 25–30 m de diámetro y jameos (claraboyas)",
-      "Superficie de malpaís basáltico árido con escasa vegetación (bajo NDVI) y polvo sahariano ocasional (Calima)",
-      "Estabilidad térmica interior casi constante a lo largo del año"
-    ],
-    "similar_processes": [
-      "Colapso parcial del techo formando claraboyas de entrada ('jameos') homólogas a los pits de Mare Tranquillitatis y Marius Hills",
-      "Aislamiento natural frente a fluctuaciones térmicas y radiación superficial",
-      "Acumulación de bloques de derrumbe en la base de las claraboyas"
-    ],
-    "differences_and_limits": [
-      "Clima subtropical árido templado y presencia de tramo inundado marino en el extremo distal",
-      "Gravedad terrestre 1.0 g y atmósfera respirable",
-      "Filtración ocasional de humedad meteórica"
-    ],
-    "exploration_use_cases": [
-      "Sede del programa ESA PANGAEA para entrenamiento de espeleología planetaria y robótica subterránea",
-      "Despliegue de enjambres de micro-rovers y mapeo LiDAR 3D en tubos de lava"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Muy alto — uno de los tubos de lava más largos y voluminosos accesibles en la Tierra",
-      "extremophiles_note": "Depósitos minerales biogénicos (espeleotemas de sílice/calcita) y microorganismos adaptados a oligotrofia oscura"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_aod",
-      "modis_ndvi",
-      "sentinel2_sr"
-    ],
-    "scores": {
-      "relieve": 0.3,
-      "iluminacion": 0.6,
-      "frio": 0.62,
-      "hielo": 0.92,
-      "polvo": 0.67
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r237_c-87",
-      "lat": 29.135,
-      "lon": -13.4475,
-      "elev_m": 14.4,
-      "slope_mean_deg": 1.369,
-      "slope_p90_deg": 4.174,
-      "relief_local_m": 162.77,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 296.57,
-      "lst_min_k": 285.23,
-      "lst_max_k": 306.71,
-      "lst_amp_k": 15.39,
-      "snow_persist": 0.0057,
-      "aod_mean": 0.2894,
-      "aod_p90": 0.8289,
-      "ndvi_mean": 0.1859,
-      "ndvi_max": 0.3884,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "cand_danakil_afar_10",
-    "name": "Depresión de Danakil y Cráter Erta Ale (Triángulo de Afar)",
-    "country": "Etiopía",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
     "analog_type": "process",
-    "analog_category": [
-      "Proceso (hidrotermal/evaporítico ácido)",
-      "Litológico (basaltos de rift y sales)"
-    ],
+    "is_understudied": false,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        40.3,
-        14.24
-      ]
-    },
-    "similar_properties": [
-      "Cuenca tectónica bajo el nivel del mar (-125 m) con intensa carga de aerosoles (MODIS AOD) y aridez extrema",
-      "Depósitos masivos de sulfatos de hierro, sílice amorfa, halita y basaltos toleíticos fisurales",
-      "Ausencia casi total de cobertura vegetal (NDVI < 0.08)"
-    ],
-    "similar_processes": [
-      "Desgasificación volcánica e interacción hidrotermal-evaporítica análoga a Gusev Crater / Home Plate en Marte",
-      "Deflación eólica y transporte de polvo mineral sobre llanuras salinas",
-      "Formación de costras poligonales por desecación extrema"
-    ],
-    "differences_and_limits": [
-      "Temperaturas superficiales extremadamente altas (> 320 K), opuestas al frío marciano actual",
-      "Presión atmosférica > 1015 hPa y gravedad 1.0 g",
-      "Actividad hidrotermal ácida líquida activa en superficie"
-    ],
-    "exploration_use_cases": [
-      "Calibración de espectrómetros orbitales y de rover para discriminar sílice hidrotermal y sulfatos ácidos",
-      "Protocolos de detección de biofirmas en ambientes poliextremos (pH < 1, hipersalinidad)"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Medio — fisuras tectónicas de rift, tubos basálticos en Erta Ale y salmueras subsuperficiales",
-      "extremophiles_note": "Límite físico de habitabilidad terrestre en salmueras hiperácidas de hierro y magnesio"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "scores": {
-      "relieve": 0.54,
-      "iluminacion": 0.68,
-      "frio": 0.24,
-      "hielo": 0.94,
-      "polvo": 0.99
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r119_c259",
-      "lat": 14.1916,
-      "lon": 40.3425,
-      "elev_m": -124.15,
-      "slope_mean_deg": 0.012,
-      "slope_p90_deg": 0.025,
-      "relief_local_m": 0.85,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 310.93,
-      "lst_min_k": 303.48,
-      "lst_max_k": 316.38,
-      "lst_amp_k": 9.46,
-      "snow_persist": 0.0,
-      "aod_mean": 0.6412,
-      "aod_p90": 1.6596,
-      "ndvi_mean": 0.0707,
-      "ndvi_max": 0.105,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "cand_lut_iran_11",
-    "name": "Desierto de Lut (Gandom Beryan y Mega-Yardangs de Kaluts)",
-    "country": "Irán",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "morphologic",
-    "analog_category": [
-      "Morfológico (mega-yardangs/mesetas basálticas)",
-      "Proceso (abrasión eólica y polvo)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        59.17,
-        30.57
-      ]
-    },
-    "similar_properties": [
-      "Corredores de yardangs paralelos de hasta 80 m de altura y > 100 km de longitud esculpidos por el viento",
-      "Meseta de lava basáltica negra (Gandom Beryan) con el récord mundial de temperatura superficial MODIS LST (> 340 K)",
-      "NDVI máximo ≈ 0.05 (suelo estéril) y frecuentes tormentas de polvo (MODIS MAIAC AOD)"
-    ],
-    "similar_processes": [
-      "Erosión eólica unidireccional a gran escala homóloga a Medusae Fossae Formation en Marte",
-      "Formación de barniz del desierto rico en óxidos de hierro/manganeso sobre basaltos",
-      "Transporte de dunas lineales y estrellas de arena en cuenca hiperárida"
-    ],
-    "differences_and_limits": [
-      "Régimen térmico hiper-cálido (frente al régimen criogénico marciano)",
-      "Atmósfera terrestre densa y gravedad 1.0 g",
-      "Ausencia de hielo subsuperficial"
-    ],
-    "exploration_use_cases": [
-      "Pruebas de navegación autónoma de rovers y drones entre corredores de yardangs con oclusión GPS/comunicaciones",
-      "Estudio aerodinámico de abrasión eólica sobre recubrimientos espaciales"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Bajo — sedimentos lacustres pleistocenos compactados bajo meseta basáltica",
-      "extremophiles_note": "Comunidades microbianas xerófilas y termotolerantes extremadamente escasas en suelos salinos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "scores": {
-      "relieve": 0.57,
-      "iluminacion": 0.94,
-      "frio": 0.53,
-      "hielo": 0.94,
-      "polvo": 0.99
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r248_c380",
-      "lat": 30.6218,
-      "lon": 59.1535,
-      "elev_m": 597.03,
-      "slope_mean_deg": 0.704,
-      "slope_p90_deg": 1.069,
-      "relief_local_m": 60.2,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 306.11,
-      "lst_min_k": 278.15,
-      "lst_max_k": 332.4,
-      "lst_amp_k": 27.9,
-      "snow_persist": 0.0043,
-      "aod_mean": 0.2072,
-      "aod_p90": 0.3552,
-      "ndvi_mean": 0.0664,
-      "ndvi_max": 0.075,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "cand_svalbard_12",
-    "name": "Bockfjorden y Mesetas Periglaciares de Spitsbergen (Svalbard)",
-    "country": "Noruega (Ártico)",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (criosférico/sombra polar 78°N)",
-      "Litológico (complejo volcánico en permafrost)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        15.63,
+        15.4,
         78.22
       ]
     },
-    "similar_properties": [
-      "Latitud extrema (78.2° N) con noche polar prolongada y sol rasante (shadow_frac = 1.0 en invierno)",
-      "Permafrost continuo de 100–500 m de espesor y alta persistencia de nieve/hielo (MOD10A2)",
-      "Único lugar en la Tierra donde coexisten centros volcánicos basálticos cuaternarios, tubos/conductos y permafrost polar (análogo dual Luna/Marte)"
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.0865,
+      "permanent_ice_fraction": 0.0538,
+      "elevation_mean_m": 228.8,
+      "elevation_min_m": 0.0,
+      "elevation_max_m": 1045.55,
+      "slope_mean_deg": 18.3,
+      "slope_p90_deg": 56.41,
+      "roughness_m": 235.75,
+      "svf": 0.8787,
+      "lst_mean_k": 256.24,
+      "lst_min_k": 247.02,
+      "lst_day_mean_k": 256.5,
+      "lst_night_mean_k": 255.98,
+      "ice_persistence": 0.9655
+    },
+    "scores": {
+      "relieve": 0.1275,
+      "iluminacion": 0.7751,
+      "frio": 0.7049,
+      "hielo": 0.9549
+    },
+    "similar_values": [
+      "latitud 78.2°N con cuatro meses de noche polar continua",
+      "mesetas despejadas de alto SVF sobre permafrost ártico",
+      "cobertura nival persistente gran parte del año"
     ],
     "similar_processes": [
-      "Congelación profunda de regolito y formación de cuñas de hielo poligonales",
-      "Geometría de iluminación rasante y sombras topográficas kilométricas",
-      "Mineralización de carbonatos en basaltos subpolares (homólogo a meteorito marciano ALH84001)"
+      "ciclos de iluminación polar rasante y gestión energética en baja elevación solar",
+      "dinámica de permafrost y suelo poligonal"
     ],
-    "differences_and_limits": [
-      "Influencia marítima del Atlántico Norte (mayor humedad y nevadas que en McMurdo)",
-      "Atmósfera terrestre y gravedad 1.0 g",
-      "Deshielo de la capa activa superficial (0.5–1.5 m) durante el verano ártico"
+    "earth_limits": [
+      "influencia oceánica del Ártico que modera temperaturas frente a PSR lunares",
+      "gravedad 1.0g y atmósfera terrestre"
     ],
-    "exploration_use_cases": [
-      "Sede de expediciones AMASE (NASA/ESA) para validación de instrumentos de Marte y Luna",
-      "Pruebas de perforación y extracción de agua en permafrost a alta latitud"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Alto — tubos de hielo subglaciares, conductos volcánicos en permafrost y minas criogénicas",
-      "extremophiles_note": "Microorganismos psicrófilos activos a temperaturas sub-cero en películas de salmuera y basalto"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "sentinel1_sar",
-      "sentinel2_sr"
-    ],
-    "scores": {
-      "relieve": 0.51,
-      "iluminacion": 0.97,
-      "frio": 0.32,
-      "hielo": 0.35,
-      "polvo": 0.4
-    },
-    "p1_cell_metrics": {
-      "cell_id": "E15_r479_c100",
-      "lat": 78.4594,
-      "lon": 15.624,
-      "elev_m": 41.94,
-      "slope_mean_deg": 2.986,
-      "slope_p90_deg": 7.174,
-      "relief_local_m": 285.56,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 266.65,
-      "lst_min_k": 260.17,
-      "lst_max_k": 289.11,
-      "lst_amp_k": 2.44,
-      "snow_persist": 0.3752,
-      "aod_mean": 0.1134,
-      "aod_p90": 0.1437,
-      "ndvi_mean": 0.2058,
-      "ndvi_max": 0.5679,
-      "qc_flag": 0
-    }
+    "exploration_use": "Ensayos de teleoperación con baja elevación solar, comunicaciones polares y microrredes.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r290_c600",
-    "name": "Depresión Eólica de Asia Central (E15_r290_c600)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
+    "_id": "site_07",
+    "name": "Meseta de Thule / Pituffik (Borde Libre de Hielo)",
+    "country": "Groenlandia",
+    "target": "moon_south_pole",
     "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        93.3552,
-        36.5273
-      ]
-    },
-    "scores": {
-      "relieve": 0.94,
-      "iluminacion": 0.99,
-      "frio": 0.76,
-      "hielo": 0.95,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 3332 m y pendiente homóloga (240 m) de 6.1° (p90=12.5°)",
-      "Temperatura mínima superficial MODIS LST de 253.7 K y amplitud diurna de 33.37 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.368 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r290_c600",
-      "lat": 36.5273,
-      "lon": 93.3552,
-      "elev_m": 3331.9,
-      "slope_mean_deg": 6.142,
-      "slope_p90_deg": 12.54,
-      "relief_local_m": 330.94,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 283.42,
-      "lst_min_k": 253.67,
-      "lst_max_k": 320.26,
-      "lst_amp_k": 33.37,
-      "snow_persist": 0.0341,
-      "aod_mean": 0.1934,
-      "aod_p90": 0.3683,
-      "ndvi_mean": 0.0606,
-      "ndvi_max": 0.069,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r306_c587",
-    "name": "Depresión Eólica de Asia Central (E15_r306_c587)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
     "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        91.3342,
-        38.8936
+        -68.7,
+        76.53
       ]
     },
-    "scores": {
-      "relieve": 0.96,
-      "iluminacion": 0.95,
-      "frio": 0.74,
-      "hielo": 0.96,
-      "polvo": 0.99
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.0768,
+      "permanent_ice_fraction": 0.0023,
+      "elevation_mean_m": 130.42,
+      "elevation_min_m": 0.0,
+      "elevation_max_m": 299.87,
+      "slope_mean_deg": 9.25,
+      "slope_p90_deg": 22.89,
+      "roughness_m": 81.15,
+      "svf": 0.9337,
+      "lst_mean_k": 249.46,
+      "lst_min_k": 237.86,
+      "lst_day_mean_k": 250.9,
+      "lst_night_mean_k": 248.02,
+      "ice_persistence": 0.9998
     },
-    "similar_properties": [
-      "Elevación media 3635 m y pendiente homóloga (240 m) de 6.3° (p90=15.8°)",
-      "Temperatura mínima superficial MODIS LST de 250.8 K y amplitud diurna de 28.18 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.392 · Sombra solar máx: 0.00"
+    "scores": {
+      "relieve": 0.7788,
+      "iluminacion": 0.7067,
+      "frio": 0.8686,
+      "hielo": 1.0
+    },
+    "similar_values": [
+      "latitud 76.5°N con régimen polar extremo",
+      "contacto directo entre regolito rocoso expuesto y hielo glaciar",
+      "temperaturas invernales severas y alta reflectancia superficial"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "transición regolito seco a hielo masivo análoga a márgenes de PSR",
+      "iluminación rasante sobre crestas costeras"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "presencia de atmósfera, viento catabático y precipitaciones",
+      "gravedad 1.0g frente a 0.165g lunar"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r306_c587",
-      "lat": 38.8936,
-      "lon": 91.3342,
-      "elev_m": 3635.13,
-      "slope_mean_deg": 6.333,
-      "slope_p90_deg": 15.836,
-      "relief_local_m": 384.54,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 278.28,
-      "lst_min_k": 250.78,
-      "lst_max_k": 309.75,
-      "lst_amp_k": 28.18,
-      "snow_persist": 0.0593,
-      "aod_mean": 0.1847,
-      "aod_p90": 0.3917,
-      "ndvi_mean": 0.0594,
-      "ndvi_max": 0.0669,
-      "qc_flag": 0
-    }
+    "exploration_use": "Pruebas de radares de penetración terrestre (GPR) para mapeo de hielo subsuperficial.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r122_cm581",
-    "name": "Escarpe Volcánico Centroamericano (E15_r122_c-581)",
-    "country": "El Salvador / Guatemala (Cinturón Volcánico C.A.)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
+    "_id": "site_08",
+    "name": "Cráter El Boquerón (Volcán de San Salvador)",
+    "country": "El Salvador",
+    "target": "moon_lava_tube",
+    "analog_type": "morphologic",
     "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -90.246,
-        14.5555
+        -89.29,
+        13.73
       ]
     },
-    "scores": {
-      "relieve": 0.95,
-      "iluminacion": 0.99,
-      "frio": 0.75,
-      "hielo": 0.92,
-      "polvo": 0.96
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.943,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 1140.64,
+      "elevation_min_m": 570.42,
+      "elevation_max_m": 1942.47,
+      "slope_mean_deg": 14.37,
+      "slope_p90_deg": 24.95,
+      "roughness_m": 300.55,
+      "svf": 0.8778,
+      "lst_mean_k": 296.32,
+      "lst_min_k": 289.38,
+      "lst_day_mean_k": 301.58,
+      "lst_night_mean_k": 291.06,
+      "ice_persistence": 0.0497
     },
-    "similar_properties": [
-      "Elevación media 1844 m y pendiente homóloga (240 m) de 14.7° (p90=22.0°)",
-      "Temperatura mínima superficial MODIS LST de 284.8 K y amplitud diurna de 8.64 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.311 · Sombra solar máx: 0.00"
+    "scores": {
+      "relieve": 0.9389,
+      "iluminacion": 0.3269,
+      "frio": 0.1779,
+      "hielo": 0.6084
+    },
+    "similar_values": [
+      "cráter de colapso profundo con paredes basáltico-andesíticas escarpadas",
+      "latitud tropical baja comparable al cinturón ecuatorial lunar",
+      "oclusión topográfica marcada en el fondo del cráter"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "colapso gravitacional de paredes volcánicas y taludes de bloques",
+      "restricción de línea de vista y visibilidad del cielo (SVF reducido) para comunicaciones"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "cobertura vegetal tropical en laderas (exenta por ser análogo geomorfológico de subsuelo)",
+      "resolución DEM 90 m no resuelve claraboyas métricas individuales (< 90 m)",
+      "gravedad 1.0g y atmósfera húmeda frente a vacío lunar"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Conductos de drenaje basáltico, coladas escoriáceas y cráteres de colapso",
-      "extremophiles_note": "Comunidades termófilas/acidófilas en fumarolas y biopelículas de cavidades basálticas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r122_c-581",
-      "lat": 14.5555,
-      "lon": -90.246,
-      "elev_m": 1843.95,
-      "slope_mean_deg": 14.708,
-      "slope_p90_deg": 21.966,
-      "relief_local_m": 803.07,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 290.44,
-      "lst_min_k": 284.8,
-      "lst_max_k": 293.9,
-      "lst_amp_k": 8.64,
-      "snow_persist": 0.0,
-      "aod_mean": 0.1854,
-      "aod_p90": 0.3107,
-      "ndvi_mean": 0.7536,
-      "ndvi_max": 0.8702,
-      "qc_flag": 0
-    }
+    "exploration_use": "Pruebas de descenso por cable/rapel de rovers en escarpes volcánicos y relés de comunicación en cráteres.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r231_cm109",
-    "name": "Campo Volcánico y Tubos de Lava Canarios (E15_r231_c-109)",
-    "country": "España (Lanzarote / Tenerife, Canarias)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
+    "_id": "site_09",
+    "name": "Volcán Chaparrastique (San Miguel)",
+    "country": "El Salvador",
+    "target": "moon_lava_tube",
+    "analog_type": "morphologic",
     "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -16.8677,
-        28.333
+        -88.27,
+        13.43
       ]
     },
-    "scores": {
-      "relieve": 0.93,
-      "iluminacion": 0.99,
-      "frio": 0.69,
-      "hielo": 0.95,
-      "polvo": 0.99
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.9691,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 753.31,
+      "elevation_min_m": 102.47,
+      "elevation_max_m": 2103.8,
+      "slope_mean_deg": 14.46,
+      "slope_p90_deg": 27.24,
+      "roughness_m": 408.18,
+      "svf": 0.8351,
+      "lst_mean_k": 299.11,
+      "lst_min_k": 291.09,
+      "lst_day_mean_k": 304.78,
+      "lst_night_mean_k": 293.43,
+      "ice_persistence": 0.0207
     },
-    "similar_properties": [
-      "Elevación media 646 m y pendiente homóloga (240 m) de 18.0° (p90=31.2°)",
-      "Temperatura mínima superficial MODIS LST de 284.5 K y amplitud diurna de 10.02 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.224 · Sombra solar máx: 0.04"
+    "scores": {
+      "relieve": 0.9474,
+      "iluminacion": 0.3316,
+      "frio": 0.1591,
+      "hielo": 0.813
+    },
+    "similar_values": [
+      "coladas basálticas jóvenes de escoria y bloques con alta rugosidad",
+      "pendientes pronunciadas en cono y flancos volcánicos",
+      "ausencia de cobertura nival/hielo"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "emplazamiento de flujos basálticos 'aa' y 'pahoehoe' y conductos lávicos",
+      "tránsito sobre regolito volcánico suelto y clastos angulosos"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "vegetación tropical en sectores bajos (exenta en curados)",
+      "resolución DEM 90 m limita detección de oquedades sub-pixel",
+      "gravedad 1.0g, atmósfera y meteorización húmeda"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Tubos de lava basáltica, jameos de colapso y campos de piroclastos",
-      "extremophiles_note": "Biomineralización subterránea en tubos volcánicos oligotróficos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r231_c-109",
-      "lat": 28.333,
-      "lon": -16.8677,
-      "elev_m": 645.99,
-      "slope_mean_deg": 18.006,
-      "slope_p90_deg": 31.211,
-      "relief_local_m": 1805.1,
-      "shadow_frac_max": 0.0357,
-      "lst_mean_k": 293.01,
-      "lst_min_k": 284.51,
-      "lst_max_k": 302.21,
-      "lst_amp_k": 10.02,
-      "snow_persist": 0.0029,
-      "aod_mean": 0.147,
-      "aod_p90": 0.2242,
-      "ndvi_mean": 0.4358,
-      "ndvi_max": 0.658,
-      "qc_flag": 0
-    }
+    "exploration_use": "Evaluación de tracción de ruedas/patas sobre coladas basálticas jóvenes y mapeo LiDAR de conductos.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r309_c607",
-    "name": "Depresión Eólica de Asia Central (E15_r309_c607)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
+    "_id": "site_10",
+    "name": "Parque Nacional Volcán Masaya (Cráter Santiago)",
+    "country": "Nicaragua",
+    "target": "moon_lava_tube",
+    "analog_type": "morphologic",
     "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        94.4435,
-        39.3459
+        -86.16,
+        11.98
       ]
     },
-    "scores": {
-      "relieve": 0.97,
-      "iluminacion": 0.94,
-      "frio": 0.73,
-      "hielo": 0.99,
-      "polvo": 0.92
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.8928,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 280.82,
+      "elevation_min_m": 198.38,
+      "elevation_max_m": 449.69,
+      "slope_mean_deg": 3.29,
+      "slope_p90_deg": 6.03,
+      "roughness_m": 48.25,
+      "svf": 0.9707,
+      "lst_mean_k": 299.13,
+      "lst_min_k": 290.94,
+      "lst_day_mean_k": 303.79,
+      "lst_night_mean_k": 294.48,
+      "ice_persistence": 0.0002
     },
-    "similar_properties": [
-      "Elevación media 3491 m y pendiente homóloga (240 m) de 7.1° (p90=14.8°)",
-      "Temperatura mínima superficial MODIS LST de 251.0 K y amplitud diurna de 27.42 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.315 · Sombra solar máx: 0.00"
+    "scores": {
+      "relieve": 0.3101,
+      "iluminacion": 0.3494,
+      "frio": 0.1589,
+      "hielo": 0.998
+    },
+    "similar_values": [
+      "cráteres de pozo (pit craters) basálticos con paredes subverticales",
+      "tubos de lava conocidos en el complejo volcánico (Cueva Tzinaconostoc)",
+      "latitud ecuatorial/tropical baja (~12°N)"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "formación de pit craters por drenaje de cámara magmática y colapso de techo",
+      "aislamiento térmico y geométrico en cavernas basálticas"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "desgasificación volcánica activa e hidrotermalismo ausentes en Mare Tranquillitatis",
+      "resolución DEM 90 m no resuelve entradas de cuevas individuales",
+      "gravedad 1.0g y atmósfera terrestre"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r309_c607",
-      "lat": 39.3459,
-      "lon": 94.4435,
-      "elev_m": 3490.92,
-      "slope_mean_deg": 7.089,
-      "slope_p90_deg": 14.83,
-      "relief_local_m": 523.93,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 278.19,
-      "lst_min_k": 251.04,
-      "lst_max_k": 308.62,
-      "lst_amp_k": 27.42,
-      "snow_persist": 0.1786,
-      "aod_mean": 0.1702,
-      "aod_p90": 0.3148,
-      "ndvi_mean": 0.0779,
-      "ndvi_max": 0.106,
-      "qc_flag": 0
-    }
+    "exploration_use": "Validación de drones/rovers exploradores de cavernas con SLAM sin GPS y mapeo 3D subterráneo.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r121_cm572",
-    "name": "Escarpe Volcánico Centroamericano (E15_r121_c-572)",
-    "country": "El Salvador / Guatemala (Cinturón Volcánico C.A.)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "_id": "site_11",
+    "name": "Lava Beds National Monument",
+    "country": "California, EE. UU.",
+    "target": "moon_lava_tube",
+    "analog_type": "morphologic",
+    "is_understudied": false,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -88.8468,
-        14.4341
+        -121.51,
+        41.71
       ]
     },
-    "scores": {
-      "relieve": 0.92,
-      "iluminacion": 0.99,
-      "frio": 0.73,
-      "hielo": 0.91,
-      "polvo": 0.99
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.8131,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 1473.33,
+      "elevation_min_m": 1286.91,
+      "elevation_max_m": 1857.91,
+      "slope_mean_deg": 4.39,
+      "slope_p90_deg": 8.63,
+      "roughness_m": 122.64,
+      "svf": 0.9593,
+      "lst_mean_k": 278.67,
+      "lst_min_k": 263.22,
+      "lst_day_mean_k": 287.02,
+      "lst_night_mean_k": 270.32,
+      "ice_persistence": 0.0973
     },
-    "similar_properties": [
-      "Elevación media 1741 m y pendiente homóloga (240 m) de 13.7° (p90=23.1°)",
-      "Temperatura mínima superficial MODIS LST de 286.4 K y amplitud diurna de 8.04 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.241 · Sombra solar máx: 0.00"
+    "scores": {
+      "relieve": 0.3461,
+      "iluminacion": 0.1073,
+      "frio": 0.3603,
+      "hielo": 0.3779
+    },
+    "similar_values": [
+      "mayor concentración de tubos de lava basálticos y claraboyas en Norteamérica",
+      "bloques de colapso (breakdown) y pisos internos planos",
+      "ausencia de hielo superficial persistente en verano"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "propagación térmica en conductos basálticos y colapso de claraboyas",
+      "atenuación de señales de radio en túneles volcánicos"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "vegetación semiárida superficial (exenta por ser sitio curado de subsuelo)",
+      "resolución DEM 90 m promedia claraboyas de < 50 m",
+      "gravedad 1.0g y atmósfera terrestre"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Conductos de drenaje basáltico, coladas escoriáceas y cráteres de colapso",
-      "extremophiles_note": "Comunidades termófilas/acidófilas en fumarolas y biopelículas de cavidades basálticas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r121_c-572",
-      "lat": 14.4341,
-      "lon": -88.8468,
-      "elev_m": 1740.84,
-      "slope_mean_deg": 13.747,
-      "slope_p90_deg": 23.132,
-      "relief_local_m": 1060.76,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 291.45,
-      "lst_min_k": 286.39,
-      "lst_max_k": 294.99,
-      "lst_amp_k": 8.04,
-      "snow_persist": 0.004,
-      "aod_mean": 0.1358,
-      "aod_p90": 0.2406,
-      "ndvi_mean": 0.7132,
-      "ndvi_max": 0.8891,
-      "qc_flag": 0
-    }
+    "exploration_use": "Banco estándar NASA/PSTAR para robótica subterránea, hábitats inflables en túneles y detección gravimétrica.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r117_cm564",
-    "name": "Escarpe Volcánico Centroamericano (E15_r117_c-564)",
-    "country": "El Salvador / Guatemala (Cinturón Volcánico C.A.)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "_id": "site_12",
+    "name": "Craters of the Moon National Monument",
+    "country": "Idaho, EE. UU.",
+    "target": "moon_lava_tube",
+    "analog_type": "morphologic",
+    "is_understudied": false,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -87.6031,
-        13.9494
+        -113.56,
+        43.46
       ]
     },
-    "scores": {
-      "relieve": 0.98,
-      "iluminacion": 0.99,
-      "frio": 0.65,
-      "hielo": 0.9,
-      "polvo": 0.99
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.6077,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 1822.06,
+      "elevation_min_m": 1679.19,
+      "elevation_max_m": 2346.73,
+      "slope_mean_deg": 6.42,
+      "slope_p90_deg": 21.18,
+      "roughness_m": 132.77,
+      "svf": 0.9346,
+      "lst_mean_k": 272.15,
+      "lst_min_k": 254.46,
+      "lst_day_mean_k": 279.37,
+      "lst_night_mean_k": 264.94,
+      "ice_persistence": 0.6336
     },
-    "similar_properties": [
-      "Elevación media 1300 m y pendiente homóloga (240 m) de 15.4° (p90=25.0°)",
-      "Temperatura mínima superficial MODIS LST de 289.9 K y amplitud diurna de 7.63 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.340 · Sombra solar máx: 0.00"
+    "scores": {
+      "relieve": 0.424,
+      "iluminacion": 0.1004,
+      "frio": 0.4677,
+      "hielo": 0.0018
+    },
+    "similar_values": [
+      "campos extensos de basaltos de inundación con tubos y grietas",
+      "pendientes moderadas a escarpadas en conos y coladas",
+      "baja cobertura arbórea"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "morfología de basaltos de inundación análoga a maria lunares",
+      "colapso de techos de tubos de lava y formación de trincheras"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "latitud media (43°N) con estacionalidad nival invernal",
+      "gravedad 1.0g y atmósfera terrestre"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Conductos de drenaje basáltico, coladas escoriáceas y cráteres de colapso",
-      "extremophiles_note": "Comunidades termófilas/acidófilas en fumarolas y biopelículas de cavidades basálticas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r117_c-564",
-      "lat": 13.9494,
-      "lon": -87.6031,
-      "elev_m": 1299.82,
-      "slope_mean_deg": 15.356,
-      "slope_p90_deg": 24.951,
-      "relief_local_m": 896.77,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 294.77,
-      "lst_min_k": 289.88,
-      "lst_max_k": 298.6,
-      "lst_amp_k": 7.63,
-      "snow_persist": 0.0038,
-      "aod_mean": 0.1655,
-      "aod_p90": 0.3397,
-      "ndvi_mean": 0.7247,
-      "ndvi_max": 0.8521,
-      "qc_flag": 0
-    }
+    "exploration_use": "Entrenamiento geológico de astronautas, caracterización espectral de basaltos y prospección de cavidades.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r124_cm566",
-    "name": "Escarpe Volcánico Centroamericano (E15_r124_c-566)",
-    "country": "El Salvador / Guatemala (Cinturón Volcánico C.A.)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "_id": "site_13",
+    "name": "Cueva de los Verdes / Corona (Lanzarote)",
+    "country": "Islas Canarias, España",
+    "target": "moon_lava_tube",
+    "analog_type": "morphologic",
+    "is_understudied": false,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -87.9141,
-        14.7984
+        -13.44,
+        29.16
       ]
     },
-    "scores": {
-      "relieve": 0.93,
-      "iluminacion": 0.99,
-      "frio": 0.7,
-      "hielo": 0.9,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 1269 m y pendiente homóloga (240 m) de 18.0° (p90=26.6°)",
-      "Temperatura mínima superficial MODIS LST de 288.3 K y amplitud diurna de 7.56 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.320 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Conductos de drenaje basáltico, coladas escoriáceas y cráteres de colapso",
-      "extremophiles_note": "Comunidades termófilas/acidófilas en fumarolas y biopelículas de cavidades basálticas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r124_c-566",
-      "lat": 14.7984,
-      "lon": -87.9141,
-      "elev_m": 1269.04,
-      "slope_mean_deg": 17.958,
-      "slope_p90_deg": 26.597,
-      "relief_local_m": 1006.78,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 292.88,
-      "lst_min_k": 288.32,
-      "lst_max_k": 295.34,
-      "lst_amp_k": 7.56,
-      "snow_persist": 0.0076,
-      "aod_mean": 0.1215,
-      "aod_p90": 0.3202,
-      "ndvi_mean": 0.7227,
-      "ndvi_max": 0.8852,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r287_c609",
-    "name": "Depresión Eólica de Asia Central (E15_r287_c609)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        94.7544,
-        36.0917
-      ]
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.372,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 81.45,
+      "elevation_min_m": 0.0,
+      "elevation_max_m": 587.45,
+      "slope_mean_deg": 3.5,
+      "slope_p90_deg": 10.65,
+      "roughness_m": 116.7,
+      "svf": 0.9772,
+      "lst_mean_k": 292.46,
+      "lst_min_k": 283.37,
+      "lst_day_mean_k": 299.18,
+      "lst_night_mean_k": 285.74,
+      "ice_persistence": 0.0023
     },
     "scores": {
-      "relieve": 0.92,
-      "iluminacion": 0.96,
-      "frio": 0.7,
-      "hielo": 0.97,
-      "polvo": 0.93
+      "relieve": 0.3166,
+      "iluminacion": 0.1763,
+      "frio": 0.2075,
+      "hielo": 0.9773
     },
-    "similar_properties": [
-      "Elevación media 3315 m y pendiente homóloga (240 m) de 7.8° (p90=19.0°)",
-      "Temperatura mínima superficial MODIS LST de 255.2 K y amplitud diurna de 28.93 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.349 · Sombra solar máx: 0.00"
+    "similar_values": [
+      "megatubo volcánico de ~7 km con múltiples jameos (claraboyas)",
+      "terreno basáltico árido prácticamente libre de vegetación",
+      "ausencia total de hielo superficial"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "arquitectura de tubos volcánicos de gran diámetro comparables a tubos lunares",
+      "estabilidad térmica interior frente a variación superficial"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "escala terrestre (~20 m ancho) menor que tubos lunares teóricos (> 100 m por baja gravedad)",
+      "gravedad 1.0g, humedad marina y atmósfera"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r287_c609",
-      "lat": 36.0917,
-      "lon": 94.7544,
-      "elev_m": 3315.35,
-      "slope_mean_deg": 7.766,
-      "slope_p90_deg": 19.035,
-      "relief_local_m": 601.01,
-      "shadow_frac_max": 0.0029,
-      "lst_mean_k": 283.03,
-      "lst_min_k": 255.21,
-      "lst_max_k": 315.11,
-      "lst_amp_k": 28.93,
-      "snow_persist": 0.0666,
-      "aod_mean": 0.1487,
-      "aod_p90": 0.3489,
-      "ndvi_mean": 0.0705,
-      "ndvi_max": 0.0869,
-      "qc_flag": 0
-    }
+    "exploration_use": "Programa ESA PANGAEA: entrenamiento de astronautas y despliegue de robots multi-agente en cuevas.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_rm201_cm444",
-    "name": "Cuenca Hiperárida Andina (E15_r-201_c-444)",
-    "country": "Chile / Argentina (Atacama – Puna)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -68.9476,
-        -24.2768
-      ]
-    },
-    "scores": {
-      "relieve": 0.99,
-      "iluminacion": 0.97,
-      "frio": 0.59,
-      "hielo": 0.94,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 3428 m y pendiente homóloga (240 m) de 6.7° (p90=12.0°)",
-      "Temperatura mínima superficial MODIS LST de 271.0 K y amplitud diurna de 29.95 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.377 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Horizontes de sulfatos, halita, percloratos y regolito hiperárido de altura",
-      "extremophiles_note": "Microorganismos endolíticos y halófilos resistentes a desecación y UV extremo"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r-201_c-444",
-      "lat": -24.2768,
-      "lon": -68.9476,
-      "elev_m": 3427.65,
-      "slope_mean_deg": 6.73,
-      "slope_p90_deg": 12.016,
-      "relief_local_m": 479.63,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 289.18,
-      "lst_min_k": 271.04,
-      "lst_max_k": 312.99,
-      "lst_amp_k": 29.95,
-      "snow_persist": 0.0061,
-      "aod_mean": 0.2041,
-      "aod_p90": 0.3767,
-      "ndvi_mean": 0.0327,
-      "ndvi_max": 0.0424,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r295_c591",
-    "name": "Depresión Eólica de Asia Central (E15_r295_c591)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        91.9561,
-        37.2589
-      ]
-    },
-    "scores": {
-      "relieve": 0.92,
-      "iluminacion": 0.98,
-      "frio": 0.74,
-      "hielo": 0.97,
-      "polvo": 0.85
-    },
-    "similar_properties": [
-      "Elevación media 3570 m y pendiente homóloga (240 m) de 5.9° (p90=15.7°)",
-      "Temperatura mínima superficial MODIS LST de 253.6 K y amplitud diurna de 30.69 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.266 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r295_c591",
-      "lat": 37.2589,
-      "lon": 91.9561,
-      "elev_m": 3569.67,
-      "slope_mean_deg": 5.86,
-      "slope_p90_deg": 15.713,
-      "relief_local_m": 375.6,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 281.36,
-      "lst_min_k": 253.58,
-      "lst_max_k": 314.36,
-      "lst_amp_k": 30.69,
-      "snow_persist": 0.0872,
-      "aod_mean": 0.1548,
-      "aod_p90": 0.2661,
-      "ndvi_mean": 0.0614,
-      "ndvi_max": 0.0753,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r312_c593",
-    "name": "Depresión Eólica de Asia Central (E15_r312_c593)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        92.267,
-        39.801
-      ]
-    },
-    "scores": {
-      "relieve": 0.94,
-      "iluminacion": 0.93,
-      "frio": 0.66,
-      "hielo": 0.94,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 1345 m y pendiente homóloga (240 m) de 6.1° (p90=11.1°)",
-      "Temperatura mínima superficial MODIS LST de 258.3 K y amplitud diurna de 27.02 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.662 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r312_c593",
-      "lat": 39.801,
-      "lon": 92.267,
-      "elev_m": 1344.81,
-      "slope_mean_deg": 6.123,
-      "slope_p90_deg": 11.123,
-      "relief_local_m": 239.44,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 291.82,
-      "lst_min_k": 258.32,
-      "lst_max_k": 326.99,
-      "lst_amp_k": 27.02,
-      "snow_persist": 0.0119,
-      "aod_mean": 0.2557,
-      "aod_p90": 0.6618,
-      "ndvi_mean": 0.0538,
-      "ndvi_max": 0.0617,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r307_c598",
-    "name": "Depresión Eólica de Asia Central (E15_r307_c598)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        93.0443,
-        39.044
-      ]
-    },
-    "scores": {
-      "relieve": 0.95,
-      "iluminacion": 0.91,
-      "frio": 0.67,
-      "hielo": 0.95,
-      "polvo": 0.97
-    },
-    "similar_properties": [
-      "Elevación media 2963 m y pendiente homóloga (240 m) de 7.4° (p90=21.6°)",
-      "Temperatura mínima superficial MODIS LST de 255.9 K y amplitud diurna de 25.62 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.328 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r307_c598",
-      "lat": 39.044,
-      "lon": 93.0443,
-      "elev_m": 2962.55,
-      "slope_mean_deg": 7.416,
-      "slope_p90_deg": 21.637,
-      "relief_local_m": 666.99,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 283.63,
-      "lst_min_k": 255.86,
-      "lst_max_k": 315.4,
-      "lst_amp_k": 25.62,
-      "snow_persist": 0.0161,
-      "aod_mean": 0.2,
-      "aod_p90": 0.3283,
-      "ndvi_mean": 0.0331,
-      "ndvi_max": 0.0454,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r303_c608",
-    "name": "Depresión Eólica de Asia Central (E15_r303_c608)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        94.5989,
-        38.4442
-      ]
-    },
-    "scores": {
-      "relieve": 0.94,
-      "iluminacion": 0.95,
-      "frio": 0.73,
-      "hielo": 0.97,
-      "polvo": 0.8
-    },
-    "similar_properties": [
-      "Elevación media 3407 m y pendiente homóloga (240 m) de 6.2° (p90=15.2°)",
-      "Temperatura mínima superficial MODIS LST de 252.1 K y amplitud diurna de 28.16 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.228 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r303_c608",
-      "lat": 38.4442,
-      "lon": 94.5989,
-      "elev_m": 3407.01,
-      "slope_mean_deg": 6.154,
-      "slope_p90_deg": 15.166,
-      "relief_local_m": 456.15,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 280.56,
-      "lst_min_k": 252.14,
-      "lst_max_k": 316.47,
-      "lst_amp_k": 28.16,
-      "snow_persist": 0.0762,
-      "aod_mean": 0.1437,
-      "aod_p90": 0.2278,
-      "ndvi_mean": 0.0724,
-      "ndvi_max": 0.089,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r307_c580",
-    "name": "Depresión Eólica de Asia Central (E15_r307_c580)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        90.246,
-        39.044
-      ]
-    },
-    "scores": {
-      "relieve": 0.93,
-      "iluminacion": 0.88,
-      "frio": 0.64,
-      "hielo": 0.99,
-      "polvo": 0.94
-    },
-    "similar_properties": [
-      "Elevación media 2768 m y pendiente homóloga (240 m) de 7.6° (p90=19.1°)",
-      "Temperatura mínima superficial MODIS LST de 256.2 K y amplitud diurna de 23.63 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.327 · Sombra solar máx: 0.01"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r307_c580",
-      "lat": 39.044,
-      "lon": 90.246,
-      "elev_m": 2767.73,
-      "slope_mean_deg": 7.644,
-      "slope_p90_deg": 19.103,
-      "relief_local_m": 639.54,
-      "shadow_frac_max": 0.0065,
-      "lst_mean_k": 282.54,
-      "lst_min_k": 256.16,
-      "lst_max_k": 309.97,
-      "lst_amp_k": 23.63,
-      "snow_persist": 0.1215,
-      "aod_mean": 0.1738,
-      "aod_p90": 0.3271,
-      "ndvi_mean": 0.0627,
-      "ndvi_max": 0.0738,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r315_c553",
-    "name": "Depresión Eólica de Asia Central (E15_r315_c553)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        86.0485,
-        40.2591
-      ]
-    },
-    "scores": {
-      "relieve": 0.92,
-      "iluminacion": 0.9,
-      "frio": 0.63,
-      "hielo": 0.94,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 932 m y pendiente homóloga (240 m) de 5.9° (p90=10.7°)",
-      "Temperatura mínima superficial MODIS LST de 258.4 K y amplitud diurna de 24.65 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 1.747 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r315_c553",
-      "lat": 40.2591,
-      "lon": 86.0485,
-      "elev_m": 932.18,
-      "slope_mean_deg": 5.883,
-      "slope_p90_deg": 10.693,
-      "relief_local_m": 147.33,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 291.59,
-      "lst_min_k": 258.36,
-      "lst_max_k": 324.51,
-      "lst_amp_k": 24.65,
-      "snow_persist": 0.0038,
-      "aod_mean": 0.5848,
-      "aod_p90": 1.747,
-      "ndvi_mean": 0.053,
-      "ndvi_max": 0.0602,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_rm211_cm443",
-    "name": "Cuenca Hiperárida Andina (E15_r-211_c-443)",
-    "country": "Chile / Argentina (Atacama – Puna)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -68.7922,
-        -25.5703
-      ]
-    },
-    "scores": {
-      "relieve": 0.98,
-      "iluminacion": 0.99,
-      "frio": 0.69,
-      "hielo": 0.96,
-      "polvo": 0.73
-    },
-    "similar_properties": [
-      "Elevación media 3762 m y pendiente homóloga (240 m) de 6.6° (p90=13.2°)",
-      "Temperatura mínima superficial MODIS LST de 264.5 K y amplitud diurna de 35.88 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.197 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Horizontes de sulfatos, halita, percloratos y regolito hiperárido de altura",
-      "extremophiles_note": "Microorganismos endolíticos y halófilos resistentes a desecación y UV extremo"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r-211_c-443",
-      "lat": -25.5703,
-      "lon": -68.7922,
-      "elev_m": 3761.91,
-      "slope_mean_deg": 6.585,
-      "slope_p90_deg": 13.167,
-      "relief_local_m": 622.36,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 286.74,
-      "lst_min_k": 264.53,
-      "lst_max_k": 316.82,
-      "lst_amp_k": 35.88,
-      "snow_persist": 0.056,
-      "aod_mean": 0.1098,
-      "aod_p90": 0.1973,
-      "ndvi_mean": 0.0567,
-      "ndvi_max": 0.0654,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_rm180_cm440",
-    "name": "Cuenca Hiperárida Andina (E15_r-180_c-440)",
-    "country": "Chile / Argentina (Atacama – Puna)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -68.3258,
-        -21.6008
-      ]
-    },
-    "scores": {
-      "relieve": 0.97,
-      "iluminacion": 0.99,
-      "frio": 0.65,
-      "hielo": 0.96,
-      "polvo": 0.78
-    },
-    "similar_properties": [
-      "Elevación media 3881 m y pendiente homóloga (240 m) de 6.4° (p90=12.1°)",
-      "Temperatura mínima superficial MODIS LST de 268.1 K y amplitud diurna de 33.4 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.225 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Horizontes de sulfatos, halita, percloratos y regolito hiperárido de altura",
-      "extremophiles_note": "Microorganismos endolíticos y halófilos resistentes a desecación y UV extremo"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r-180_c-440",
-      "lat": -21.6008,
-      "lon": -68.3258,
-      "elev_m": 3880.99,
-      "slope_mean_deg": 6.413,
-      "slope_p90_deg": 12.092,
-      "relief_local_m": 580.57,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 288.78,
-      "lst_min_k": 268.07,
-      "lst_max_k": 311.77,
-      "lst_amp_k": 33.4,
-      "snow_persist": 0.0556,
-      "aod_mean": 0.1319,
-      "aod_p90": 0.2251,
-      "ndvi_mean": 0.0627,
-      "ndvi_max": 0.0736,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r297_c616",
-    "name": "Depresión Eólica de Asia Central (E15_r297_c616)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        95.8426,
-        37.5535
-      ]
-    },
-    "scores": {
-      "relieve": 0.98,
-      "iluminacion": 0.87,
-      "frio": 0.64,
-      "hielo": 0.95,
-      "polvo": 0.87
-    },
-    "similar_properties": [
-      "Elevación media 3595 m y pendiente homóloga (240 m) de 6.6° (p90=10.4°)",
-      "Temperatura mínima superficial MODIS LST de 255.0 K y amplitud diurna de 22.69 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.298 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r297_c616",
-      "lat": 37.5535,
-      "lon": 95.8426,
-      "elev_m": 3594.84,
-      "slope_mean_deg": 6.603,
-      "slope_p90_deg": 10.431,
-      "relief_local_m": 362.35,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 280.72,
-      "lst_min_k": 254.96,
-      "lst_max_k": 309.14,
-      "lst_amp_k": 22.69,
-      "snow_persist": 0.016,
-      "aod_mean": 0.1431,
-      "aod_p90": 0.2981,
-      "ndvi_mean": 0.0908,
-      "ndvi_max": 0.106,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r305_c549",
-    "name": "Depresión Eólica de Asia Central (E15_r305_c549)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        85.4266,
-        38.7435
-      ]
-    },
-    "scores": {
-      "relieve": 0.79,
-      "iluminacion": 0.92,
-      "frio": 0.65,
-      "hielo": 0.95,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 1141 m y pendiente homóloga (240 m) de 4.2° (p90=7.8°)",
-      "Temperatura mínima superficial MODIS LST de 258.2 K y amplitud diurna de 26.13 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 2.179 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r305_c549",
-      "lat": 38.7435,
-      "lon": 85.4266,
-      "elev_m": 1140.75,
-      "slope_mean_deg": 4.217,
-      "slope_p90_deg": 7.835,
-      "relief_local_m": 96.6,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 291.87,
-      "lst_min_k": 258.23,
-      "lst_max_k": 323.53,
-      "lst_amp_k": 26.13,
-      "snow_persist": 0.015,
-      "aod_mean": 0.5722,
-      "aod_p90": 2.1794,
-      "ndvi_mean": 0.0556,
-      "ndvi_max": 0.0614,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r312_c616",
-    "name": "Depresión Eólica de Asia Central (E15_r312_c616)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        95.8426,
-        39.801
-      ]
-    },
-    "scores": {
-      "relieve": 0.9,
-      "iluminacion": 0.89,
-      "frio": 0.63,
-      "hielo": 0.98,
-      "polvo": 0.9
-    },
-    "similar_properties": [
-      "Elevación media 2505 m y pendiente homóloga (240 m) de 5.7° (p90=11.4°)",
-      "Temperatura mínima superficial MODIS LST de 257.6 K y amplitud diurna de 24.06 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.315 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r312_c616",
-      "lat": 39.801,
-      "lon": 95.8426,
-      "elev_m": 2504.82,
-      "slope_mean_deg": 5.652,
-      "slope_p90_deg": 11.43,
-      "relief_local_m": 375.74,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 284.62,
-      "lst_min_k": 257.55,
-      "lst_max_k": 314.28,
-      "lst_amp_k": 24.06,
-      "snow_persist": 0.0923,
-      "aod_mean": 0.1545,
-      "aod_p90": 0.3153,
-      "ndvi_mean": 0.0917,
-      "ndvi_max": 0.1153,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_rm218_cm445",
-    "name": "Cuenca Hiperárida Andina (E15_r-218_c-445)",
-    "country": "Chile / Argentina (Atacama – Puna)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -69.1031,
-        -26.4839
-      ]
-    },
-    "scores": {
-      "relieve": 0.93,
-      "iluminacion": 0.98,
-      "frio": 0.64,
-      "hielo": 0.99,
-      "polvo": 0.75
-    },
-    "similar_properties": [
-      "Elevación media 3741 m y pendiente homóloga (240 m) de 7.6° (p90=13.4°)",
-      "Temperatura mínima superficial MODIS LST de 265.2 K y amplitud diurna de 30.81 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.217 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Horizontes de sulfatos, halita, percloratos y regolito hiperárido de altura",
-      "extremophiles_note": "Microorganismos endolíticos y halófilos resistentes a desecación y UV extremo"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r-218_c-445",
-      "lat": -26.4839,
-      "lon": -69.1031,
-      "elev_m": 3740.83,
-      "slope_mean_deg": 7.618,
-      "slope_p90_deg": 13.44,
-      "relief_local_m": 538.02,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 285.65,
-      "lst_min_k": 265.22,
-      "lst_max_k": 313.3,
-      "lst_amp_k": 30.81,
-      "snow_persist": 0.1193,
-      "aod_mean": 0.1141,
-      "aod_p90": 0.2168,
-      "ndvi_mean": 0.0572,
-      "ndvi_max": 0.0791,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r296_c609",
-    "name": "Depresión Eólica de Asia Central (E15_r296_c609)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        94.7544,
-        37.406
-      ]
-    },
-    "scores": {
-      "relieve": 0.62,
-      "iluminacion": 0.99,
-      "frio": 0.75,
-      "hielo": 0.94,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 2896 m y pendiente homóloga (240 m) de 1.5° (p90=2.6°)",
-      "Temperatura mínima superficial MODIS LST de 253.3 K y amplitud diurna de 31.42 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.386 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r296_c609",
-      "lat": 37.406,
-      "lon": 94.7544,
-      "elev_m": 2896.17,
-      "slope_mean_deg": 1.478,
-      "slope_p90_deg": 2.6,
-      "relief_local_m": 107.99,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 283.49,
-      "lst_min_k": 253.35,
-      "lst_max_k": 318.26,
-      "lst_amp_k": 31.42,
-      "snow_persist": 0.0015,
-      "aod_mean": 0.4084,
-      "aod_p90": 0.3859,
-      "ndvi_mean": 0.052,
-      "ndvi_max": 0.0607,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_rm176_cm450",
-    "name": "Cuenca Hiperárida Andina (E15_r-176_c-450)",
-    "country": "Chile / Argentina (Atacama – Puna)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -69.8804,
-        -21.0968
-      ]
-    },
-    "scores": {
-      "relieve": 0.91,
-      "iluminacion": 0.99,
-      "frio": 0.58,
-      "hielo": 0.94,
-      "polvo": 0.86
-    },
-    "similar_properties": [
-      "Elevación media 997 m y pendiente homóloga (240 m) de 5.8° (p90=13.3°)",
-      "Temperatura mínima superficial MODIS LST de 279.2 K y amplitud diurna de 34.11 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.289 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Horizontes de sulfatos, halita, percloratos y regolito hiperárido de altura",
-      "extremophiles_note": "Microorganismos endolíticos y halófilos resistentes a desecación y UV extremo"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r-176_c-450",
-      "lat": -21.0968,
-      "lon": -69.8804,
-      "elev_m": 997.49,
-      "slope_mean_deg": 5.771,
-      "slope_p90_deg": 13.264,
-      "relief_local_m": 385.55,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 299.08,
-      "lst_min_k": 279.18,
-      "lst_max_k": 321.92,
-      "lst_amp_k": 34.11,
-      "snow_persist": 0.0,
-      "aod_mean": 0.1408,
-      "aod_p90": 0.2888,
-      "ndvi_mean": 0.1025,
-      "ndvi_max": 0.1089,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r304_c518",
-    "name": "Depresión Eólica de Asia Central (E15_r304_c518)",
-    "country": "China (Qaidam / Taklamakán)",
-    "target": "mars_surface",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        80.6073,
-        38.5937
-      ]
-    },
-    "scores": {
-      "relieve": 0.85,
-      "iluminacion": 0.89,
-      "frio": 0.61,
-      "hielo": 0.94,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 1276 m y pendiente homóloga (240 m) de 5.0° (p90=12.4°)",
-      "Temperatura mínima superficial MODIS LST de 260.5 K y amplitud diurna de 24.5 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.352 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Estratigrafía evaporítica de paleolagos salinos y campos de yardangs",
-      "extremophiles_note": "Halófilos extremos preservados en costras de cloruros y sulfatos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r304_c518",
-      "lat": 38.5937,
-      "lon": 80.6073,
-      "elev_m": 1275.76,
-      "slope_mean_deg": 5.04,
-      "slope_p90_deg": 12.417,
-      "relief_local_m": 338.16,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 292.02,
-      "lst_min_k": 260.52,
-      "lst_max_k": 322.75,
-      "lst_amp_k": 24.5,
-      "snow_persist": 0.0011,
-      "aod_mean": 0.1963,
-      "aod_p90": 0.3521,
-      "ndvi_mean": 0.0533,
-      "ndvi_max": 0.0618,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r229_cm101",
-    "name": "Campo Volcánico y Tubos de Lava Canarios (E15_r229_c-101)",
-    "country": "España (Lanzarote / Tenerife, Canarias)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -15.624,
-        28.0669
-      ]
-    },
-    "scores": {
-      "relieve": 0.76,
-      "iluminacion": 0.9,
-      "frio": 0.72,
-      "hielo": 0.99,
-      "polvo": 0.88
-    },
-    "similar_properties": [
-      "Elevación media 996 m y pendiente homóloga (240 m) de 9.6° (p90=14.2°)",
-      "Temperatura mínima superficial MODIS LST de 281.4 K y amplitud diurna de 12.35 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.235 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Tubos de lava basáltica, jameos de colapso y campos de piroclastos",
-      "extremophiles_note": "Biomineralización subterránea en tubos volcánicos oligotróficos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r229_c-101",
-      "lat": 28.0669,
-      "lon": -15.624,
-      "elev_m": 996.1,
-      "slope_mean_deg": 9.626,
-      "slope_p90_deg": 14.173,
-      "relief_local_m": 632.18,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 292.06,
-      "lst_min_k": 281.36,
-      "lst_max_k": 305.73,
-      "lst_amp_k": 12.35,
-      "snow_persist": 0.0025,
-      "aod_mean": 0.1289,
-      "aod_p90": 0.235,
-      "ndvi_mean": 0.5847,
-      "ndvi_max": 0.7586,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r113_cm570",
-    "name": "Escarpe Volcánico Centroamericano (E15_r113_c-570)",
-    "country": "El Salvador / Guatemala (Cinturón Volcánico C.A.)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -88.5359,
-        13.4657
-      ]
-    },
-    "scores": {
-      "relieve": 0.87,
-      "iluminacion": 0.99,
-      "frio": 0.62,
-      "hielo": 0.89,
-      "polvo": 0.7
-    },
-    "similar_properties": [
-      "Elevación media 969 m y pendiente homóloga (240 m) de 12.3° (p90=19.7°)",
-      "Temperatura mínima superficial MODIS LST de 292.2 K y amplitud diurna de 7.14 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.112 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Conductos de drenaje basáltico, coladas escoriáceas y cráteres de colapso",
-      "extremophiles_note": "Comunidades termófilas/acidófilas en fumarolas y biopelículas de cavidades basálticas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r113_c-570",
-      "lat": 13.4657,
-      "lon": -88.5359,
-      "elev_m": 968.59,
-      "slope_mean_deg": 12.269,
-      "slope_p90_deg": 19.699,
-      "relief_local_m": 960.79,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 296.17,
-      "lst_min_k": 292.25,
-      "lst_max_k": 299.55,
-      "lst_amp_k": 7.14,
-      "snow_persist": 0.0012,
-      "aod_mean": 0.0714,
-      "aod_p90": 0.1116,
-      "ndvi_mean": 0.76,
-      "ndvi_max": 0.8865,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r445_cm115",
-    "name": "Campo Volcánico Subpolar de Islandia (E15_r445_c-115)",
+    "_id": "site_14",
+    "name": "Campo Volcánico de Krafla / Grjótagjá",
     "country": "Islandia",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "target": "moon_lava_tube",
+    "analog_type": "morphologic",
+    "is_understudied": false,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -17.8005,
-        65.6221
+        -16.78,
+        65.71
       ]
     },
-    "scores": {
-      "relieve": 0.88,
-      "iluminacion": 0.88,
-      "frio": 0.73,
-      "hielo": 0.67,
-      "polvo": 0.88
-    },
-    "similar_properties": [
-      "Elevación media 369 m y pendiente homóloga (240 m) de 12.5° (p90=25.7°)",
-      "Temperatura mínima superficial MODIS LST de 261.9 K y amplitud diurna de 7.17 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.200 · Sombra solar máx: 0.72"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Tubos de lava basáltica y cavidades vulcano-criosféricas",
-      "extremophiles_note": "Quimiolitótrofos en basalto vítreo y cuevas de hielo volcánicas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r445_c-115",
-      "lat": 65.6221,
-      "lon": -17.8005,
-      "elev_m": 368.8,
-      "slope_mean_deg": 12.493,
-      "slope_p90_deg": 25.708,
-      "relief_local_m": 747.51,
-      "shadow_frac_max": 0.7207,
-      "lst_mean_k": 272.61,
-      "lst_min_k": 261.94,
-      "lst_max_k": 292.17,
-      "lst_amp_k": 7.17,
-      "snow_persist": 0.4392,
-      "aod_mean": 0.1397,
-      "aod_p90": 0.2003,
-      "ndvi_mean": 0.2586,
-      "ndvi_max": 0.6773,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r232_cm91",
-    "name": "Campo Volcánico y Tubos de Lava Canarios (E15_r232_c-91)",
-    "country": "España (Lanzarote / Tenerife, Canarias)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -14.0694,
-        28.4662
-      ]
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.1906,
+      "permanent_ice_fraction": 0.0001,
+      "elevation_mean_m": 545.74,
+      "elevation_min_m": 360.91,
+      "elevation_max_m": 806.36,
+      "slope_mean_deg": 8.34,
+      "slope_p90_deg": 22.41,
+      "roughness_m": 79.01,
+      "svf": 0.9234,
+      "lst_mean_k": 266.16,
+      "lst_min_k": 257.12,
+      "lst_day_mean_k": 268.0,
+      "lst_night_mean_k": 264.33,
+      "ice_persistence": 0.896
     },
     "scores": {
-      "relieve": 0.69,
-      "iluminacion": 0.85,
-      "frio": 0.65,
-      "hielo": 0.98,
-      "polvo": 0.85
+      "relieve": 0.5138,
+      "iluminacion": 0.0424,
+      "frio": 0.5943,
+      "hielo": 0.0001
     },
-    "similar_properties": [
-      "Elevación media 297 m y pendiente homóloga (240 m) de 8.5° (p90=14.4°)",
-      "Temperatura mínima superficial MODIS LST de 285.0 K y amplitud diurna de 12.96 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.378 · Sombra solar máx: 0.00"
+    "similar_values": [
+      "fisuras basálticas recientes, cavidades lávicas y regolito vítreo",
+      "bajas temperaturas superficiales y escasa vegetación"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "tectónica extensional en basaltos y formación de oquedades subsuperficiales",
+      "abrasión por ceniza y escoria basáltica"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "latitud subártica (65.7°N) con nieve invernal y actividad geotérmica",
+      "gravedad 1.0g y atmósfera terrestre"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Tubos de lava basáltica, jameos de colapso y campos de piroclastos",
-      "extremophiles_note": "Biomineralización subterránea en tubos volcánicos oligotróficos"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r232_c-91",
-      "lat": 28.4662,
-      "lon": -14.0694,
-      "elev_m": 297.29,
-      "slope_mean_deg": 8.549,
-      "slope_p90_deg": 14.436,
-      "relief_local_m": 565.75,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 295.09,
-      "lst_min_k": 284.98,
-      "lst_max_k": 304.48,
-      "lst_amp_k": 12.96,
-      "snow_persist": 0.0006,
-      "aod_mean": 0.2253,
-      "aod_p90": 0.3775,
-      "ndvi_mean": 0.1247,
-      "ndvi_max": 0.2313,
-      "qc_flag": 0
-    }
+    "exploration_use": "Validación de sensores GPR, trajes EVA y movilidad sobre basalto fracturado frío.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r481_c93",
-    "name": "Meseta Periglaciar de Spitsbergen (E15_r481_c93)",
-    "country": "Svalbard, Noruega",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
+    "_id": "site_15",
+    "name": "Cuenca Hiperárida de Qaidam",
+    "country": "Meseta Tibetana, China",
+    "target": "mars",
     "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "is_understudied": true,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        14.5358,
-        79.6839
+        93.45,
+        37.85
       ]
     },
-    "scores": {
-      "relieve": 0.99,
-      "iluminacion": 0.98,
-      "frio": 0.34,
-      "hielo": 0.76,
-      "polvo": 0.92
-    },
-    "similar_properties": [
-      "Elevación media 416 m y pendiente homóloga (240 m) de 11.9° (p90=34.8°)",
-      "Temperatura mínima superficial MODIS LST de 257.2 K y amplitud diurna de 0.57 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.191 · Sombra solar máx: 1.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Permafrost ártico continuo y conductos criogénicos a >77° N",
-      "extremophiles_note": "Comunidades psicrófilas y litótrofas en regolito congelado"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r481_c93",
-      "lat": 79.6839,
-      "lon": 14.5358,
-      "elev_m": 416.3,
-      "slope_mean_deg": 11.934,
-      "slope_p90_deg": 34.78,
-      "relief_local_m": 593.24,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 263.62,
-      "lst_min_k": 257.18,
-      "lst_max_k": 279.21,
-      "lst_amp_k": 0.57,
-      "snow_persist": 0.9812,
-      "aod_mean": 0.1907,
-      "aod_p90": 0.1907,
-      "ndvi_mean": -0.0787,
-      "ndvi_max": -0.0044,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r440_cm97",
-    "name": "Campo Volcánico Subpolar de Islandia (E15_r440_c-97)",
-    "country": "Islandia",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -15.0021,
-        64.2495
-      ]
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.0,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 2728.88,
+      "elevation_min_m": 2695.69,
+      "elevation_max_m": 2776.91,
+      "slope_mean_deg": 0.85,
+      "slope_p90_deg": 1.67,
+      "roughness_m": 18.91,
+      "svf": 0.995,
+      "lst_mean_k": 273.54,
+      "lst_min_k": 248.92,
+      "lst_day_mean_k": 286.64,
+      "lst_night_mean_k": 260.45,
+      "ice_persistence": 0.0691
     },
     "scores": {
-      "relieve": 0.68,
-      "iluminacion": 0.93,
-      "frio": 0.8,
-      "hielo": 0.81,
-      "polvo": 0.74
+      "relieve": 0.3543,
+      "iluminacion": 0.5828,
+      "frio": 1.0,
+      "hielo": 0.9713
     },
-    "similar_properties": [
-      "Elevación media 41 m y pendiente homóloga (240 m) de 4.5° (p90=20.8°)",
-      "Temperatura mínima superficial MODIS LST de 266.4 K y amplitud diurna de 6.11 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.160 · Sombra solar máx: 0.00"
+    "similar_values": [
+      "planicie hiperárida de alta altitud (~3,000 m) con yardangs y playas salinas",
+      "pendientes suaves (< 5°) y alta apertura topográfica (SVF > 0.85)",
+      "latitud media (~37.8°N) y fuertes amplitudes térmicas"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "deflación eólica intensa, formación de yardangs y dunas",
+      "precipitación de evaporitas (sulfatos y cloruros) análoga a cuencas lacustres marcianas"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "presión atmosférica terrestre (~700 hPa) frente a 6.1 hPa de CO2 en Marte",
+      "gravedad 1.0g frente a 0.38g marciana"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Tubos de lava basáltica y cavidades vulcano-criosféricas",
-      "extremophiles_note": "Quimiolitótrofos en basalto vítreo y cuevas de hielo volcánicas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r440_c-97",
-      "lat": 64.2495,
-      "lon": -15.0021,
-      "elev_m": 40.8,
-      "slope_mean_deg": 4.502,
-      "slope_p90_deg": 20.847,
-      "relief_local_m": 683.1,
-      "shadow_frac_max": 0.0027,
-      "lst_mean_k": 275.37,
-      "lst_min_k": 266.36,
-      "lst_max_k": 289.98,
-      "lst_amp_k": 6.11,
-      "snow_persist": 0.1243,
-      "aod_mean": 0.1173,
-      "aod_p90": 0.16,
-      "ndvi_mean": 0.3017,
-      "ndvi_max": 0.6497,
-      "qc_flag": 0
-    }
+    "exploration_use": "Pruebas de rovers de largo alcance en planicies evaporíticas y espectrómetros Raman/LIBS.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r471_cm564",
-    "name": "Meseta Polar de Devon / Islas Reina Isabel (E15_r471_c-564)",
-    "country": "Nunavut, Ártico Canadiense",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
+    "_id": "site_16",
+    "name": "Puna de Atacama (Salar de Arizaro)",
+    "country": "Salta, Argentina",
+    "target": "mars",
     "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "is_understudied": true,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -87.6031,
-        74.4877
+        -67.75,
+        -24.6
       ]
     },
-    "scores": {
-      "relieve": 0.75,
-      "iluminacion": 0.97,
-      "frio": 0.47,
-      "hielo": 0.77,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 478 m y pendiente homóloga (240 m) de 7.3° (p90=17.2°)",
-      "Temperatura mínima superficial MODIS LST de 241.2 K y amplitud diurna de 2.15 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.275 · Sombra solar máx: 1.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Permafrost continuo en carbonatos y brechas fracturadas de alta latitud",
-      "extremophiles_note": "Biopelículas hipolíticas psicrófilas adaptadas a ciclos de luz polar extrema"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r471_c-564",
-      "lat": 74.4877,
-      "lon": -87.6031,
-      "elev_m": 478.3,
-      "slope_mean_deg": 7.347,
-      "slope_p90_deg": 17.197,
-      "relief_local_m": 487.51,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 256.76,
-      "lst_min_k": 241.18,
-      "lst_max_k": 277.26,
-      "lst_amp_k": 2.15,
-      "snow_persist": 0.9383,
-      "aod_mean": 0.1733,
-      "aod_p90": 0.2749,
-      "ndvi_mean": -0.0488,
-      "ndvi_max": 0.0256,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r439_cm113",
-    "name": "Campo Volcánico Subpolar de Islandia (E15_r439_c-113)",
-    "country": "Islandia",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -17.4895,
-        63.9831
-      ]
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.0,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 3566.54,
+      "elevation_min_m": 3468.32,
+      "elevation_max_m": 4089.8,
+      "slope_mean_deg": 4.12,
+      "slope_p90_deg": 11.44,
+      "roughness_m": 133.12,
+      "svf": 0.9603,
+      "lst_mean_k": 292.79,
+      "lst_min_k": 270.77,
+      "lst_day_mean_k": 307.49,
+      "lst_night_mean_k": 278.1,
+      "ice_persistence": 0.0711
     },
     "scores": {
-      "relieve": 0.85,
-      "iluminacion": 0.9,
-      "frio": 0.8,
-      "hielo": 0.71,
-      "polvo": 0.6
+      "relieve": 0.8025,
+      "iluminacion": 0.6679,
+      "frio": 0.2722,
+      "hielo": 1.0
     },
-    "similar_properties": [
-      "Elevación media 289 m y pendiente homóloga (240 m) de 11.8° (p90=31.1°)",
-      "Temperatura mínima superficial MODIS LST de 265.3 K y amplitud diurna de 8.67 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.107 · Sombra solar máx: 0.22"
+    "similar_values": [
+      "cuenca endorreica hiperárida a ~3,500 m con costras salinas y dunas",
+      "pendientes bajas, horizonte despejado y radiación UV elevada",
+      "baja humedad y latitud subtropical (~24.6°S)"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "formación de costras de halita/yeso y polígonos de desecación",
+      "transporte eólico de polvo fino y arena basáltica"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "atmósfera de N2/O2 mucho más densa que Marte",
+      "gravedad 1.0g frente a 0.38g"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Tubos de lava basáltica y cavidades vulcano-criosféricas",
-      "extremophiles_note": "Quimiolitótrofos en basalto vítreo y cuevas de hielo volcánicas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r439_c-113",
-      "lat": 63.9831,
-      "lon": -17.4895,
-      "elev_m": 288.52,
-      "slope_mean_deg": 11.798,
-      "slope_p90_deg": 31.131,
-      "relief_local_m": 689.91,
-      "shadow_frac_max": 0.2159,
-      "lst_mean_k": 275.28,
-      "lst_min_k": 265.34,
-      "lst_max_k": 294.94,
-      "lst_amp_k": 8.67,
-      "snow_persist": 0.4308,
-      "aod_mean": 0.0666,
-      "aod_p90": 0.107,
-      "ndvi_mean": 0.2172,
-      "ndvi_max": 0.4298,
-      "qc_flag": 0
-    }
+    "exploration_use": "Validación de detección de biofirmas en sales evaporíticas y pruebas de polvo en paneles solares.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r480_c120",
-    "name": "Meseta Periglaciar de Spitsbergen (E15_r480_c120)",
-    "country": "Svalbard, Noruega",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
+    "_id": "site_17",
+    "name": "Valle de la Luna / Yungay (Desierto de Atacama)",
+    "country": "Antofagasta, Chile",
+    "target": "mars",
     "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "is_understudied": false,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        18.7332,
-        79.0548
+        -69.92,
+        -24.08
       ]
     },
-    "scores": {
-      "relieve": 0.91,
-      "iluminacion": 0.99,
-      "frio": 0.34,
-      "hielo": 0.77,
-      "polvo": 0.82
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.0005,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 1034.3,
+      "elevation_min_m": 957.27,
+      "elevation_max_m": 1454.27,
+      "slope_mean_deg": 4.89,
+      "slope_p90_deg": 13.14,
+      "roughness_m": 78.43,
+      "svf": 0.9607,
+      "lst_mean_k": 299.99,
+      "lst_min_k": 280.29,
+      "lst_day_mean_k": 315.79,
+      "lst_night_mean_k": 284.19,
+      "ice_persistence": 0.0019
     },
-    "similar_properties": [
-      "Elevación media 383 m y pendiente homóloga (240 m) de 10.5° (p90=25.1°)",
-      "Temperatura mínima superficial MODIS LST de 257.1 K y amplitud diurna de 1.23 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): bajo albedo polar · Sombra solar máx: 1.00"
+    "scores": {
+      "relieve": 0.9729,
+      "iluminacion": 0.6606,
+      "frio": 0.0,
+      "hielo": 0.0072
+    },
+    "similar_values": [
+      "suelos hiperáridos con nitratos, percloratos y sulfatos",
+      "vegetación prácticamente nula y pendientes suaves a moderadas",
+      "latitud ~24°S con alta insolación"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "acumulación atmosférica de sales oxidantes en ausencia de lavado hídrico",
+      "preservación extrema de materia orgánica en regolito seco"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "presencia de niebla costera ocasional (camanchaca) en sectores occidentales",
+      "gravedad 1.0g y atmósfera terrestre"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Permafrost ártico continuo y conductos criogénicos a >77° N",
-      "extremophiles_note": "Comunidades psicrófilas y litótrofas en regolito congelado"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r480_c120",
-      "lat": 79.0548,
-      "lon": 18.7332,
-      "elev_m": 382.65,
-      "slope_mean_deg": 10.484,
-      "slope_p90_deg": 25.142,
-      "relief_local_m": 566.42,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 261.42,
-      "lst_min_k": 257.06,
-      "lst_max_k": 274.78,
-      "lst_amp_k": 1.23,
-      "snow_persist": 1.0,
-      "aod_mean": null,
-      "aod_p90": null,
-      "ndvi_mean": -0.073,
-      "ndvi_max": -0.0183,
-      "qc_flag": 8
-    }
+    "exploration_use": "Calibración de instrumentos de astrobiología (perforación y detección orgánica) para misiones tipo Rosalind Franklin/MSR.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r477_c99",
-    "name": "Meseta Periglaciar de Spitsbergen (E15_r477_c99)",
-    "country": "Svalbard, Noruega",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
+    "_id": "site_18",
+    "name": "Wadi Rum (Desierto Basáltico-Arenisco)",
+    "country": "Jordania",
+    "target": "mars",
+    "analog_type": "morphologic",
+    "is_understudied": false,
+    "is_curated": true,
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        35.42,
+        29.57
+      ]
+    },
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.0186,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 1115.02,
+      "elevation_min_m": 866.2,
+      "elevation_max_m": 1724.37,
+      "slope_mean_deg": 15.85,
+      "slope_p90_deg": 38.32,
+      "roughness_m": 173.27,
+      "svf": 0.7849,
+      "lst_mean_k": 291.72,
+      "lst_min_k": 276.92,
+      "lst_day_mean_k": 299.75,
+      "lst_night_mean_k": 283.69,
+      "ice_persistence": 0.0014
+    },
+    "scores": {
+      "relieve": 0.0664,
+      "iluminacion": 0.8265,
+      "frio": 0.3127,
+      "hielo": 0.0
+    },
+    "similar_values": [
+      "latitud 29.6°N coincidente con banda subtropical marciana",
+      "arenas ricas en óxidos de hierro sobre planicies y mesas",
+      "horizonte despejado y cielo árido"
+    ],
+    "similar_processes": [
+      "saltación eólica sobre sustratos duros y abanicos aluviales secos",
+      "oxidación superficial de hierro en areniscas"
+    ],
+    "earth_limits": [
+      "litología dominada por areniscas cuarcíticas frente a basaltos marcianos",
+      "gravedad 1.0g y atmósfera terrestre"
+    ],
+    "exploration_use": "Pruebas de hábitats análogos (AMADEE), logística EVA y navegación autónoma de rovers.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
+  },
+  {
+    "_id": "site_19",
+    "name": "Río Tinto (Faja Pirítica Ibérica)",
+    "country": "Huelva, España",
+    "target": "mars",
     "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "is_understudied": false,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        15.4685,
-        77.3514
+        -6.55,
+        37.7
       ]
     },
-    "scores": {
-      "relieve": 0.83,
-      "iluminacion": 0.98,
-      "frio": 0.35,
-      "hielo": 0.77,
-      "polvo": 0.82
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.7868,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 372.05,
+      "elevation_min_m": 177.5,
+      "elevation_max_m": 683.63,
+      "slope_mean_deg": 8.8,
+      "slope_p90_deg": 17.4,
+      "roughness_m": 85.16,
+      "svf": 0.9277,
+      "lst_mean_k": 285.85,
+      "lst_min_k": 276.59,
+      "lst_day_mean_k": 290.81,
+      "lst_night_mean_k": 280.89,
+      "ice_persistence": 0.0315
     },
-    "similar_properties": [
-      "Elevación media 692 m y pendiente homóloga (240 m) de 8.8° (p90=22.8°)",
-      "Temperatura mínima superficial MODIS LST de 254.8 K y amplitud diurna de 1.34 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): bajo albedo polar · Sombra solar máx: 1.00"
+    "scores": {
+      "relieve": 0.3867,
+      "iluminacion": 0.7008,
+      "frio": 0.5346,
+      "hielo": 0.4319
+    },
+    "similar_values": [
+      "depósitos masivos de jarosita, hematita y sulfatos de hierro",
+      "latitud ~37.7°N y pendientes moderadas de cuenca minera/fluvial"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "alteración ácida sulfatada análoga a Meridiani Planum y Gale",
+      "precipitación de óxidos de hierro en ambientes ácidos"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "presencia de agua líquida superficial permanente y vegetación mediterránea circundante (exenta en curados)",
+      "gravedad 1.0g y atmósfera terrestre"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Permafrost ártico continuo y conductos criogénicos a >77° N",
-      "extremophiles_note": "Comunidades psicrófilas y litótrofas en regolito congelado"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r477_c99",
-      "lat": 77.3514,
-      "lon": 15.4685,
-      "elev_m": 692.48,
-      "slope_mean_deg": 8.822,
-      "slope_p90_deg": 22.849,
-      "relief_local_m": 549.82,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 261.82,
-      "lst_min_k": 254.81,
-      "lst_max_k": 274.24,
-      "lst_amp_k": 1.34,
-      "snow_persist": 1.0,
-      "aod_mean": null,
-      "aod_p90": null,
-      "ndvi_mean": -0.0765,
-      "ndvi_max": -0.0265,
-      "qc_flag": 8
-    }
+    "exploration_use": "Pruebas de perforación (proyecto MARTE) y espectrometría Mössbauer/Raman para minerales hidratados.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   },
   {
-    "_id": "p1_e15_r473_cm555",
-    "name": "Meseta Polar de Devon / Islas Reina Isabel (E15_r473_c-555)",
-    "country": "Nunavut, Ártico Canadiense",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
+    "_id": "site_20",
+    "name": "Meseta de Hanksville / MDRS (Utah)",
+    "country": "Utah, EE. UU.",
+    "target": "mars",
+    "analog_type": "morphologic",
+    "is_understudied": false,
+    "is_curated": true,
     "location": {
       "type": "Point",
       "coordinates": [
-        -86.204,
-        75.3812
+        -110.78,
+        38.41
       ]
     },
-    "scores": {
-      "relieve": 0.75,
-      "iluminacion": 0.97,
-      "frio": 0.52,
-      "hielo": 0.59,
-      "polvo": 0.89
-    },
-    "similar_properties": [
-      "Elevación media 361 m y pendiente homóloga (240 m) de 7.1° (p90=18.2°)",
-      "Temperatura mínima superficial MODIS LST de 236.7 K y amplitud diurna de 2.18 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.214 · Sombra solar máx: 1.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Permafrost continuo en carbonatos y brechas fracturadas de alta latitud",
-      "extremophiles_note": "Biopelículas hipolíticas psicrófilas adaptadas a ciclos de luz polar extrema"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r473_c-555",
-      "lat": 75.3812,
-      "lon": -86.204,
-      "elev_m": 361.41,
-      "slope_mean_deg": 7.14,
-      "slope_p90_deg": 18.178,
-      "relief_local_m": 512.19,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 254.65,
-      "lst_min_k": 236.7,
-      "lst_max_k": 281.08,
-      "lst_amp_k": 2.18,
-      "snow_persist": 0.6261,
-      "aod_mean": 0.2144,
-      "aod_p90": 0.2144,
-      "ndvi_mean": -0.0049,
-      "ndvi_max": 0.1756,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r475_cm579",
-    "name": "Meseta Polar de Devon / Islas Reina Isabel (E15_r475_c-579)",
-    "country": "Nunavut, Ártico Canadiense",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -89.9351,
-        76.3315
-      ]
+    "metrics": {
+      "worldcover_coverage": true,
+      "vegetation_fraction": 0.0448,
+      "permanent_ice_fraction": 0.0,
+      "elevation_mean_m": 1376.93,
+      "elevation_min_m": 1300.37,
+      "elevation_max_m": 1536.64,
+      "slope_mean_deg": 4.03,
+      "slope_p90_deg": 9.69,
+      "roughness_m": 37.8,
+      "svf": 0.9665,
+      "lst_mean_k": 281.83,
+      "lst_min_k": 258.55,
+      "lst_day_mean_k": 293.73,
+      "lst_night_mean_k": 269.93,
+      "ice_persistence": 0.0263
     },
     "scores": {
-      "relieve": 0.7,
-      "iluminacion": 0.97,
-      "frio": 0.5,
-      "hielo": 0.65,
-      "polvo": 0.85
+      "relieve": 0.7847,
+      "iluminacion": 0.6208,
+      "frio": 0.6866,
+      "hielo": 0.3572
     },
-    "similar_properties": [
-      "Elevación media 187 m y pendiente homóloga (240 m) de 8.2° (p90=16.7°)",
-      "Temperatura mínima superficial MODIS LST de 238.0 K y amplitud diurna de 1.58 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.154 · Sombra solar máx: 1.00"
+    "similar_values": [
+      "latitud 38.4°N, planicies arcillosas (bentonita/esmectita) y canales invertidos",
+      "pendientes bajas en llanuras y escarpes estratificados",
+      "escasa vegetación desértica"
     ],
     "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
+      "preservación de paleocanales fluviales invertidos análogos a Jezero/Eberswalde",
+      "exposición de filosilicatos y sulfatos sedimentarios"
     ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
+    "earth_limits": [
+      "lluvias torrenciales estacionales e intemperismo húmedo ausentes en Marte actual",
+      "gravedad 1.0g y atmósfera terrestre"
     ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Permafrost continuo en carbonatos y brechas fracturadas de alta latitud",
-      "extremophiles_note": "Biopelículas hipolíticas psicrófilas adaptadas a ciclos de luz polar extrema"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r475_c-579",
-      "lat": 76.3315,
-      "lon": -89.9351,
-      "elev_m": 186.61,
-      "slope_mean_deg": 8.176,
-      "slope_p90_deg": 16.671,
-      "relief_local_m": 340.44,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 255.03,
-      "lst_min_k": 237.98,
-      "lst_max_k": 283.02,
-      "lst_amp_k": 1.58,
-      "snow_persist": 0.735,
-      "aod_mean": 0.1536,
-      "aod_p90": 0.1536,
-      "ndvi_mean": -0.0244,
-      "ndvi_max": 0.1356,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r479_c73",
-    "name": "Meseta Periglaciar de Spitsbergen (E15_r479_c73)",
-    "country": "Svalbard, Noruega",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        11.4265,
-        78.4594
-      ]
-    },
-    "scores": {
-      "relieve": 0.89,
-      "iluminacion": 0.98,
-      "frio": 0.32,
-      "hielo": 0.62,
-      "polvo": 0.71
-    },
-    "similar_properties": [
-      "Elevación media 177 m y pendiente homóloga (240 m) de 10.2° (p90=27.6°)",
-      "Temperatura mínima superficial MODIS LST de 260.2 K y amplitud diurna de 1.72 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.111 · Sombra solar máx: 1.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Permafrost ártico continuo y conductos criogénicos a >77° N",
-      "extremophiles_note": "Comunidades psicrófilas y litótrofas en regolito congelado"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r479_c73",
-      "lat": 78.4594,
-      "lon": 11.4265,
-      "elev_m": 176.56,
-      "slope_mean_deg": 10.171,
-      "slope_p90_deg": 27.587,
-      "relief_local_m": 549.24,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 266.65,
-      "lst_min_k": 260.25,
-      "lst_max_k": 284.47,
-      "lst_amp_k": 1.72,
-      "snow_persist": 0.7792,
-      "aod_mean": 0.1027,
-      "aod_p90": 0.111,
-      "ndvi_mean": 0.009,
-      "ndvi_max": 0.2111,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r470_cm598",
-    "name": "Meseta Polar de Devon / Islas Reina Isabel (E15_r470_c-598)",
-    "country": "Nunavut, Ártico Canadiense",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -92.8889,
-        74.0593
-      ]
-    },
-    "scores": {
-      "relieve": 0.49,
-      "iluminacion": 0.97,
-      "frio": 0.51,
-      "hielo": 0.61,
-      "polvo": 0.88
-    },
-    "similar_properties": [
-      "Elevación media 120 m y pendiente homóloga (240 m) de 3.5° (p90=7.6°)",
-      "Temperatura mínima superficial MODIS LST de 237.1 K y amplitud diurna de 2.76 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.285 · Sombra solar máx: 1.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Permafrost continuo en carbonatos y brechas fracturadas de alta latitud",
-      "extremophiles_note": "Biopelículas hipolíticas psicrófilas adaptadas a ciclos de luz polar extrema"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r470_c-598",
-      "lat": 74.0593,
-      "lon": -92.8889,
-      "elev_m": 119.59,
-      "slope_mean_deg": 3.473,
-      "slope_p90_deg": 7.566,
-      "relief_local_m": 210.99,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 256.29,
-      "lst_min_k": 237.11,
-      "lst_max_k": 286.94,
-      "lst_amp_k": 2.76,
-      "snow_persist": 0.6672,
-      "aod_mean": 0.215,
-      "aod_p90": 0.2851,
-      "ndvi_mean": 0.011,
-      "ndvi_max": 0.2385,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r445_cm98",
-    "name": "Campo Volcánico Subpolar de Islandia (E15_r445_c-98)",
-    "country": "Islandia",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -15.1576,
-        65.6221
-      ]
-    },
-    "scores": {
-      "relieve": 0.55,
-      "iluminacion": 0.71,
-      "frio": 0.72,
-      "hielo": 0.65,
-      "polvo": 0.68
-    },
-    "similar_properties": [
-      "Elevación media 424 m y pendiente homóloga (240 m) de 6.0° (p90=12.6°)",
-      "Temperatura mínima superficial MODIS LST de 263.5 K y amplitud diurna de 6.57 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.180 · Sombra solar máx: 0.50"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Tubos de lava basáltica y cavidades vulcano-criosféricas",
-      "extremophiles_note": "Quimiolitótrofos en basalto vítreo y cuevas de hielo volcánicas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r445_c-98",
-      "lat": 65.6221,
-      "lon": -15.1576,
-      "elev_m": 423.73,
-      "slope_mean_deg": 5.953,
-      "slope_p90_deg": 12.578,
-      "relief_local_m": 438.33,
-      "shadow_frac_max": 0.5016,
-      "lst_mean_k": 272.17,
-      "lst_min_k": 263.48,
-      "lst_max_k": 289.02,
-      "lst_amp_k": 6.57,
-      "snow_persist": 0.4543,
-      "aod_mean": 0.1264,
-      "aod_p90": 0.1796,
-      "ndvi_mean": 0.2278,
-      "ndvi_max": 0.5879,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r440_cm125",
-    "name": "Campo Volcánico Subpolar de Islandia (E15_r440_c-125)",
-    "country": "Islandia",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -19.3551,
-        64.2495
-      ]
-    },
-    "scores": {
-      "relieve": 0.52,
-      "iluminacion": 0.64,
-      "frio": 0.72,
-      "hielo": 0.66,
-      "polvo": 0.68
-    },
-    "similar_properties": [
-      "Elevación media 425 m y pendiente homóloga (240 m) de 7.3° (p90=15.6°)",
-      "Temperatura mínima superficial MODIS LST de 262.0 K y amplitud diurna de 6.37 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.192 · Sombra solar máx: 0.61"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Tubos de lava basáltica y cavidades vulcano-criosféricas",
-      "extremophiles_note": "Quimiolitótrofos en basalto vítreo y cuevas de hielo volcánicas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r440_c-125",
-      "lat": 64.2495,
-      "lon": -19.3551,
-      "elev_m": 424.9,
-      "slope_mean_deg": 7.276,
-      "slope_p90_deg": 15.6,
-      "relief_local_m": 345.91,
-      "shadow_frac_max": 0.6063,
-      "lst_mean_k": 272.33,
-      "lst_min_k": 261.96,
-      "lst_max_k": 290.63,
-      "lst_amp_k": 6.37,
-      "snow_persist": 0.4424,
-      "aod_mean": 0.0964,
-      "aod_p90": 0.1916,
-      "ndvi_mean": 0.1137,
-      "ndvi_max": 0.3512,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r475_cm554",
-    "name": "Meseta Polar de Devon / Islas Reina Isabel (E15_r475_c-554)",
-    "country": "Nunavut, Ártico Canadiense",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -86.0485,
-        76.3315
-      ]
-    },
-    "scores": {
-      "relieve": 0.3,
-      "iluminacion": 0.97,
-      "frio": 0.51,
-      "hielo": 0.21,
-      "polvo": 0.99
-    },
-    "similar_properties": [
-      "Elevación media 0 m y pendiente homóloga (240 m) de 0.0° (p90=0.0°)",
-      "Temperatura mínima superficial MODIS LST de 237.1 K y amplitud diurna de 1.84 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.364 · Sombra solar máx: 1.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Permafrost continuo en carbonatos y brechas fracturadas de alta latitud",
-      "extremophiles_note": "Biopelículas hipolíticas psicrófilas adaptadas a ciclos de luz polar extrema"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r475_c-554",
-      "lat": 76.3315,
-      "lon": -86.0485,
-      "elev_m": 0.0,
-      "slope_mean_deg": 0.026,
-      "slope_p90_deg": 0.0,
-      "relief_local_m": 0.0,
-      "shadow_frac_max": 1.0,
-      "lst_mean_k": 256.82,
-      "lst_min_k": 237.06,
-      "lst_max_k": 275.81,
-      "lst_amp_k": 1.84,
-      "snow_persist": 0.0537,
-      "aod_mean": 0.3645,
-      "aod_p90": 0.3645,
-      "ndvi_mean": -0.0724,
-      "ndvi_max": -0.0311,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r117_cm585",
-    "name": "Escarpe Volcánico Centroamericano (E15_r117_c-585)",
-    "country": "El Salvador / Guatemala (Cinturón Volcánico C.A.)",
-    "target": "lava_tubes",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "lithologic",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -90.8678,
-        13.9494
-      ]
-    },
-    "scores": {
-      "relieve": 0.19,
-      "iluminacion": 0.51,
-      "frio": 0.54,
-      "hielo": 0.94,
-      "polvo": 0.61
-    },
-    "similar_properties": [
-      "Elevación media 10 m y pendiente homóloga (240 m) de 0.2° (p90=0.3°)",
-      "Temperatura mínima superficial MODIS LST de 294.3 K y amplitud diurna de 9.38 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.336 · Sombra solar máx: 0.00"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Conductos de drenaje basáltico, coladas escoriáceas y cráteres de colapso",
-      "extremophiles_note": "Comunidades termófilas/acidófilas en fumarolas y biopelículas de cavidades basálticas"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r117_c-585",
-      "lat": 13.9494,
-      "lon": -90.8678,
-      "elev_m": 10.37,
-      "slope_mean_deg": 0.199,
-      "slope_p90_deg": 0.335,
-      "relief_local_m": 11.92,
-      "shadow_frac_max": 0.0,
-      "lst_mean_k": 300.3,
-      "lst_min_k": 294.26,
-      "lst_max_k": 304.89,
-      "lst_amp_k": 9.38,
-      "snow_persist": 0.0,
-      "aod_mean": 0.2078,
-      "aod_p90": 0.336,
-      "ndvi_mean": 0.7456,
-      "ndvi_max": 0.8687,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r427_cm461",
-    "name": "Escudo Cristalino de Nunavik (E15_r427_c-461)",
-    "country": "Nunavik, Quebec (Canadá)",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -71.5905,
-        60.9619
-      ]
-    },
-    "scores": {
-      "relieve": 0.42,
-      "iluminacion": 0.25,
-      "frio": 0.49,
-      "hielo": 0.61,
-      "polvo": 0.81
-    },
-    "similar_properties": [
-      "Elevación media 420 m y pendiente homóloga (240 m) de 2.9° (p90=5.2°)",
-      "Temperatura mínima superficial MODIS LST de 239.2 K y amplitud diurna de 5.88 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 1.010 · Sombra solar máx: 0.03"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Basamento precámbrico cristalino fracturado con permafrost subártico",
-      "extremophiles_note": "Comunidades oligotróficas subárticas en sustrato cristalino desnudo"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r427_c-461",
-      "lat": 60.9619,
-      "lon": -71.5905,
-      "elev_m": 420.3,
-      "slope_mean_deg": 2.929,
-      "slope_p90_deg": 5.215,
-      "relief_local_m": 112.48,
-      "shadow_frac_max": 0.0264,
-      "lst_mean_k": 263.8,
-      "lst_min_k": 239.24,
-      "lst_max_k": 293.37,
-      "lst_amp_k": 5.88,
-      "snow_persist": 0.6722,
-      "aod_mean": 0.5542,
-      "aod_p90": 1.0095,
-      "ndvi_mean": 0.035,
-      "ndvi_max": 0.308,
-      "qc_flag": 0
-    }
-  },
-  {
-    "_id": "p1_e15_r432_cm474",
-    "name": "Escudo Cristalino de Nunavik (E15_r432_c-474)",
-    "country": "Nunavik, Quebec (Canadá)",
-    "target": "moon_south_pole",
-    "region_type": "understudied_discovery",
-    "is_understudied": true,
-    "analog_type": "process",
-    "analog_category": [
-      "Proceso (descubrimiento GEE P1)",
-      "Propiedad (escala homóloga 240 m / 5 km)"
-    ],
-    "location": {
-      "type": "Point",
-      "coordinates": [
-        -73.6115,
-        62.1842
-      ]
-    },
-    "scores": {
-      "relieve": 0.46,
-      "iluminacion": 0.26,
-      "frio": 0.51,
-      "hielo": 0.58,
-      "polvo": 0.71
-    },
-    "similar_properties": [
-      "Elevación media 479 m y pendiente homóloga (240 m) de 3.3° (p90=5.3°)",
-      "Temperatura mínima superficial MODIS LST de 237.7 K y amplitud diurna de 5.84 K",
-      "Espesor óptico de polvo/aerosoles (MODIS MAIAC p90): 0.199 · Sombra solar máx: 0.04"
-    ],
-    "similar_processes": [
-      "Morfometría topográfica evaluada en ventana circular de 5 km homóloga a LRO LOLA y MGS MOLA",
-      "Balance radiativo e insolación/sombra estacional calculada con modelo de elevación Copernicus GLO-30 (2024_1)",
-      "Dinámica superficial sin cubierta vegetal densa verificada con climatología MODIS 2019–2023"
-    ],
-    "differences_and_limits": [
-      "Gravedad terrestre (1.0 g frente a 0.165 g en la Luna y 0.38 g en Marte)",
-      "Presencia de atmósfera terrestre densa y campo geomagnético protector contra radiación GCR/SPE",
-      "Procesos meteorológicos terrestres a tener en cuenta durante ensayos de campo"
-    ],
-    "exploration_use_cases": [
-      "Validación en campo de sensores de navegación óptica/LiDAR, locomoción de rovers y protocolos ISRU",
-      "Muestreo geoquímico y calibración de instrumentación orbital/superficial en sitio poco estudiado"
-    ],
-    "subsurface_and_biology": {
-      "subsurface_potential": "Basamento precámbrico cristalino fracturado con permafrost subártico",
-      "extremophiles_note": "Comunidades oligotróficas subárticas en sustrato cristalino desnudo"
-    },
-    "datasets_used": [
-      "copernicus_dem",
-      "modis_lst",
-      "modis_snow",
-      "modis_aod",
-      "modis_ndvi"
-    ],
-    "p1_cell_metrics": {
-      "cell_id": "E15_r432_c-474",
-      "lat": 62.1842,
-      "lon": -73.6115,
-      "elev_m": 478.89,
-      "slope_mean_deg": 3.31,
-      "slope_p90_deg": 5.346,
-      "relief_local_m": 172.57,
-      "shadow_frac_max": 0.0445,
-      "lst_mean_k": 263.4,
-      "lst_min_k": 237.67,
-      "lst_max_k": 293.26,
-      "lst_amp_k": 5.84,
-      "snow_persist": 0.612,
-      "aod_mean": 0.1754,
-      "aod_p90": 0.1987,
-      "ndvi_mean": 0.0324,
-      "ndvi_max": 0.3347,
-      "qc_flag": 0
-    }
+    "exploration_use": "Simulaciones de misión tripulada (MDRS), geología de campo con rovers y muestreo de arcillas.",
+    "datasets": [
+      "cop-dem-glo-90",
+      "modis-11A2-061",
+      "modis-10A2-061",
+      "esa-worldcover"
+    ]
   }
 ]

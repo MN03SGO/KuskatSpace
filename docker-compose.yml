@@ -1,5 +1,5 @@
 services:
-  # API unificada (api/main.py) — app única del equipo (D7)
+  # Servidor API FastAPI Unificado (TerraAnáloga)
   api:
     build:
       context: .
@@ -21,7 +21,7 @@ services:
     depends_on:
       - mongo
 
-  # MongoDB local (Plan B / respaldo si Atlas falla)
+  # Base de Datos MongoDB local (Plan B / Respaldo local)
   mongo:
     image: mongo:7.0
     container_name: terraanaloga_mongo
@@ -31,61 +31,6 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  # PostGIS / MinIO / Adminer — infra del pipeline geoespacial (fuera del camino crítico)
-  db:
-    image: postgis/postgis:16-3.4
-    container_name: nasa_space_db
-    environment:
-      POSTGRES_USER: Kuskat-space
-      POSTGRES_PASSWORD: kuskat-nasa
-      POSTGRES_DB: Hacka_geo
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U Kuskat-space -d Hacka_geo"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  minio-init:
-    image: alpine:latest
-    container_name: nasa_space_minio_init
-    user: "0:0"
-    command: ["sh", "-c", "chown -R 65532:65532 /data"]
-    volumes:
-      - miniodata:/data
-    restart: "no"
-
-  minio:
-    image: chainguard/minio:latest
-    container_name: nasa_space_minio
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: minio
-      MINIO_ROOT_PASSWORD: minio123
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - miniodata:/data
-    depends_on:
-      minio-init:
-        condition: service_completed_successfully
-
-  adminer:
-    image: adminer
-    container_name: nasa_space_adminer
-    ports:
-      - "8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy
-
 volumes:
-  pgdata:
-  miniodata:
   mongo_data:
     driver: local
