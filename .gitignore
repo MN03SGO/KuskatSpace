@@ -7,19 +7,19 @@ venv/
 env/
 ENV/
 
-# Caché y compilación de Python
+# Cach├® y compilaci├│n de Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# Distribución y empaquetado
+# Distribuci├│n y empaquetado
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# Pruebas y análisis estático
+# Pruebas y an├ílisis est├ítico
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -67,14 +67,14 @@ lerna-debug.log*
 Thumbs.db
 
 # ==========================================
-# Herramientas de IA / configuración local
+# Herramientas de IA / configuraci├│n local
 # ==========================================
 .claude/
 .cursor/
 .aider*
 
 # ==========================================
-# Cachés y artefactos de build adicionales
+# Cach├®s y artefactos de build adicionales
 # ==========================================
 *.tsbuildinfo
 .vite/
@@ -84,3 +84,50 @@ coverage/
 .cache/
 *.tmp
 *.bak
+
+# ==========================================
+# Backend (FastAPI / Mongo / Docker) - aportado por feature/database
+# ==========================================
+.env.*
+!.env.example
+!.env.sample
+.Python
+develop-eggs/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+.installed.cfg
+*.egg
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+*.pid
+docker-compose.override.yml
+pgdata/
+miniodata/
+postgres-data/
+.docker/
+*.sql.gz
+*.dump
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+!.vscode/extensions.json
+!.vscode/settings.json.example
+*~
+*.sublime-project
+*.sublime-workspace
+*.temp
+tmp/
+temp/
