@@ -1,14 +1,30 @@
-# Entornos virtuales (específicamente tu carpeta 'nasa')
-nasa/
+# Entornos virtuales
 venv/
+.venv/
 env/
 ENV/
+nasa/
 
-# Archivos de caché y compilación de Python
+# Python cache & bytecode
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+
+# Variables de entorno y credenciales (NUNCA subir a git)
+.env
+.env.local
+.env.*.local
+
+# Archivos Geoespaciales y Datos Pesados Temporales
+*.tif
+*.tiff
+*.geotiff
+*.nc
+*.hdf
+*.h5
+*.jp2
+data/cache_*.json
 
 # Distribución y empaquetado
 build/
@@ -16,23 +32,10 @@ dist/
 *.egg-info/
 .eggs/
 
-# Herramientas de pruebas y análisis estático
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-
-# Variables de entorno y credenciales
-.env
-
-# Registros (Logs)
-*.log
-
-# Editores e IDEs
+# IDEs y SO
 .vscode/
 .idea/
-*.swp
-*.swo
-
-# Archivos del Sistema Operativo
 .DS_Store
 Thumbs.db
+*.log
+.pytest_cache/

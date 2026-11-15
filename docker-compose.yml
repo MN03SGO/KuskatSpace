@@ -1,0 +1,37 @@
+services:
+  # Servidor API FastAPI
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: terraanaloga_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    env_file:
+      - .env
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+    volumes:
+      - .:/app
+    depends_on:
+      - mongo
+
+  # Base de Datos MongoDB local (Plan B / Respaldo local)
+  mongo:
+    image: mongo:7.0
+    container_name: terraanaloga_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
+    driver: local
+
