@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, ImageOverlay, Rectangle, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -22,7 +22,7 @@ function MapClickSelector({ onSelectPoint }) {
       const { lat, lng } = e.latlng;
       const clampedLat = Math.max(-85, Math.min(85, lat));
       const clampedLng = Math.max(-175, Math.min(175, lng));
-      const newBbox = `${(clampedLng - 1.5).toFixed(2)},${(clampedLat - 1.0).toFixed(2)},${(clampedLng + 1.5).toFixed(2)},${(clampedLat + 1.0).toFixed(2)}`;
+      const newBbox = `${(clampedLng - 4.75).toFixed(2)},${(clampedLat - 3.0).toFixed(2)},${(clampedLng + 4.75).toFixed(2)},${(clampedLat + 3.0).toFixed(2)}`;
       onSelectPoint(newBbox);
     },
   });
@@ -32,17 +32,17 @@ function MapClickSelector({ onSelectPoint }) {
 export default function App() {
   const [bodyMode, setBodyMode] = useState("earth");
   const [gibsDate, setGibsDate] = useState("2024-08-15");
-  const [bbox, setBbox] = useState("-90.1,13.1,-87.6,14.5");
+  const [bbox, setBbox] = useState("-92.5,11.5,-83.0,17.5");
   const [variableFilter, setVariableFilter] = useState("all");
   const [opacity, setOpacity] = useState(0.82);
   const [searchResults, setSearchResults] = useState(null);
   const [processResult, setProcessResult] = useState(null);
-  const [activeSceneLabel, setActiveSceneLabel] = useState("Tierra - Región Mesoamérica");
+  const [activeSceneLabel, setActiveSceneLabel] = useState("Tierra - Cuenca Mesoamericana y Caribe");
   const [loading, setLoading] = useState(false);
 
   const parsedBboxBounds = () => {
     const p = bbox.split(",").map(Number);
-    if (p.length !== 4 || p.some(isNaN)) return [[13.1, -90.1], [14.5, -87.6]];
+    if (p.length !== 4 || p.some(isNaN)) return [[11.5, -92.5], [17.5, -83.0]];
     return [[p[1], p[0]], [p[3], p[2]]];
   };
 
@@ -51,14 +51,14 @@ export default function App() {
     setSearchResults(null);
     setProcessResult(null);
     if (mode === "earth") {
-      setBbox("-90.1,13.1,-87.6,14.5");
-      setActiveSceneLabel("Tierra - Región Mesoamérica");
+      setBbox("-92.5,11.5,-83.0,17.5");
+      setActiveSceneLabel("Tierra - Cuenca Mesoamericana y Caribe");
     } else if (mode === "moon") {
-      setBbox("-30.0,-85.0,30.0,-65.0");
-      setActiveSceneLabel("Luna - Polo Sur / LRO Diviner");
+      setBbox("-60.0,-88.0,60.0,-60.0");
+      setActiveSceneLabel("Luna - Región Polar Sur (LRO Diviner)");
     } else {
-      setBbox("135.0,-6.0,140.0,-3.0");
-      setActiveSceneLabel("Marte - Cráter Gale / NASA PDS");
+      setBbox("-95.0,-20.0,-45.0,5.0");
+      setActiveSceneLabel("Marte - Valles Marineris (NASA PDS)");
     }
   };
 
@@ -326,32 +326,24 @@ export default function App() {
         <MapContainer
           key={bodyMode}
           crs={isEarth ? L.CRS.EPSG3857 : L.CRS.EPSG4326}
-          center={isEarth ? [13.8, -88.9] : [0, 0]}
-          zoom={isEarth ? 5 : 2}
-          minZoom={1}
-          maxZoom={isEarth ? 14 : 6}
-          maxBounds={WORLD_BOUNDS}
-          maxBoundsViscosity={1.0}
+          center={isEarth ? [14.5, -87.8] : bodyMode === "moon" ? [-72, 0] : [-8, -70]}
+          zoom={isEarth ? 6 : 3}
+          minZoom={2}
+          maxZoom={isEarth ? 14 : 7}
+          maxBounds={isEarth ? null : WORLD_BOUNDS}
           style={{ height: "100%", width: "100%", background: "#050811" }}
         >
           {isEarth && (
             <>
-              {/* Capa base satelital de alta disponibilidad (evita pantalla negra a cualquier zoom) */}
               <TileLayer
                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                 attribution="Esri World Imagery"
-                noWrap={true}
-                bounds={WORLD_BOUNDS}
               />
-              {/* Capa orbital diaria NASA Worldview GIBS */}
               <TileLayer
-                key={gibsDate}
-                url={`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/${gibsDate}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`}
+                url="https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg"
                 attribution="NASA Worldview GIBS"
-                maxNativeZoom={9}
-                opacity={0.65}
-                noWrap={true}
-                bounds={WORLD_BOUNDS}
+                maxNativeZoom={8}
+                opacity={0.45}
               />
             </>
           )}

@@ -18,7 +18,7 @@ app.add_middleware(
 
 @app.get("/api/search")
 async def search_catalogs(
-    bbox: str = Query("-90.1,13.1,-87.6,14.5"),
+    bbox: str = Query("-92.5,11.5,-83.0,17.5"),
     start_date: str = Query("2026-10-01"),
     end_date: str = Query("2026-11-10"),
     body: str = Query("earth", enum=["earth", "moon", "mars"]),
@@ -31,12 +31,12 @@ async def search_catalogs(
 @app.post("/api/process")
 def process_scene(
     mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
-    bbox: str = Query("-90.1,13.1,-87.6,14.5"),
+    bbox: str = Query("-92.5,11.5,-83.0,17.5"),
     sample_name: Optional[str] = Query(None),
 ):
     try:
         coords = [float(x) for x in bbox.split(",")]
-        file_path = os.path.join("sample_data", sample_name) if sample_name else None
+        file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sample_data", sample_name) if sample_name else None
         return execute_pipeline(mode=mode, bbox=coords, sample_path=file_path)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
@@ -45,7 +45,7 @@ def process_scene(
 @app.get("/api/export/geotiff")
 def download_processed_geotiff(
     mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
-    bbox: str = Query("-90.1,13.1,-87.6,14.5"),
+    bbox: str = Query("-92.5,11.5,-83.0,17.5"),
 ):
     coords = [float(x) for x in bbox.split(",")]
     tif_bytes = export_geotiff_bytes(mode=mode, bbox=coords)
