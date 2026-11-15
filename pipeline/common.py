@@ -64,3 +64,4 @@ def init_ee():
         raise RuntimeError("Falta GEE_PROJECT_ID en el entorno/.env")
     ee.Initialize(project=project, opt_url="https://earthengine-highvolume.googleapis.com")
     return ee
+

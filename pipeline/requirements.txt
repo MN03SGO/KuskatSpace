@@ -6,3 +6,4 @@ matplotlib==3.11.2
 pystac-client==0.9.1
 planetary-computer==1.0.0
 requests==2.34.2
+

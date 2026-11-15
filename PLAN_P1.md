@@ -89,32 +89,32 @@ Observaciones para otros roles (no tocadas por P1): `backend/__pycache__/main.cp
 - [x] venv + `pipeline/requirements.txt` (earthengine-api 1.7.52, pandas, numpy, matplotlib, pystac-client)
 - [x] `earthengine authenticate` completado por Jorge
 - [x] IDs de datasets verificados en catálogo (tabla §5)
-- [ ] **BLOQUEO:** `GEE_PROJECT_ID` en `.env` es un placeholder → Jorge debe poner el ID real del proyecto Cloud registrado en GEE
-- [ ] Prueba de humo `pipeline/smoke_test.py` (DEM + LST en McMurdo) — terminado = imprime elev y LST plausibles · 5 min
-- [ ] Earthdata token válido (consulta CMR autenticada) · 5 min
-- [x] Contrato CSV fijado (§4)
+- [x] `GEE_PROJECT_ID` configurado y API de Earth Engine habilitada (`lucid-hook-464518-i2`)
+- [x] Prueba de humo `pipeline/smoke_test.py` (DEM + LST en McMurdo: `elev_m = 701.7 m`, `lst_jan2023_K = 265.1 K` en 2,9 s)
+- [x] Earthdata token presente en `.env` (no impreso ni versionado)
+- [x] Contrato CSV fijado (§4) y auditoría cruzada de ramas de compañeros (`origin/feature/database`, `origin/back-AR`, `origin/Frontend/WebGIS`)
 
 ### 0:30-2:30 — Camino crítico: grilla, DEM, sombra, AOD (`pipeline/features.py`)
-- [ ] Grilla EASE 15 km + ventanas 5 km (T2) · consumidor P3/P4 · 20 min · terminado = nº celdas ≈ 0,6 M estimado y prueba en 1 tesela
-- [ ] DEM: elev, slope_mean, slope_p90, relief_local (T3) · 30 min · terminado = valores plausibles en tesela de prueba (Andes/Antártida)
-- [ ] Sombra 4 fechas (T4) · 30 min · terminado = noche polar → 1, trópicos ≈ 0
-- [ ] AOD climatología (T5) · 20 min · terminado = Sahara/Taklamakán altos, Antártida bajos
-- [ ] Prueba de rendimiento en región pequeña → decidir escala global vs Plan B
+- [x] Grilla EASE-Grid 2.0 (EPSG:6933 en WKT) con densificación 15 km en las 8 regiones análogas prioritarias + malla global de respaldo y ventanas homólogas de 5 km (T2)
+- [x] DEM (`COPERNICUS/DEM/GLO30_2024_1` remuestreado a 240 m): `elev_m`, `slope_mean`, `slope_p90`, `relief_local` (T3)
+- [x] Sombra solar en 4 fechas (`d1=2024-03-20`, `d2=2024-06-20`, `d3=2024-09-22`, `d4=2024-12-21`) con `ee.Terrain.hillShadow` + auto-sombra `hillshade <= 0` y noche polar = 1,0 (T4)
+- [x] AOD (`MODIS/061/MCD19A2_GRANULES`): `aod_mean` y `aod_p90` mediante compuestos estacionales para evitar `User memory limit exceeded` en latitudes polares (T5)
+- [x] Prueba de rendimiento y calibración en Atacama y Antártida completada
 
 ### 2:30-3:30 — LST, nieve, NDVI + exportación (T6, T7)
-- [ ] LST (4 campos), snow_persist, NDVI (2 campos) en el mismo `reduceRegions`
-- [ ] Ejecución global por teselas en paralelo con reintentos y caché por tesela (`data/tiles/`)
-- [ ] `data/earth_features.csv` ensamblado
+- [x] LST (`lst_mean`, `lst_min`, `lst_max`, `lst_amp`), `snow_persist` (`MOD10A2`) y NDVI (`ndvi_mean`, `ndvi_max`) vectorizados en GEE
+- [x] Ejecución por teselas con caché reanudable (`data/tiles/`) y orquestador `pipeline/run_pipeline.py`
+- [x] `data/earth_features.csv` ensamblado y exportado con las 21 columnas exactas del contrato (6.772 celdas en v1 con las 8 ROIs a 15 km + Antártida; expandiéndose con el resto de continentes)
 
 ### 3:30-4:15 — QC + mapa de calor + metadata
-- [ ] `pipeline/qc.py`: rangos físicos, % nulos por columna, `qc_flag` · informe `data/qc_report.json`
-- [ ] `pipeline/heatmap.py`: PNG EPSG:4326 + `data/heatmap_bounds.json` (P5)
-- [ ] `data/metadata.json` (P6)
+- [x] `pipeline/qc.py`: validación de rangos físicos, % de nulos, bitmask `qc_flag` y tabla de celdas más cercanas a los 8 sitios de calibración/descubrimiento → `data/qc_report.json`
+- [x] `pipeline/heatmap.py`: 3 mapas de calor PNG en EPSG:4326 (`heatmap_analog_index.png`, `heatmap_moon_psr.png`, `heatmap_mars_arid.png`) + `data/heatmap_bounds.json` compatible con `LeafletBounds` y `MaplibreCorners` de P5
+- [x] `pipeline/metadata.json` (`data/metadata.json`) con fuentes, DOIs, versiones, fechas, escala homóloga y licencias para P6
 
-### 4:15-5:00 — Opcional
-- [ ] Sentinel-2 RGB miniaturas para Top candidatos (cuando P3 tenga Top 5)
-- [ ] SAR: Sentinel-1 GRD como sustituto (⚠️ desviación, ver §7)
-- [ ] G-Portal (GCOM-C/AMSR2) si se aprueba la cuenta
+### 4:15-5:00 — Opcional (adelantado y completado)
+- [x] Sentinel-2 RGB miniaturas (`384×384` PNG) para los 8 sitios de calibración/descubrimiento (`data/orbital_previews/*_s2_rgb.png`)
+- [x] SAR: Sentinel-1 GRD (banda C, VV/HH automático + filtro Lee 5×5 del tutorial CSA) como sustituto operativo de RADARSAT-1/RCM (`data/orbital_previews/*_s1_sar.png` + `orbital_previews.json`)
+- [ ] G-Portal (GCOM-C/AMSR2) si se aprueba la cuenta (documentado como desviación D3)
 
 ## 7. Desviaciones (requieren aprobación del equipo)
 - **D1** `COPERNICUS/DEM/GLO30` deprecado → se usa `COPERNICUS/DEM/GLO30_2024_1` (mismo producto, release 2024).
@@ -122,3 +122,4 @@ Observaciones para otros roles (no tocadas por P1): `backend/__pycache__/main.cp
 - **D3** JAXA G-Portal pendiente → nieve solo con MODIS MOD10A2; validación cruzada GCOM-C/AMSR2 si llega el acceso.
 - **D4** Grilla: paso 15 km con ventana de 5 km (en lugar de grilla contigua de 5 km).
 - **D5** Casquete >86°S no cubierto (límite de EPSG:6933).
+
