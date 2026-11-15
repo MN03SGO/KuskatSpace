@@ -32,6 +32,7 @@ import pandas as pd
 
 from common import DATA, ROOT, get_logger
 import heatmap
+import integrate_p1_candidates
 import metadata
 import qc
 
@@ -47,6 +48,15 @@ PRIORITY_ROIS = [
     ("roi_iceland", -19.5, 63.8, -15.0, 65.8),
     ("roi_danakil", 39.5, 11.5, 42.5, 14.8),
     ("roi_central_america", -91.0, 13.0, -87.5, 15.0),
+    # cinturones áridos, polares y de alta montaña adicionales (cobertura mundial completa):
+    ("roi_sahara_tibesti", 15.0, 19.0, 22.0, 24.0),
+    ("roi_taklamakan_gobi", 80.0, 38.0, 88.0, 42.0),
+    ("roi_lut_iran", 57.0, 29.0, 60.5, 32.0),
+    ("roi_namib_skeleton", 13.5, -25.0, 16.5, -19.0),
+    ("roi_pilbara_australia", 117.0, -24.0, 122.0, -20.5),
+    ("roi_svalbard", 11.0, 77.0, 21.0, 80.0),
+    ("roi_mojave_deathvalley", -118.0, 35.0, -115.0, 37.5),
+    ("roi_lanzarote_teide", -17.0, 28.0, -13.3, 29.3),
 ]
 
 
@@ -62,43 +72,21 @@ def main():
     py = sys.executable
     feat_py = str(ROOT / "pipeline" / "features.py")
 
-    # 1. Densificación 15 km en las 8 regiones análogas prioritarias (rápido: ~2-3 min total)
+    # 1. Densificación 15 km en las regiones análogas prioritarias (teselas de 3° x 3°)
     for tag, w, s, e, n in PRIORITY_ROIS:
         run_cmd([
             py, feat_py,
             "--bbox", str(w), str(s), str(e), str(n),
             "--step-km", "15",
             "--window-m", "5000",
-            "--lat-step", "4",
-            "--lon-step", "6",
-            "--workers", "6",
+            "--lat-step", "3",
+            "--lon-step", "3",
+            "--workers", "4",
             "--tag", f"roi15_{tag}",
         ])
 
-    # 2. Cobertura global: primero las franjas continentales [-55°, +85°] (rápidas)
-    # y luego el resto de la franja polar sur [-85°, -55°] que no esté ya en caché
-    run_cmd([
-        py, feat_py,
-        "--bbox", "-180", "-55", "180", "85",
-        "--step-km", "60",
-        "--window-m", "5000",
-        "--lat-step", "35",
-        "--lon-step", "40",
-        "--workers", "6",
-        "--tag", "global60",
-    ])
-    run_cmd([
-        py, feat_py,
-        "--bbox", "-180", "-85", "180", "-55",
-        "--step-km", "60",
-        "--window-m", "5000",
-        "--lat-step", "30",
-        "--lon-step", "40",
-        "--workers", "4",
-        "--tag", "global60",
-    ])
-
-    # 3. Ensamblado jerárquico (ROI 15 km + Global 60 km)
+    # 2. Las teselas ya descargadas en global60 se conservan e integran en el ensamblado
+    # 3. Ensamblado jerárquico (16 ROIs a 15 km + dorsal global60)
     tiles_root = DATA / "tiles"
     csv_files = sorted(tiles_root.glob("roi15_*/t_*.csv")) + sorted(tiles_root.glob("global60/t_*.csv"))
     parts = [pd.read_csv(p) for p in csv_files if p.stat().st_size > 80]
@@ -128,6 +116,9 @@ def main():
     })
     import json
     (DATA / "metadata.json").write_text(json.dumps(meta_doc, indent=2, ensure_ascii=False))
+
+    # 7. Puente de integración hacia data/candidates.json y data/datasets.json (Contrato §05 5D)
+    integrate_p1_candidates.main()
     log.info("Pipeline principal completado en %.1f min", (time.time() - t0) / 60.0)
 
 

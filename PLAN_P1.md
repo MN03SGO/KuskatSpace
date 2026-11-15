@@ -104,12 +104,13 @@ Observaciones para otros roles (no tocadas por P1): `backend/__pycache__/main.cp
 ### 2:30-3:30 — LST, nieve, NDVI + exportación (T6, T7)
 - [x] LST (`lst_mean`, `lst_min`, `lst_max`, `lst_amp`), `snow_persist` (`MOD10A2`) y NDVI (`ndvi_mean`, `ndvi_max`) vectorizados en GEE
 - [x] Ejecución por teselas con caché reanudable (`data/tiles/`) y orquestador `pipeline/run_pipeline.py`
-- [x] `data/earth_features.csv` ensamblado y exportado con las 21 columnas exactas del contrato (6.772 celdas en v1 con las 8 ROIs a 15 km + Antártida; expandiéndose con el resto de continentes)
+- [x] `data/earth_features.csv` ensamblado y exportado con las 21 columnas exactas del contrato (**13.688 celdas únicas** cubriendo las 16 ROIs análogas a 15 km + dorsal global a 60 km; `qc_flag == 0` en **69,64 %** y usable `0|8` en **71,05 %**)
 
 ### 3:30-4:15 — QC + mapa de calor + metadata
-- [x] `pipeline/qc.py`: validación de rangos físicos, % de nulos, bitmask `qc_flag` y tabla de celdas más cercanas a los 8 sitios de calibración/descubrimiento → `data/qc_report.json`
+- [x] `pipeline/qc.py`: validación de rangos físicos (0 valores fuera de rango), % de nulos, bitmask `qc_flag` y tabla de celdas más cercanas a los sitios de calibración/descubrimiento → `data/qc_report.json`
 - [x] `pipeline/heatmap.py`: 3 mapas de calor PNG en EPSG:4326 (`heatmap_analog_index.png`, `heatmap_moon_psr.png`, `heatmap_mars_arid.png`) + `data/heatmap_bounds.json` compatible con `LeafletBounds` y `MaplibreCorners` de P5
-- [x] `pipeline/metadata.json` (`data/metadata.json`) con fuentes, DOIs, versiones, fechas, escala homóloga y licencias para P6
+- [x] `pipeline/metadata.py` (`data/metadata.json`) con fuentes, DOIs, versiones, fechas, escala homóloga y licencias para P6
+- [x] `pipeline/integrate_p1_candidates.py`: puente P1 → P3/P4 que calcula las **5 dimensiones del IFA** (incluyendo `scores.polvo`), enriquece `data/candidates.json` (**57 candidatos**: 12 sitios curados + 45 descubrimientos GEE con contrato §05 al 100 %) y fusiona `data/datasets.json` (12 fuentes oficiales)
 
 ### 4:15-5:00 — Opcional (adelantado y completado)
 - [x] Sentinel-2 RGB miniaturas (`384×384` PNG) para los 8 sitios de calibración/descubrimiento (`data/orbital_previews/*_s2_rgb.png`)

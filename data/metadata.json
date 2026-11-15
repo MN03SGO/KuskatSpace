@@ -1,7 +1,7 @@
 {
   "project": "TerraAnáloga v2.0 — NASA Space Apps Challenge 2026",
   "role": "P1 — Ingeniero de Datos Terrestres (Jorge)",
-  "generated_at_utc": "2026-11-15T01:40:20Z",
+  "generated_at_utc": "2026-11-15T02:38:13Z",
   "homologous_scale_protocol": {
     "base_dem_resolution_m": 30,
     "homologous_resampled_resolution_m": 240,
@@ -13,10 +13,10 @@
       "global_backbone_step_km": 60,
       "priority_rois_step_km": 15,
       "homologous_window_diameter_m": 5000,
-      "total_cells_exported": 6772,
-      "qc_ok_percent": 53.35,
-      "qc_usable_percent": 55.35,
-      "status": "v1_ready_with_8_priority_rois_and_antarctica_backbone"
+      "total_cells_exported": 13688,
+      "qc_ok_percent": 69.64,
+      "qc_usable_percent": 71.05,
+      "execution_seconds": 110.3
     }
   },
   "solar_shadow_protocol": {
