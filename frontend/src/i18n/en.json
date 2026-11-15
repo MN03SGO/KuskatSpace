@@ -1,0 +1,154 @@
+{
+  "_status": "Version reviewed by P6 (T3, 2026-11-14), pending PM approval. Terms follow docs/p6/glosario.md.",
+  "app": {
+    "title": "TerraAnáloga",
+    "tagline": "Earth analogs of the Moon and Mars",
+    "tabs": {
+      "label": "Modules",
+      "analogs": "Analog finder",
+      "explorer": "Data explorer"
+    },
+    "lang": {
+      "label": "Language",
+      "es": "ES",
+      "en": "EN"
+    }
+  },
+  "analogs": {
+    "placeholderTitle": "We are building the analog finder",
+    "placeholderBody": "Here you will be able to compare sites on Earth with the Moon and Mars (IFA, zone presets, site cards and radar). It is not available yet; in the meantime, use the Data explorer.",
+    "placeholderAction": "Go to the Data explorer"
+  },
+  "bodies": {
+    "label": "Planetary body",
+    "earth": { "label": "Earth (Worldview)", "region": "Earth · Mesoamerican & Caribbean Basin" },
+    "moon": { "label": "Moon (LRO/Diviner)", "region": "Moon · South Polar Region (LRO Diviner)" },
+    "mars": { "label": "Mars (PDS)", "region": "Mars · Valles Marineris (NASA PDS)" }
+  },
+  "explorer": {
+    "mapLabel": "Data explorer map",
+    "view": {
+      "label": "View type",
+      "globe": "3D globe",
+      "map": "2D map"
+    },
+    "globe": {
+      "label": "3D globe of the selected body",
+      "hint": "Drag to rotate · scroll or pinch to zoom · click or tap to move the BBox",
+      "loading": "Loading mosaic {loaded} of {total}",
+      "noWebgl": "Your browser cannot show the 3D globe (WebGL is not available). Switch to the 2D map to continue.",
+      "hintShort": "Drag to rotate · tap or click to move the BBox",
+      "tileErrors": "Some detail did not load; showing the base image of the globe."
+    },
+    "layers": {
+      "title": "Global layers",
+      "hint": "Show one variable over the whole visible surface.",
+      "temperature": "Show temperature",
+      "temperatureModel": "Show temperature (model)",
+      "humidity": "Show humidity",
+      "precipitation": "Show precipitation",
+      "names": {
+        "temperature": "temperature",
+        "humidity": "relative humidity",
+        "precipitation": "precipitation"
+      },
+      "unavailable": {
+        "moon": "The Moon has almost no atmosphere, so there is no humidity or rain. Only temperature is available, calculated with a model.",
+        "mars": "This app has no global humidity or rain data for Mars. Only temperature is available, calculated with a model."
+      },
+      "sources": {
+        "temperature": "NASA AIRS (Aqua satellite): surface air temperature, daytime pass",
+        "humidity": "NASA AIRS (Aqua satellite): surface relative humidity, daytime pass",
+        "precipitation": "NASA GPM IMERG: precipitation rate, one map per day"
+      },
+      "sourceEarth": "Satellite data: {source}. Layer date: {date}.",
+      "dateAdjusted": "The chosen date ({requested}) is very recent: the latest date that is usually published is shown.",
+      "gapsNote": "Empty stripes are areas the satellite did not pass over that day.",
+      "kelvinHint": "Kelvin (K): 273 K equals 0 °C.",
+      "sourceModel": "Approximate model, calculated for this moment ({date} {time} UTC). It is not a measurement or satellite data.",
+      "modelBadge": "Model layer: not a measurement",
+      "subsolar": "Subsolar point (where the Sun is directly overhead): lat. {lat}°, lon. {lon}°",
+      "modelNote": {
+        "moon": "The model uses the Sun's position and gives about 390 K under the Sun, about 95 K at night at the equator and about 40 K at the poles. It ignores relief and thermal inertia, and the Sun's position has an error of about 8°.",
+        "mars": "The model uses the Sun's position and gives about 290 K under the Sun and 150–190 K at night. It ignores dust, relief and thermal inertia."
+      },
+      "legendLabel": "{name} scale: from {min} to {max} {unit}",
+      "legendLabelLog": "Logarithmic scale of {name}: from {min} to {max} {unit} or more",
+      "logScale": "logarithmic scale",
+      "opacity": "Layer opacity: {value}%",
+      "loading": "Loading layer {loaded} of {total}",
+      "failed": "There is no image of this layer for that date (some days are not published). Try another date."
+    },
+    "mapHint": "Tap or click the map to move the BBox",
+    "gibsDate": "NASA Worldview GIBS layer date",
+    "bbox": "BBox: coordinate box (min. lon., min. lat., max. lon., max. lat.)",
+    "bboxErrors": {
+      "format": "Enter 4 numbers separated by commas, for example: -90.1,13.1,-87.6,14.5.",
+      "range": "Adjust the values: longitude ranges from -180 to 180 and latitude from -90 to 90.",
+      "order": "Check the order: each minimum must be lower than its maximum."
+    },
+    "startDate": "Search from",
+    "endDate": "To",
+    "dateOrder": "Adjust the dates: the start date must be on or before the end date.",
+    "variable": "Filter by agency or variable",
+    "variables": {
+      "all": "All missions (NASA, CSA, ESA, JAXA)",
+      "maritime": "CSA RCM (maritime / disasters / ecosystems)",
+      "sar_historical": "CSA RADARSAT-1 (open SAR archive)",
+      "precipitation": "JAXA G-Portal (precipitation / snow / vegetation)",
+      "land_ocean": "ESA Open Science and Copernicus",
+      "lunar": "NASA LRO (lunar surface and thermal)",
+      "planetary": "NASA PDS (Mars geoscience)"
+    },
+    "search": "Search live scenes",
+    "searching": "Querying catalogs...",
+    "processing": {
+      "title": "Processing with simulated data",
+      "running": "Processing...",
+      "modes": {
+        "sar_db": "Process SAR dB + Lee filter",
+        "ndvi": "Calculate NDVI",
+        "ndwi": "Calculate NDWI (water)",
+        "jaxa_precip": "Process simulated precipitation",
+        "diviner_thermal": "Process simulated thermal profile"
+      }
+    },
+    "result": {
+      "unit": "Unit",
+      "min": "Min",
+      "max": "Max",
+      "mean": "Mean",
+      "opacity": "Opacity: {value}%",
+      "download": "Download GeoTIFF result (.tif)",
+      "demoSample": "Simulated demo data ({file}): these are not measurements from any mission or from this area. The image is not clipped to the BBox; it is only placed over it.",
+      "legendLow": "Low",
+      "legendHigh": "High"
+    },
+    "cryo": {
+      "title": "Simulated example: lunar pole vs. Earth",
+      "lunarMin": "Minimum of the simulated profile (Diviner-like): {value} K",
+      "earthAvg": "Antarctic reference average: {value} K",
+      "colder": "The coldest point of this simulated profile is {delta} K below the Antarctic reference average.",
+      "warmer": "The coldest point of this simulated profile is {delta} K above the Antarctic reference average."
+    },
+    "results": {
+      "hint": "Choose a scene to locate and process it:",
+      "copernicus": "ESA Copernicus STAC live ({count})",
+      "earthdata": "NASA Earthdata CMR live ({count})",
+      "pds": "NASA PDS planetary live ({count})",
+      "partners": "Partner agencies ({count})",
+      "empty": "No results or source unavailable. Try other dates, another BBox or another filter.",
+      "clouds": "Clouds: {value}",
+      "date": "Date: {value}",
+      "instrument": "Instrument: {value}",
+      "approxLocation": "Approximate location",
+      "notAvailable": "no data"
+    }
+  },
+  "errors": {
+    "network": "We could not reach the data server ({api}). Check that it is running and try again.",
+    "timeout": "The data server took too long to respond. Please try again in a few seconds.",
+    "http": "The data server returned an error ({status}): {detail}. Try another scene or try again later.",
+    "parse": "The data server sent a response we could not read. Please try again."
+  }
+}
