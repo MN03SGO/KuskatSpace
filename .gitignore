@@ -1,14 +1,12 @@
-# =============================================================================
-# Variables de entorno (nunca subir secretos)
-# =============================================================================
+.venv/
+venv/
+env/
+
 .env
 .env.*
 !.env.example
 !.env.sample
 
-# =============================================================================
-# Python
-# =============================================================================
 .venv/
 venv/
 ENV/
@@ -44,31 +42,7 @@ htmlcov/
 .hypothesis/
 *.log
 
-# =============================================================================
-# Node.js / React (frontend)
-# =============================================================================
-node_modules/
-frontend/node_modules/
-frontend/dist/
-frontend/build/
-frontend/.vite/
-frontend/coverage/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-*.tsbuildinfo
-.npm
-.yarn/
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
-# =============================================================================
-# Docker / datos locales
-# =============================================================================
 *.pid
 docker-compose.override.yml
 pgdata/
@@ -78,9 +52,6 @@ postgres-data/
 *.sql.gz
 *.dump
 
-# =============================================================================
-# Sistema operativo
-# =============================================================================
 .DS_Store
 .DS_Store?
 ._*
@@ -90,9 +61,6 @@ ehthumbs.db
 Thumbs.db
 Desktop.ini
 
-# =============================================================================
-# Editores / IDEs
-# =============================================================================
 .vscode/
 !.vscode/extensions.json
 !.vscode/settings.json.example
@@ -103,9 +71,6 @@ Desktop.ini
 *.sublime-project
 *.sublime-workspace
 
-# =============================================================================
-# Misc
-# =============================================================================
 *.bak
 *.tmp
 *.temp
