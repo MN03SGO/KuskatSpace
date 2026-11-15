@@ -22,7 +22,7 @@ El paquete `api` implementa el servicio REST en FastAPI que orquesta la platafor
 - La suma de ponderaciones de los sliders nunca divide por cero; si los 4 pesos son cero, la suma se normaliza a 1.0.
 
 ## Side Effects
-- Consultas y lecturas a la base de datos `analogos` en MongoDB Atlas o contenedor local `mongo`.
+- Consultas y lecturas a la base de datos `nasa_space` en MongoDB Atlas o contenedor local `mongo`.
 - Lectura de archivos JSON de respaldo en `data/candidates.json`, `data/targets.json` y `data/datasets.json`.
 - Despacho de tráfico HTTP saliente asíncrono hacia NASA CMR y Planetary Computer durante búsquedas federadas.
 
