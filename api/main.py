@@ -271,6 +271,15 @@ def get_datasets():
     return read_local_json("datasets.json")
 
 
+def clean_doc(doc: Any) -> Any:
+    """Convierte _id de MongoDB y valores no serializables a tipos compatibles con JSON."""
+    if isinstance(doc, dict):
+        return {str(k): clean_doc(v) if k != "_id" else str(v) for k, v in doc.items()}
+    if isinstance(doc, list):
+        return [clean_doc(x) for x in doc]
+    return doc
+
+
 @app.get("/export", tags=["Sistema"])
 def export_all():
     """Respaldo JSON completo de candidates + targets (compatibilidad feature/database)."""
@@ -280,8 +289,8 @@ def export_all():
             db = client[DB_NAME]
             return {
                 "database": DB_NAME,
-                "candidates": list(db["candidates"].find({})),
-                "targets": list(db["targets"].find({})),
+                "candidates": [clean_doc(d) for d in db["candidates"].find({})],
+                "targets": [clean_doc(d) for d in db["targets"].find({})],
             }
         except PyMongoError:
             pass
@@ -407,7 +416,7 @@ async def search_catalogs(
     bbox: str = Query("-90.1,13.1,-87.6,14.5", description="Bounding box en formato min_lon,min_lat,max_lon,max_lat"),
     start_date: str = Query("2026-10-01", description="Fecha de inicio YYYY-MM-DD"),
     end_date: str = Query("2026-11-10", description="Fecha fin YYYY-MM-DD"),
-    body: str = Query("earth", enum=["earth", "moon", "mars"], description="Cuerpo celeste"),
+    body: str = Query("earth", description="Cuerpo celeste: earth, moon, mars"),
     variable: str = Query("all", description="Variable temática"),
     limit: int = Query(5, ge=1, le=20, description="Límite de resultados"),
 ):
@@ -419,7 +428,7 @@ async def search_catalogs(
 
 @app.post("/api/process", tags=["Teledetección Multi-Agencia"])
 def process_scene(
-    mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
+    mode: str = Query("sar_db", description="Modo: sar_db, ndvi, ndwi, diviner_thermal, jaxa_precip"),
     bbox: str = Query("-90.1,13.1,-87.6,14.5"),
     sample_name: Optional[str] = Query(None),
 ):
@@ -436,7 +445,7 @@ def process_scene(
 
 @app.get("/api/export/geotiff", tags=["Teledetección Multi-Agencia"])
 def download_processed_geotiff(
-    mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
+    mode: str = Query("sar_db", description="Modo: sar_db, ndvi, ndwi, diviner_thermal, jaxa_precip"),
     bbox: str = Query("-90.1,13.1,-87.6,14.5"),
 ):
     """Exporta el ráster procesado a un archivo GeoTIFF binario para descarga."""

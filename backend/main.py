@@ -21,7 +21,7 @@ async def search_catalogs(
     bbox: str = Query("-90.1,13.1,-87.6,14.5"),
     start_date: str = Query("2026-10-01"),
     end_date: str = Query("2026-11-10"),
-    body: str = Query("earth", enum=["earth", "moon", "mars"]),
+    body: str = Query("earth"),
     variable: str = Query("all"),
     limit: int = Query(5, ge=1, le=20),
 ):
@@ -30,7 +30,7 @@ async def search_catalogs(
 
 @app.post("/api/process")
 def process_scene(
-    mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
+    mode: str = Query("sar_db"),
     bbox: str = Query("-90.1,13.1,-87.6,14.5"),
     sample_name: Optional[str] = Query(None),
 ):
@@ -44,7 +44,7 @@ def process_scene(
 
 @app.get("/api/export/geotiff")
 def download_processed_geotiff(
-    mode: str = Query("sar_db", enum=["sar_db", "ndvi", "ndwi", "diviner_thermal", "jaxa_precip"]),
+    mode: str = Query("sar_db"),
     bbox: str = Query("-90.1,13.1,-87.6,14.5"),
 ):
     coords = [float(x) for x in bbox.split(",")]
