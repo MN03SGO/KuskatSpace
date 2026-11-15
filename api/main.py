@@ -68,6 +68,8 @@ class Scores(BaseModel):
     iluminacion: float = Field(..., ge=0.0, le=1.0)
     frio: float = Field(..., ge=0.0, le=1.0)
     hielo: float = Field(..., ge=0.0, le=1.0)
+    # Contrato §05: quinta dimensión (Polvo/Aerosoles). Opcional mientras P1 la calcula.
+    polvo: Optional[float] = Field(None, ge=0.0, le=1.0)
 
 
 class CandidateResponse(BaseModel):
@@ -75,16 +77,27 @@ class CandidateResponse(BaseModel):
     name: str
     country: Optional[str] = None
     target: str
-    analog_type: str
-    is_understudied: Optional[bool] = False
     location: GeoLocation
     scores: Scores
     weighted_score: Optional[float] = None
     distance_km: Optional[float] = None
-    similar_values: List[str] = []
+
+    # --- Contrato §05 (plan maestro) ---
+    region_type: Optional[str] = None
+    analog_category: List[str] = []
+    similar_properties: List[str] = []
     similar_processes: List[str] = []
+    differences_and_limits: List[str] = []
+    exploration_use_cases: List[str] = []
+    subsurface_and_biology: Optional[Dict[str, str]] = None
+    datasets_used: List[str] = []
+
+    # --- Compatibilidad con documentos anteriores al §05 ---
+    analog_type: Optional[str] = None
+    is_understudied: Optional[bool] = False
+    similar_values: List[str] = []
     earth_limits: List[str] = []
-    exploration_use: str
+    exploration_use: Optional[str] = None
     datasets: List[str] = []
 
     model_config = {

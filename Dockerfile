@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Un solo requirements: el de backend/ (D7)
+# Un solo requirements (D7)
 COPY backend/requirements.txt /app/backend/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r /app/backend/requirements.txt
@@ -22,9 +22,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Codigo del proyecto
 COPY . /app/
 
-# La app vive en backend/: se arranca desde ahi (imports y sample_data/ son relativos)
-WORKDIR /app/backend
-
+# App unica: api/main.py (reutiliza connectors/processor de backend/ via sys.path)
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
