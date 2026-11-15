@@ -45,10 +45,14 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Configuración obligatoria de CORS para permitir peticiones desde cualquier frontend (Leaflet, MapLibre, React, Vite)
+# CORS con orígenes explícitos (requerido si allow_credentials=True; "*" falla en el navegador)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -355,7 +359,8 @@ def get_candidates(
     # Ordenar descendentemente por el puntaje resultante
     candidates.sort(key=lambda x: x.get("weighted_score", 0.0), reverse=True)
 
-    return candidates[:limit]
+    # clean_doc: ObjectId de Mongo → str (evita 500 de validación Pydantic)
+    return [clean_doc(c) for c in candidates[:limit]]
 
 
 @app.get("/candidates/near", response_model=List[CandidateResponse], tags=["Búsqueda Geoespacial"])
@@ -397,7 +402,7 @@ def get_candidates_near(
                 coords = doc.get("location", {}).get("coordinates", [0, 0])
                 doc["distance_km"] = round(haversine_km(lat, lon, coords[1], coords[0]), 2)
                 doc["weighted_score"] = compute_weighted_score(doc.get("scores", {}), 1.0, 1.0, 1.0, 1.0)
-                results.append(doc)
+                results.append(clean_doc(doc))
             return results
         except PyMongoError:
             results = []
@@ -414,7 +419,7 @@ def get_candidates_near(
             c_copy = dict(c)
             c_copy["distance_km"] = round(dist, 2)
             c_copy["weighted_score"] = compute_weighted_score(c_copy.get("scores", {}), 1.0, 1.0, 1.0, 1.0)
-            filtered.append(c_copy)
+            filtered.append(clean_doc(c_copy))
 
     filtered.sort(key=lambda x: x.get("distance_km", 999999))
     return filtered[:limit]
