@@ -165,7 +165,7 @@ async def run_federated_search(bbox: str, start_date: str, end_date: str, body: 
         "partner_resources": [],
     }
 
-    async with httpx.AsyncClient(timeout=12.0) as client:
+    async with httpx.AsyncClient(timeout=6.0) as client:
         if body == "earth":
             results = await asyncio.gather(
                 query_nasa_cmr(client, bbox, start_date, end_date, limit),

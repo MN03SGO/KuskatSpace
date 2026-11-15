@@ -21,9 +21,9 @@
   },
   "bodies": {
     "label": "Planetary body",
-    "earth": { "label": "Earth (Worldview)", "region": "Earth · Mesoamerica region" },
-    "moon": { "label": "Moon (LRO/Diviner)", "region": "Moon · South Pole / LRO Diviner" },
-    "mars": { "label": "Mars (PDS)", "region": "Mars · Gale Crater / NASA PDS" }
+    "earth": { "label": "Earth (Worldview)", "region": "Earth · Mesoamerican & Caribbean Basin" },
+    "moon": { "label": "Moon (LRO/Diviner)", "region": "Moon · South Polar Region (LRO Diviner)" },
+    "mars": { "label": "Mars (PDS)", "region": "Mars · Valles Marineris (NASA PDS)" }
   },
   "explorer": {
     "mapLabel": "Data explorer map",

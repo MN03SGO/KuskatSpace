@@ -43,11 +43,11 @@ export function exportGeotiffUrl(p: ProcessParams, base = API_BASE): string {
 }
 
 export async function searchCatalogs(p: SearchParams): Promise<SearchResponse> {
-  // El backend consulta servicios externos con timeout de 12 s; dejamos margen.
-  const data = await requestJson<Partial<SearchResponse>>(buildSearchUrl(p), { timeoutMs: 30000 })
+  // El backend consulta servicios externos; dejamos margen para evitar timeouts falsos.
+  const data = await requestJson<Partial<SearchResponse>>(buildSearchUrl(p), { timeoutMs: 45000 })
   return normalizeSearchResponse(data)
 }
 
 export function processScene(p: ProcessParams): Promise<ProcessResponse> {
-  return requestJson<ProcessResponse>(buildProcessUrl(p), { method: 'POST', timeoutMs: 30000 })
+  return requestJson<ProcessResponse>(buildProcessUrl(p), { method: 'POST', timeoutMs: 45000 })
 }

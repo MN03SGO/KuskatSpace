@@ -442,7 +442,7 @@ async def search_catalogs(
 @app.post("/api/process", tags=["Teledetección Multi-Agencia"])
 def process_scene(
     mode: str = Query("sar_db", description="Modo: sar_db, ndvi, ndwi, diviner_thermal, jaxa_precip"),
-    bbox: str = Query("-90.1,13.1,-87.6,14.5"),
+    bbox: str = Query("-92.5,11.5,-83.0,17.5"),
     sample_name: Optional[str] = Query(None),
 ):
     """Procesa rásteres: SAR (filtro Lee), NDVI, NDWI, precipitación JAXA y radiometría térmica Diviner."""
@@ -459,7 +459,7 @@ def process_scene(
 @app.get("/api/export/geotiff", tags=["Teledetección Multi-Agencia"])
 def download_processed_geotiff(
     mode: str = Query("sar_db", description="Modo: sar_db, ndvi, ndwi, diviner_thermal, jaxa_precip"),
-    bbox: str = Query("-90.1,13.1,-87.6,14.5"),
+    bbox: str = Query("-92.5,11.5,-83.0,17.5"),
 ):
     """Exporta el ráster procesado a un archivo GeoTIFF binario para descarga."""
     if not REMOTE_SENSING_AVAILABLE:

@@ -48,6 +48,7 @@ export default function PlanetMap() {
   const layer = useActivePlanetLayer()
 
   const cfg = BODIES[body]
+  const isEarth = body === 'earth'
   const bounds = useMemo(() => toLeafletBounds(bbox), [bbox])
   const tiles = useMemo(() => baseTiles(body, gibsDate), [body, gibsDate])
   // Luna/Marte: la imagen del modelo se recalcula una vez por minuto (layer.key).
@@ -61,15 +62,16 @@ export default function PlanetMap() {
     <div className="h-full w-full" role="region" aria-label={t('explorer.mapLabel')}>
       <MapContainer
         key={body}
-        crs={cfg.crs === 'EPSG3857' ? L.CRS.EPSG3857 : L.CRS.EPSG4326}
+        crs={isEarth ? L.CRS.EPSG3857 : L.CRS.EPSG4326}
         center={cfg.center}
         zoom={cfg.zoom}
-        minZoom={1}
+        minZoom={2}
         maxZoom={cfg.maxZoom}
-        maxBounds={WORLD_BOUNDS}
-        maxBoundsViscosity={1}
-        worldCopyJump={false}
+        maxBounds={isEarth ? undefined : WORLD_BOUNDS}
+        maxBoundsViscosity={isEarth ? 0 : 1}
+        worldCopyJump={isEarth}
         className="h-full w-full"
+        style={{ height: '100%', width: '100%', background: '#050811' }}
       >
         {tiles.map((tile) => (
           <TileLayer
@@ -78,8 +80,8 @@ export default function PlanetMap() {
             attribution={tile.attribution}
             maxNativeZoom={tile.maxNativeZoom}
             opacity={tile.opacity ?? 1}
-            noWrap
-            bounds={WORLD_BOUNDS}
+            noWrap={!isEarth}
+            bounds={isEarth ? undefined : WORLD_BOUNDS}
           />
         ))}
 

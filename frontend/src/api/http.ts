@@ -31,7 +31,7 @@ function readDetail(data: unknown): string | undefined {
  * fetch + JSON con timeout. Siempre valida `res.ok` (B1) y convierte
  * cualquier fallo en un ApiError.
  */
-export async function requestJson<T>(url: string, { timeoutMs = 20000, ...init }: RequestOptions = {}): Promise<T> {
+export async function requestJson<T>(url: string, { timeoutMs = 45000, ...init }: RequestOptions = {}): Promise<T> {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
 
