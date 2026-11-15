@@ -95,8 +95,9 @@ coverage/
 develop-eggs/
 downloads/
 eggs/
-lib/
-lib64/
+# Anclados a la raíz: sin la "/" inicial ignoraban también frontend/src/lib/ (código TypeScript).
+/lib/
+/lib64/
 parts/
 sdist/
 var/
