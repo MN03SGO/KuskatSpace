@@ -11,7 +11,7 @@ PARTNER_DATASETS = [
         "instruments": "SAR Banda-C (3 satélites)",
         "description": "Vigilancia marítima (hielo, vientos, derrames, buques), desastres y ecosistemas.",
         "recommended_mode": "sar_db",
-        "bbox": [-90.1, 13.1, -87.6, 14.5],
+        "bbox": [-92.5, 11.5, -83.0, 17.5],
     },
     {
         "id": "CSA-RADARSAT1-OPEN",
@@ -22,7 +22,7 @@ PARTNER_DATASETS = [
         "instruments": "SAR Banda-C",
         "description": "Archivo histórico abierto de radar con penetración de nubes y humo.",
         "recommended_mode": "sar_db",
-        "bbox": [-89.5, 13.0, -88.0, 14.2],
+        "bbox": [-92.5, 11.5, -83.0, 17.5],
     },
     {
         "id": "NASA-LRO-DIVINER-POLAR",
@@ -33,7 +33,7 @@ PARTNER_DATASETS = [
         "instruments": "Diviner Radiometer / LOLA",
         "description": "Temperaturas extremas en polos lunares comparables con criósfera terrestre.",
         "recommended_mode": "diviner_thermal",
-        "bbox": [-30.0, -89.5, 30.0, -80.0],
+        "bbox": [-60.0, -88.0, 60.0, -60.0],
     },
     {
         "id": "NASA-PDS-MARS",
@@ -44,7 +44,7 @@ PARTNER_DATASETS = [
         "instruments": "HiRISE, CTX, MOLA, CRISM",
         "description": "Cartografía y geociencia marciana de misiones orbitales y rovers.",
         "recommended_mode": "diviner_thermal",
-        "bbox": [135.0, -6.0, 140.0, -3.0],
+        "bbox": [-95.0, -20.0, -45.0, 5.0],
     },
     {
         "id": "JAXA-GPORTAL-THEMATIC",
@@ -55,7 +55,7 @@ PARTNER_DATASETS = [
         "instruments": "DPR, SGLI, AMSR2",
         "description": "Variables geofísicas buscables por precipitación, nieve y vegetación.",
         "recommended_mode": "jaxa_precip",
-        "bbox": [-90.1, 13.1, -87.6, 14.5],
+        "bbox": [-92.5, 11.5, -83.0, 17.5],
     },
     {
         "id": "ESA-OPEN-SCIENCE",
@@ -66,7 +66,7 @@ PARTNER_DATASETS = [
         "instruments": "Sentinel-1 SAR, Sentinel-2 MSI",
         "description": "Flujos científicos abiertos para tierra, océanos y atmósfera.",
         "recommended_mode": "ndvi",
-        "bbox": [-90.1, 13.1, -87.6, 14.5],
+        "bbox": [-92.5, 11.5, -83.0, 17.5],
     },
 ]
 
@@ -165,7 +165,7 @@ async def run_federated_search(bbox: str, start_date: str, end_date: str, body: 
         "partner_resources": [],
     }
 
-    async with httpx.AsyncClient(timeout=12.0) as client:
+    async with httpx.AsyncClient(timeout=6.0) as client:
         if body == "earth":
             results = await asyncio.gather(
                 query_nasa_cmr(client, bbox, start_date, end_date, limit),

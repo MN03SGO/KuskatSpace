@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { processScene, searchCatalogs } from '../api/explorer'
 import { ApiError } from '../api/http'
 import { BODIES } from '../config/bodies'
-import { GIBS_LAYERS } from '../config/gibsLayers'
+import { type PlanetLayerId, isLayerAvailable } from '../config/planetLayers'
 import { type BBox, type BBoxError, formatBBox, parseBBox, sameBBox, validateBBox } from '../lib/bbox'
 import type { BodyId, ProcessMode, ProcessedScene, SearchResponse, SelectableResult } from '../types/explorer'
 
@@ -16,6 +16,13 @@ export interface RequestStatus {
 }
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10)
+
+/** Ayer (UTC): la imagen diaria más reciente que GIBS suele tener completa. */
+function yesterday(): string {
+  const d = new Date()
+  d.setUTCDate(d.getUTCDate() - 1)
+  return isoDate(d)
+}
 
 function defaultDateRange(): { startDate: string; endDate: string } {
   const end = new Date()
@@ -41,6 +48,9 @@ interface ExplorerState {
   endDate: string
   gibsDate: string
   opacity: number
+  /** Capa global del planeta visible (temperatura, humedad o precipitación). */
+  planetLayer: PlanetLayerId | null
+  planetLayerOpacity: number
 
   search: RequestStatus
   results: SearchResponse | null
@@ -57,6 +67,9 @@ interface ExplorerState {
   setEndDate: (date: string) => void
   setGibsDate: (date: string) => void
   setOpacity: (opacity: number) => void
+  /** Activa la capa; si ya estaba activa, la oculta. */
+  togglePlanetLayer: (layer: PlanetLayerId) => void
+  setPlanetLayerOpacity: (opacity: number) => void
   runSearch: () => Promise<void>
   runProcess: (mode: ProcessMode, opts?: { bbox?: BBox; label?: string | null }) => Promise<void>
   selectResult: (result: SelectableResult) => Promise<void>
@@ -74,8 +87,10 @@ export const useExplorerStore = create<ExplorerState>((set, get) => ({
   bboxError: null,
   variable: 'all',
   ...defaultDateRange(),
-  gibsDate: GIBS_LAYERS.trueColor.defaultDate,
+  gibsDate: yesterday(),
   opacity: 0.82,
+  planetLayer: null,
+  planetLayerOpacity: 0.75,
 
   search: { state: 'idle' },
   results: null,
@@ -89,8 +104,11 @@ export const useExplorerStore = create<ExplorerState>((set, get) => ({
     searchSeq++
     processSeq++
     const bbox = BODIES[body].defaultBBox
+    const layer = get().planetLayer
     set({
       body,
+      // La humedad y la precipitación solo existen en la Tierra.
+      planetLayer: layer && isLayerAvailable(body, layer) ? layer : null,
       bbox,
       bboxText: formatBBox(bbox),
       bboxError: null,
@@ -122,6 +140,11 @@ export const useExplorerStore = create<ExplorerState>((set, get) => ({
   setEndDate: (endDate) => set({ endDate }),
   setGibsDate: (gibsDate) => set({ gibsDate }),
   setOpacity: (opacity) => set({ opacity }),
+  togglePlanetLayer: (layer) => {
+    if (!isLayerAvailable(get().body, layer)) return
+    set({ planetLayer: get().planetLayer === layer ? null : layer })
+  },
+  setPlanetLayerOpacity: (planetLayerOpacity) => set({ planetLayerOpacity }),
 
   runSearch: async () => {
     const { bbox, body, variable, startDate, endDate } = get()

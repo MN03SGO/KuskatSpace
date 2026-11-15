@@ -49,12 +49,14 @@ def render_colormap_png(data: np.ndarray, palette: str = "viridis") -> str:
 
 
 def _compute_matrix(mode: str, bbox: list[float], sample_path: str | None = None):
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    sample_dir = os.path.join(base_dir, "sample_data")
     default_files = {
-        "sar_db": "sample_data/csa_rcm_sar.tif",
-        "ndvi": "sample_data/esa_sentinel2_optical.tif",
-        "ndwi": "sample_data/esa_sentinel2_optical.tif",
-        "diviner_thermal": "sample_data/nasa_lro_diviner_polar.tif",
-        "jaxa_precip": "sample_data/jaxa_gportal_precip.tif",
+        "sar_db": os.path.join(sample_dir, "csa_rcm_sar.tif"),
+        "ndvi": os.path.join(sample_dir, "esa_sentinel2_optical.tif"),
+        "ndwi": os.path.join(sample_dir, "esa_sentinel2_optical.tif"),
+        "diviner_thermal": os.path.join(sample_dir, "nasa_lro_diviner_polar.tif"),
+        "jaxa_precip": os.path.join(sample_dir, "jaxa_gportal_precip.tif"),
     }
     target_path = sample_path or default_files.get(mode)
 

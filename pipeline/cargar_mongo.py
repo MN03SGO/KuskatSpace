@@ -40,20 +40,28 @@ def load_json_file(filename: str) -> List[Dict[str, Any]]:
         return json.load(f)
 
 
-def sync_collection(db: pymongo.database.Database, collection_name: str, documents: List[Dict[str, Any]]) -> int:
-    """Inserta o actualiza (upsert) documentos según su _id."""
+def sync_collection(
+    db: pymongo.database.Database,
+    collection_name: str,
+    documents: List[Dict[str, Any]],
+    prune: bool = False,
+) -> int:
+    """Inserta o actualiza (upsert) documentos según su _id y opcionalmente poda obsoletos."""
     coll = db[collection_name]
     upserted_count = 0
+    active_ids = []
     for doc in documents:
         doc_id = doc.get("_id") or doc.get("id")
         if not doc_id:
             continue
-        # Asegurar que el campo clave se llame _id en MongoDB
         if "_id" not in doc and "id" in doc:
             doc["_id"] = doc["id"]
 
         coll.replace_one({"_id": doc_id}, doc, upsert=True)
+        active_ids.append(doc_id)
         upserted_count += 1
+    if prune and active_ids:
+        coll.delete_many({"_id": {"$nin": active_ids}})
     return upserted_count
 
 
@@ -106,10 +114,10 @@ def main():
         candidates_data = load_json_file("candidates.json")
         datasets_data = load_json_file("datasets.json")
 
-        n_targets = sync_collection(db, "targets", targets_data)
+        n_targets = sync_collection(db, "targets", targets_data, prune=True)
         print(f"[+] Colección 'targets': {n_targets} documentos sincronizados.")
 
-        n_candidates = sync_collection(db, "candidates", candidates_data)
+        n_candidates = sync_collection(db, "candidates", candidates_data, prune=True)
         print(f"[+] Colección 'candidates': {n_candidates} documentos sincronizados.")
 
         n_datasets = sync_collection(db, "datasets", datasets_data)

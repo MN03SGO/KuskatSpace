@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Query, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import pymongo
 from pymongo import MongoClient
@@ -92,6 +93,7 @@ class Scores(BaseModel):
     iluminacion: float = Field(..., ge=0.0, le=1.0)
     frio: float = Field(..., ge=0.0, le=1.0)
     hielo: float = Field(..., ge=0.0, le=1.0)
+    polvo: Optional[float] = Field(None, ge=0.0, le=1.0)
 
 
 class CandidateResponse(BaseModel):
@@ -99,7 +101,7 @@ class CandidateResponse(BaseModel):
     name: str
     country: Optional[str] = None
     target: str
-    analog_type: str
+    analog_type: Optional[str] = None
     is_understudied: Optional[bool] = False
     is_curated: Optional[bool] = False
     location: GeoLocation
@@ -110,8 +112,10 @@ class CandidateResponse(BaseModel):
     similar_values: List[str] = []
     similar_processes: List[str] = []
     earth_limits: List[str] = []
-    exploration_use: str
+    exploration_use: Optional[str] = None
     datasets: List[str] = []
+    orbital_previews: Optional[Dict[str, Any]] = None
+    p1_cell_metrics: Optional[Dict[str, Any]] = None
 
     model_config = {
         "populate_by_name": True
@@ -427,6 +431,64 @@ def get_candidates_near(
 
 
 # ---------------------------------------------------------------------------
+# Endpoints de Productos Geoespaciales P1 (Heatmaps GEE, Previews S1/S2 y QC)
+# ---------------------------------------------------------------------------
+
+if DATA_DIR.exists():
+    app.mount("/data", StaticFiles(directory=str(DATA_DIR)), name="data")
+
+
+@app.get("/api/p1/heatmaps", tags=["Pipeline Terrestre P1 (GEE)"])
+def get_p1_heatmaps():
+    """Devuelve `data/heatmap_bounds.json` con metadatos, bounds (Leaflet/MapLibre) y capas PNG."""
+    for candidate_path in (
+        DATA_DIR / "heatmap_bounds.json",
+        DATA_DIR.parent / "frontend" / "public" / "data" / "heatmap_bounds.json",
+    ):
+        if candidate_path.exists():
+            return json.loads(candidate_path.read_text(encoding="utf-8"))
+    raise HTTPException(status_code=404, detail="heatmap_bounds.json no encontrado")
+
+
+@app.get("/api/p1/orbital-previews", tags=["Pipeline Terrestre P1 (GEE)"])
+def get_p1_orbital_previews():
+    """Devuelve el catálogo `orbital_previews.json` (Sentinel-2 RGB + Sentinel-1 SAR con filtro Lee)."""
+    for candidate_path in (
+        DATA_DIR / "orbital_previews" / "orbital_previews.json",
+        DATA_DIR.parent / "frontend" / "public" / "data" / "orbital_previews" / "orbital_previews.json",
+    ):
+        if candidate_path.exists():
+            return json.loads(candidate_path.read_text(encoding="utf-8"))
+    raise HTTPException(status_code=404, detail="orbital_previews.json no encontrado")
+
+
+def _sanitize_json(obj: Any) -> Any:
+    """Reemplaza NaN/Infinity por None para serialización JSON estricta."""
+    if isinstance(obj, float):
+        return obj if math.isfinite(obj) else None
+    if isinstance(obj, dict):
+        return {k: _sanitize_json(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize_json(v) for v in obj]
+    return obj
+
+
+@app.get("/api/p1/qc-report", tags=["Pipeline Terrestre P1 (GEE)"])
+def get_p1_qc_report():
+    """Devuelve el reporte de control de calidad `qc_report.json` y `metadata.json`."""
+    qc_file = DATA_DIR / "qc_report.json"
+    if not qc_file.exists():
+        qc_file = DATA_DIR.parent / "frontend" / "public" / "data" / "qc_report.json"
+    meta_file = DATA_DIR / "metadata.json"
+    if not meta_file.exists():
+        meta_file = DATA_DIR.parent / "frontend" / "public" / "data" / "metadata.json"
+    return _sanitize_json({
+        "qc_report": json.loads(qc_file.read_text(encoding="utf-8")) if qc_file.exists() else {},
+        "metadata": json.loads(meta_file.read_text(encoding="utf-8")) if meta_file.exists() else {},
+    })
+
+
+# ---------------------------------------------------------------------------
 # Endpoints de Teledetección y Procesamiento Ráster Multi-Agencia (back-AR)
 # ---------------------------------------------------------------------------
 
@@ -448,7 +510,7 @@ async def search_catalogs(
 @app.post("/api/process", tags=["Teledetección Multi-Agencia"])
 def process_scene(
     mode: str = Query("sar_db", description="Modo: sar_db, ndvi, ndwi, diviner_thermal, jaxa_precip"),
-    bbox: str = Query("-90.1,13.1,-87.6,14.5"),
+    bbox: str = Query("-92.5,11.5,-83.0,17.5"),
     sample_name: Optional[str] = Query(None),
 ):
     """Procesa rásteres: SAR (filtro Lee), NDVI, NDWI, precipitación JAXA y radiometría térmica Diviner."""
@@ -465,7 +527,7 @@ def process_scene(
 @app.get("/api/export/geotiff", tags=["Teledetección Multi-Agencia"])
 def download_processed_geotiff(
     mode: str = Query("sar_db", description="Modo: sar_db, ndvi, ndwi, diviner_thermal, jaxa_precip"),
-    bbox: str = Query("-90.1,13.1,-87.6,14.5"),
+    bbox: str = Query("-92.5,11.5,-83.0,17.5"),
 ):
     """Exporta el ráster procesado a un archivo GeoTIFF binario para descarga."""
     if not REMOTE_SENSING_AVAILABLE:
@@ -487,4 +549,4 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
     host = os.getenv("HOST", "0.0.0.0")
     print(f"[*] Iniciando TerraAnáloga API en http://{host}:{port}")
-    uvicorn.run("main:app", host=host, port=port, reload=True)
+    uvicorn.run("api.main:app", host=host, port=port, reload=True)
