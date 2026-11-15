@@ -36,7 +36,43 @@
       "label": "Globo 3D del cuerpo seleccionado",
       "hint": "Arrastra para girar · rueda o pellizco para acercar · clic o toque para mover el BBox",
       "loading": "Cargando mosaico {loaded} de {total}",
-      "noWebgl": "Tu navegador no puede mostrar el globo 3D (WebGL no está disponible). Cambia al mapa 2D para seguir."
+      "noWebgl": "Tu navegador no puede mostrar el globo 3D (WebGL no está disponible). Cambia al mapa 2D para seguir.",
+      "hintShort": "Arrastra para girar · toca para mover el BBox",
+      "tileErrors": "Parte del detalle no cargó; se muestra la textura local."
+    },
+    "layers": {
+      "title": "Capas del planeta",
+      "hint": "Muestra una variable sobre todo el planeta visible.",
+      "temperature": "Mostrar temperatura",
+      "humidity": "Mostrar humedad",
+      "precipitation": "Mostrar precipitación",
+      "names": {
+        "temperature": "temperatura",
+        "humidity": "humedad relativa",
+        "precipitation": "precipitación"
+      },
+      "unavailable": {
+        "moon": "La Luna no tiene atmósfera: no hay humedad ni lluvia. Solo está la temperatura (modelo).",
+        "mars": "No hay datos globales diarios de humedad ni de lluvia en Marte. Solo está la temperatura (modelo)."
+      },
+      "sources": {
+        "temperature": "NASA AIRS, temperatura del aire en superficie (pasada de día)",
+        "humidity": "NASA AIRS, humedad relativa en superficie (pasada de día)",
+        "precipitation": "NASA GPM IMERG, tasa de precipitación diaria"
+      },
+      "sourceEarth": "Datos de satélite: {source}. Fecha: {date} (la más reciente publicada).",
+      "gapsNote": "Las franjas vacías son zonas por donde el satélite no pasó ese día.",
+      "sourceModel": "Modelo térmico aproximado para ahora ({date} {time} UTC). No es una medición.",
+      "subsolar": "Punto subsolar: lat. {lat}°, lon. {lon}°",
+      "modelNote": {
+        "moon": "Se calcula con la posición del Sol: unos 390 K bajo el Sol, unos 95 K de noche y unos 40 K en los polos. No incluye relieve ni inercia térmica.",
+        "mars": "Se calcula con la posición del Sol: unos 290 K bajo el Sol y entre 150 y 190 K de noche. No incluye polvo, relieve ni inercia térmica."
+      },
+      "legendLabel": "Escala de {name}: de {min} a {max} {unit}",
+      "logScale": "escala logarítmica",
+      "opacity": "Opacidad de la capa: {value} %",
+      "loading": "Cargando capa {loaded} de {total}",
+      "failed": "No se pudo cargar la capa para esa fecha. Prueba con otra fecha."
     },
     "mapHint": "Toca o haz clic en el mapa para mover el BBox",
     "gibsDate": "Fecha de la capa NASA Worldview GIBS",
@@ -68,8 +104,8 @@
         "sar_db": "Procesar SAR dB + filtro Lee",
         "ndvi": "Calcular NDVI",
         "ndwi": "Calcular NDWI (agua)",
-        "jaxa_precip": "Mostrar precipitación",
-        "diviner_thermal": "Mostrar temperatura (tipo Diviner)"
+        "jaxa_precip": "Procesar precipitación simulada",
+        "diviner_thermal": "Procesar perfil térmico simulado"
       }
     },
     "result": {

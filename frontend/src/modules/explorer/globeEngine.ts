@@ -40,6 +40,8 @@ interface BaseMosaic {
   full: HTMLCanvasElement
   loaded: number
   total: number
+  /** Teselas en vivo que no se pudieron descargar (B24). */
+  failed: number
   listeners: Set<() => void>
 }
 
@@ -84,7 +86,10 @@ function loadLevel(
             ctx.drawImage(img, Math.floor(col * tileW), Math.floor(row * tileH), Math.ceil(tileW) + 1, Math.ceil(tileH) + 1)
             done()
           }
-          img.onerror = done
+          img.onerror = () => {
+            mosaic.failed++
+            done()
+          }
           img.src = url(level.z, row, col)
         }),
       )
@@ -103,6 +108,7 @@ function getMosaic(body: BodyId): BaseMosaic {
     full: makeCanvas(),
     loaded: 0,
     total: 1 + src.full.cols * src.full.rows,
+    failed: 0,
     listeners: new Set(),
   }
   mosaics.set(body, mosaic)
@@ -134,7 +140,7 @@ function getMosaic(body: BodyId): BaseMosaic {
 
 export interface GlobeCallbacks {
   onPick: (lon: number, lat: number) => void
-  onProgress: (loaded: number, total: number) => void
+  onProgress: (loaded: number, total: number, failed: number) => void
 }
 
 const BBOX_COLOR = '#38bdf8'
@@ -161,6 +167,9 @@ export class GlobeEngine {
   private bbox: BBox | null = null
   private overlay: { img: HTMLImageElement; bounds: LeafletBounds } | null = null
   private overlayOpacity = 0.82
+  /** Capa global del planeta (equirectangular, cualquier tamaño 2:1). */
+  private planetLayer: HTMLCanvasElement | null = null
+  private planetLayerOpacity = 0.75
 
   private frame = 0
   private composeQueued = false
@@ -227,7 +236,7 @@ export class GlobeEngine {
     this.unsubscribeMosaic?.()
     this.mosaic = getMosaic(body)
     const listener = () => {
-      this.cb.onProgress(this.mosaic!.loaded, this.mosaic!.total)
+      this.cb.onProgress(this.mosaic!.loaded, this.mosaic!.total, this.mosaic!.failed)
       this.queueCompose()
     }
     this.mosaic.listeners.add(listener)
@@ -261,6 +270,17 @@ export class GlobeEngine {
 
   setOverlayOpacity(opacity: number): void {
     this.overlayOpacity = opacity
+    this.queueCompose()
+  }
+
+  /** Cambia la capa global; llamar de nuevo con el mismo lienzo para repintar cuando llegan teselas. */
+  setPlanetLayer(canvas: HTMLCanvasElement | null): void {
+    this.planetLayer = canvas
+    this.queueCompose()
+  }
+
+  setPlanetLayerOpacity(opacity: number): void {
+    this.planetLayerOpacity = opacity
     this.queueCompose()
   }
 
@@ -314,6 +334,13 @@ export class GlobeEngine {
     if (this.mosaic) {
       ctx.drawImage(this.mosaic.preview, 0, 0)
       ctx.drawImage(this.mosaic.full, 0, 0)
+    }
+
+    if (this.planetLayer) {
+      ctx.globalAlpha = this.planetLayerOpacity
+      ctx.imageSmoothingEnabled = true
+      ctx.drawImage(this.planetLayer, 0, 0, W, H)
+      ctx.globalAlpha = 1
     }
 
     if (this.overlay) {

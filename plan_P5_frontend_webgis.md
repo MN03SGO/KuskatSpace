@@ -100,7 +100,8 @@ El frontend es **responsabilidad completa del equipo P5 + P6**. P5 programa; P6 
 | **D4** | ¿TypeScript + Tailwind? | **Sí, de forma gradual:** `allowJs`, los archivos nuevos en `.tsx` y el `App.jsx` de `back-AR` se migra al partirlo en componentes. | P5 |
 | **D5** | Merge de `back-AR` | **Merge de `back-AR` en `Frontend/WebGIS` en H0–H1**, antes de reestructurar. Desde ese momento, **el backend no toca `frontend/`**. | P4 + P5 |
 | **D6** | Base de datos del módulo A | **Seguir con MongoDB Atlas** (ya implementado, coincide con el plan maestro) y sacar del camino crítico el `docker-compose` de PostGIS/MinIO, dejándolo como experimento o eliminándolo. Sigue **abierta**: la decide P4 con el equipo. Al frontend le da igual mientras se respete el contrato JSON. | P4 + equipo |
-| **D7** | Dos APIs en el puerto 8000 | **Corto plazo (sin tocar el backend):** levantar la API de Mongo en el **puerto 8001**; el frontend usa dos URLs, `VITE_API_BASE` (back-AR, módulo B) y **`VITE_DATA_API_BASE`** (Mongo, módulo A). **Definitivo (P4):** unir las dos en una sola aplicación (routers `/api/*` + `/candidates*`, `/targets`, `/export`) y un solo `requirements.txt`. Así vuelve a bastar una URL y un solo despliegue en Render. | P4 (definitivo) · P5 (corto plazo) |
+| **D9** | Capas globales del planeta | **Implementado (2026-11-14):** panel "Capas del planeta" con temperatura, humedad y precipitación sobre todo el globo (y en el mapa 2D). **Tierra:** datos reales de NASA GIBS (AIRS L3 diario de temperatura del aire y humedad relativa en superficie; GPM IMERG de precipitación), con la fecha más reciente publicada (fecha elegida recortada a hoy − 7 días para AIRS y hoy − 2 para IMERG). **Luna y Marte:** solo temperatura, con un **modelo térmico aproximado** calculado para el momento actual a partir del punto subsolar (Mars24 para Marte; elongación lunar para la Luna) y equilibrio radiativo simplificado. Se actualiza cada minuto y se rotula como "modelo, no medición". Humedad y precipitación se desactivan con una explicación. | P5 |
+| **D7** | Dos APIs en el puerto 8000 | **RESUELTO en `7f0968a`:** una sola app (`backend/main.py` monta `backend/mongo_api.py`), un `requirements.txt` y `.env.example`. El frontend vuelve a una sola URL (`VITE_API_BASE`). Texto original: | **Corto plazo (sin tocar el backend):** levantar la API de Mongo en el **puerto 8001**; el frontend usa dos URLs, `VITE_API_BASE` (back-AR, módulo B) y **`VITE_DATA_API_BASE`** (Mongo, módulo A). **Definitivo (P4):** unir las dos en una sola aplicación (routers `/api/*` + `/candidates*`, `/targets`, `/export`) y un solo `requirements.txt`. Así vuelve a bastar una URL y un solo despliegue en Render. | P4 (definitivo) · P5 (corto plazo) |
 | **D8** | Fuente de datos del módulo A | **API primero** (`GET /candidates`, que se recarga al elegir objetivo) y **Plan B** = `public/data/candidates.json` generado con `GET /export` cuando P3 cargue los datos reales. `candidates.mock.json` queda **solo para desarrollo y pruebas**, nunca en la demo. Un adaptador (`lib/candidateAdapter.ts`) valida cada documento contra el contrato §05 y **descarta y cuenta** los que no lo cumplen, en lugar de inventar puntuaciones. | P5 |
 
 ---
@@ -282,6 +283,13 @@ flowchart LR
 ---
 
 ## 6. Correcciones al integrar `back-AR` (backlog del módulo B)
+
+> **Estado al 2026-11-14 (noche):**
+> - **Resueltos por la pasada de UX:** B20 (objetivos ≥ 40 px, verificado a 375 px), B21 (pista corta en móvil), B22 (leyendas con nombre accesible), B24 (aviso si fallan teselas), B26 (`Intl.NumberFormat` en estadísticas y criósfera), B27 (estado activo con barra inferior además del color; foco `outline-ink` dentro de los grupos), B28 (rótulos opacos sobre el mapa, `text-xs`), B29 (bordes de campos `ink-muted/70`), B30 (solo pesos normal y bold) y B31 (sin medios pasos en los componentes tocados). Las clases están centralizadas en `frontend/src/components/ui.ts`.
+> - **Resueltos por P4 en `7f0968a`:** B13, B32, B33 y B36.
+> - **Siguen abiertos:** B34 y B35 (datos reales §05) y B37 (adaptador del módulo A, **todavía no existe**).
+> - **Ajuste de textos:** "Mostrar temperatura" y "Mostrar precipitación" ahora son las capas globales. Los modos de procesamiento simulados pasaron a "Procesar perfil térmico simulado" y "Procesar precipitación simulada", para no confundirlos.
+> - **Fecha GIBS por defecto:** ahora es **ayer (UTC)** y no una fecha fija, para mostrar "lo de ahora". Para grabar la demo, fija una fecha a mano.
 
 Del informe del backend, ordenadas por prioridad. **Frontend** = lo resolvemos nosotros; **Pedir a P4** = cambio en el backend.
 

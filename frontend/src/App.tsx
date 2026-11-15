@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { LangToggle } from './components/LangToggle'
+import { focusRing } from './components/ui'
 import { useDocumentLang, useT } from './i18n/useT'
 import { AnalogsView } from './modules/analogs/AnalogsView'
 import { ExplorerView } from './modules/explorer/ExplorerView'
@@ -27,8 +28,10 @@ export default function App() {
               type="button"
               aria-current={tab === id ? 'page' : undefined}
               onClick={() => setTab(id)}
-              className={`rounded px-3 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info ${
-                tab === id ? 'bg-raised text-ink' : 'text-ink-muted hover:text-ink'
+              className={`min-h-10 rounded px-3 py-2 text-sm ${focusRing} ${
+                tab === id
+                  ? 'bg-raised font-bold text-ink shadow-[inset_0_-3px_0_0_var(--color-info)]'
+                  : 'text-ink-muted hover:text-ink'
               }`}
             >
               {t(`app.tabs.${id}`)}

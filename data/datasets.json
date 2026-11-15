@@ -1,0 +1,92 @@
+[
+  {
+    "id": "copernicus_dem_glo90",
+    "name": "Copernicus DEM GLO-90 Digital Elevation Model",
+    "agency": "ESA",
+    "url": "https://planetarycomputer.microsoft.com/dataset/cop-dem-glo-90",
+    "license": "Copernicus Open Access / Open Data",
+    "dimension": "relieve",
+    "usage": "Cálculo de pendiente topográfica (grados), rugosidad del terreno y sombras orográficas a 90m de resolución espacial."
+  },
+  {
+    "id": "modis_lst_terra_aqua",
+    "name": "MODIS Land Surface Temperature (MOD11A2 / MYD11A2)",
+    "agency": "NASA Earthdata & Planetary Computer",
+    "url": "https://planetarycomputer.microsoft.com/dataset/modis-11A2-061",
+    "license": "NASA Open Data Policy",
+    "dimension": "frio",
+    "usage": "Temperatura superficial diurna y nocturna a 1 km cada 8 días para evaluar gradientes de frío extremo y contrastes térmicos."
+  },
+  {
+    "id": "meteomatics_weather_era5",
+    "name": "Meteomatics Global High-Resolution Weather & ERA5 Reanalysis",
+    "agency": "Meteomatics",
+    "url": "https://www.meteomatics.com/en/weather-api/",
+    "license": "Commercial / Academic License (REST API)",
+    "dimension": "frio",
+    "usage": "Series climatológicas históricas de temperatura a 2m, precipitación acumulada, nieve fresca y vientos para modelos de aridez y polvo."
+  },
+  {
+    "id": "nasa_lro_lola",
+    "name": "Lunar Orbiter Laser Altimeter (LOLA) Polar DEM",
+    "agency": "NASA PDS / LRO",
+    "url": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm",
+    "license": "NASA Public Domain",
+    "dimension": "relieve",
+    "usage": "Topografía de referencia del Polo Sur Lunar para correlacionar pendientes de cráteres de impacto con elevaciones terrestres."
+  },
+  {
+    "id": "nasa_lro_diviner",
+    "name": "Diviner Lunar Radiometer Experiment - Polar Regolith Temperatures",
+    "agency": "NASA PDS / LRO",
+    "url": "https://pds-geosciences.wustl.edu/missions/lro/diviner.htm",
+    "license": "NASA Public Domain",
+    "dimension": "frio",
+    "usage": "Mapeo térmico del Polo Sur lunar para identificar trampas frías PSR capaces de retener hielo estable por debajo de 100K."
+  },
+  {
+    "id": "csa_rcm_sar",
+    "name": "RADARSAT Constellation Mission (RCM) Synthetic Aperture Radar",
+    "agency": "CSA",
+    "url": "https://www.asc-csa.gc.ca/eng/satellites/radarsat/default.asp",
+    "license": "Canadian Open Government Licence",
+    "dimension": "hielo",
+    "usage": "Detección de hielo glacial subsuperficial, rugosidad dieléctrica y humedad estructural mediante polarimetría radar en banda C."
+  },
+  {
+    "id": "csa_radarsat1_archive",
+    "name": "RADARSAT-1 Historical Open Data Archive",
+    "agency": "CSA",
+    "url": "https://donnees-data.asc-csa.gc.ca/en/dataset/radarsat1",
+    "license": "Open Data CSA",
+    "dimension": "relieve",
+    "usage": "Monitoreo morfológico y variabilidad geológica multidecadal en sitios análogos árticos y periglaciares."
+  },
+  {
+    "id": "esa_sentinel2_msi",
+    "name": "Sentinel-2 MultiSpectral Instrument (MSI) Surface Reflectance",
+    "agency": "ESA / Copernicus Data Space",
+    "url": "https://dataspace.copernicus.eu/",
+    "license": "Copernicus Open Access",
+    "dimension": "iluminacion",
+    "usage": "Albedo de superficie, índice NDSI (Normalized Difference Snow Index) y clasificación de vegetación nula o hiperárida."
+  },
+  {
+    "id": "jaxa_gportal_precip_snow",
+    "name": "JAXA G-Portal Global Precipitation Measurement (GPM/GSMaP) & Snow",
+    "agency": "JAXA",
+    "url": "https://gportal.jaxa.jp/gpr/",
+    "license": "JAXA Terms of Use - Open Science",
+    "dimension": "hielo",
+    "usage": "Validación independiente de tasas globales de precipitación líquida/sólida y acumulación nival en análogos hiperáridos."
+  },
+  {
+    "id": "nasa_earthdata_gibs",
+    "name": "NASA Global Imagery Browse Services (GIBS) & Worldview",
+    "agency": "NASA Earthdata",
+    "url": "https://worldview.earthdata.nasa.gov/",
+    "license": "NASA Open Data",
+    "dimension": "iluminacion",
+    "usage": "Visualización y verificación de nubes, radiación solar incidente y aerosoles atmosféricos en tiempo cuasi-real."
+  }
+]

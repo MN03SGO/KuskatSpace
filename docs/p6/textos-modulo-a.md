@@ -97,7 +97,7 @@ La clave `analogs.placeholderTitle` y `analogs.placeholderBody` existentes se co
 
 > `analogs.status.mock` solo debe mostrarse mientras se use `candidates.mock.json` (solo desarrollo, D8). `PENDIENTE: confirmar con P5/P4 cuándo se pasa a candidates.json real`.
 >
-> **Aviso de descartes (S2):** `analogs.status.invalid` es **informativo, no un error** (tono `info` del `StatusBanner`, sin culpar y sin pedir acción). `{n}` y `{total}` son enteros formateados por el código (`Intl.NumberFormat`). Se muestra solo si `n > 0` y junto al conmutador de origen de datos (zona A4 de [wireframes.md](wireframes.md)). Si **todos** se descartan se usa `analogs.status.allInvalid`, que dice lo que pasa sin afirmar que haya resultados. **Decidido (PM): la interfaz muestra solo el conteo; el detalle (`_id` y motivo) va a `console.warn` solo en desarrollo (B37), no en un texto de la interfaz.**.
+> **Aviso de descartes (S2; el adaptador B37 todavía no existe, estas claves son para cuando exista):** `analogs.status.invalid` es **informativo, no un error** (tono `info` del `StatusBanner`, sin culpar y sin pedir acción). `{n}` y `{total}` son enteros formateados por el código (`Intl.NumberFormat`). Se muestra solo si `n > 0` y junto al conmutador de origen de datos (zona A4 de [wireframes.md](wireframes.md)). Si **todos** se descartan se usa `analogs.status.allInvalid`, que dice lo que pasa sin afirmar que haya resultados. **Decidido (PM): la interfaz muestra solo el conteo; el detalle (`_id` y motivo) va a `console.warn` solo en desarrollo (B37), no en un texto de la interfaz.**.
 >
 > **Términos del glosario:** no hace falta término nuevo; se reutilizan "sitios" y "datos completos". La base de datos y su API no se nombran en los textos de la interfaz.
 

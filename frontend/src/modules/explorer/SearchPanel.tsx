@@ -1,6 +1,7 @@
 import { useId } from 'react'
 import { StatusBanner } from '../../components/StatusBanner'
 import { apiErrorText } from '../../components/apiErrorText'
+import { focusRing, inputClass, labelClass } from '../../components/ui'
 import { useT } from '../../i18n/useT'
 import { useExplorerStore } from '../../store/useExplorerStore'
 import type { BodyId } from '../../types/explorer'
@@ -11,10 +12,6 @@ const VARIABLES_BY_BODY: Record<BodyId, string[]> = {
   moon: ['all', 'lunar'],
   mars: ['all', 'planetary'],
 }
-
-const inputClass =
-  'w-full rounded border border-line bg-surface px-2 py-1.5 text-sm text-ink focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-info aria-invalid:border-danger'
-const labelClass = 'mb-1 block text-xs text-ink-muted'
 
 export function SearchPanel() {
   const t = useT()
@@ -117,7 +114,7 @@ export function SearchPanel() {
         type="button"
         onClick={() => void s.runSearch()}
         disabled={!canSearch}
-        className="w-full rounded bg-ok px-3 py-2 text-sm font-bold text-canvas hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info disabled:cursor-not-allowed disabled:opacity-60"
+        className={`min-h-10 w-full rounded bg-ok px-3 py-2 text-sm font-bold text-canvas hover:brightness-110 ${focusRing} disabled:cursor-not-allowed disabled:opacity-60`}
       >
         {loading ? t('explorer.searching') : t('explorer.search')}
       </button>

@@ -1,120 +1,192 @@
-# Informe de integración — backend `feature/database` → `Frontend/WebGIS`
+# Informe de integración — backend unificado en `Frontend/WebGIS`
 
-**Fecha:** 2026-11-14
+**Fecha:** 2026-11-14 (v2 — reemplaza al informe anterior)
 **Repo:** `MN03SGO/NASA_SPACE`
 **Ruta local:** `C:\Users\ricar\Downloads\NASA_SPACE`
-**Merge commit:** `c3e2be9` (merge --no-ff)
-**Backup previo:** rama `backup/pre-merge-20261114-1908` (apunta a `093a1a8`)
+**Rama:** `Frontend/WebGIS`
+**Commits de la integración:** `c3e2be9` (merge) + `7f0968a` (unificación)
+**Backup previo al merge:** `backup/pre-merge-20261114-1908` → `093a1a8`
 
 ---
 
-## 1. Qué se integró
+## 1. Qué se hizo
 
-| Commit | Autor | Mensaje |
-|---|---|---|
-| `8b18173` | MN03SGO | chore: agregue requirements.txt para el seed |
-| `c8e5dbc` | MN03SGO | Termine la api para consumir y la bd conexion en bd mongo atlas |
+| Commit | Qué |
+|---|---|
+| `c3e2be9` | Merge de `feature/database` (backend de Mongo de MN03SGO) en tu rama |
+| `7f0968a` | **Unificación del backend**: una sola app FastAPI, un solo `requirements.txt` |
 
-### Archivos que entraron
-
-| Archivo | Δ | Estado |
-|---|---|---|
-| `main.py` | +177 | **nuevo** — API FastAPI sobre MongoDB Atlas |
-| `requirements.txt` | +4 | **nuevo** — fastapi, uvicorn, pymongo, python-dotenv |
-| `seed_mongo.py` | +43 | **nuevo** — carga inicial de datos |
-| `test_db.py` | +21 | **nuevo** — smoke test de conexión |
-| `docker-compose.yml` | +56 | **nuevo** — PostGIS + MinIO + Adminer |
-| `db/init.sql` | +26 | **nuevo** — esquema PostGIS |
-| `README.md` | +18 | actualizado |
-| `index.html` (raíz) | −2 | **eliminado** (el entry real es `frontend/index.html`) |
-| `.gitignore` | +43 | **conflicto resuelto por unión** |
+Con esto quedan resueltos **B32, B33, B36 y D7** del plan P5.
 
 ---
 
-## 2. Contrato de API (lo que el frontend debe consumir)
+## 2. Antes vs. después
 
-**Base:** `VITE_API_BASE` → por defecto `http://localhost:8000`
-**CORS:** habilitado (`CORSMiddleware`)
-**DB:** MongoDB Atlas, base `nasa_space`, índice `2dsphere` sobre la ubicación de candidatos
+### Antes (dos backends peleando por el puerto 8000)
 
-| Método | Ruta | Parámetros | Devuelve |
+```
+main.py              ← API Mongo   (/candidates, /targets)
+requirements.txt     ← fastapi, pymongo…
+seed_mongo.py
+test_db.py
+backend/
+  main.py            ← API búsqueda (/api/search)
+  requirements.txt   ← fastapi, rasterio…
+```
+
+### Después (un solo backend)
+
+```
+backend/
+  main.py            ← app única: /api/* + /candidates + /targets + /export
+  mongo_api.py       ← NUEVO: router con los endpoints de Mongo
+  connectors.py
+  processor.py
+  prepare_samples.py
+  seed_mongo.py      ← movido
+  test_db.py         ← movido y corregido
+  requirements.txt   ← unión, versiones fijas
+  README.md          ← NUEVO: arranque, rutas, variables
+docker-compose.yml   ← se queda en la raíz (infra del repo)
+db/init.sql
+.env.example         ← NUEVO
+```
+
+Eliminados de la raíz: `main.py`, `requirements.txt`, `seed_mongo.py`, `test_db.py`.
+
+---
+
+## 3. Rutas de la app única
+
+| Método | Ruta | Módulo | Notas |
 |---|---|---|---|
-| GET | `/` | — | health / info |
-| GET | `/candidates` | — | lista de candidatos espaciales |
-| GET | `/candidates/near` | `lat` (−90..90, req), `lon` (−180..180, req), `radius_km` (default 100, >0) | candidatos dentro del radio |
-| GET | `/targets` | — | targets planetarios |
-| GET | `/export` | — | JSON completo con metadatos de la base |
+| GET | `/` | salud | `{status, service}` |
+| GET | `/candidates` | A (Mongo) | contrato §05 — **pendiente de datos reales** |
+| GET | `/candidates/near?lat&lon&radius_km` | A (Mongo) | `$near` + índice `2dsphere`, radio en km |
+| GET | `/targets` | A (Mongo) | |
+| GET | `/export` | A (Mongo) | respaldo JSON para el Plan B |
+| GET | `/api/search` | B (federada) | NASA / Copernicus / PDS |
+| POST | `/api/process` | B | SAR, NDVI, NDWI, Diviner, precipitación |
+| GET | `/api/export/geotiff` | B | descarga GeoTIFF |
 
-**Variable de entorno obligatoria:** `MONGO_URI` (en `.env`). Si falta, `main.py` aborta con `RuntimeError`.
-**Arranque:** `uvicorn main:app --reload` (desde la raíz del repo).
-
----
-
-## 3. Conflictos y resolución
-
-- **`.gitignore`** — add/add. Resuelto por **unión**: se mantuvo tu versión (Python + Node/Vite/TS + IDEs + `.env`) y se añadió al final un bloque *"Backend (FastAPI / Mongo / Docker)"* con 43 reglas del backend (`pgdata/`, `miniodata/`, `*.sql.gz`, `.coverage`, `.tox/`, `docker-compose.override.yml`, etc.). Total: 133 líneas.
-- Resto de archivos: **sin conflicto**.
+**Una sola URL en el frontend**: ya no hace falta `VITE_DATA_API_BASE`, basta `VITE_API_BASE`.
 
 ---
 
-## 4. Verificación
+## 4. Verificación ejecutada (con `backend/.venv`)
 
-- `tsc --noEmit` en `frontend/` → **exit 0** (compila con tus cambios en curso incluidos).
-- Tu trabajo sin commitear **no se tocó**:
-  - `frontend/src/i18n/en.json`, `es.json`
-  - `frontend/src/index.css`
-  - `frontend/src/modules/analogs/AnalogsView.tsx`
-  - `plan_P5_frontend_webgis.md`
-  - `docs/` y `plan_P6_ux_pitch.md` (sin trackear)
+```
+python -m py_compile main.py mongo_api.py seed_mongo.py test_db.py   → OK
+import main                                                          → APP OK
+deps: fastapi 0.115.0 | pymongo 4.20.0 | python-dotenv               → OK
+TestClient GET /                 → 200 {"status":"ok","service":"NASA_SPACE API"}
+TestClient GET /candidates       → 503 {"detail":"Falta MONGO_URI en el archivo .env"}
+```
 
----
+La conexión a Mongo es **perezosa**: sin `MONGO_URI` la app arranca y la búsqueda
+federada sigue funcionando; solo los endpoints de datos devuelven `503`.
 
-## 5. Deuda técnica / riesgos detectados
-
-1. **Estructura duplicada del backend.** Tu rama tiene `backend/main.py` y `backend/requirements.txt`; el backend subió `main.py` y `requirements.txt` **en la raíz**. Ahora conviven dos versiones. Hay que decidir cuál es la canónica y reubicar.
-2. **`docker-compose.yml` no coincide con el código.** Levanta PostGIS/Postgres + MinIO + Adminer, pero `main.py` usa **MongoDB Atlas**. O sobra el compose o falta el servicio de Mongo.
-3. **No hay `.env.example`** para `MONGO_URI` en la raíz ni en `backend/`. El `frontend/.env.example` sí existe con `VITE_API_BASE`.
-4. **`frontend/src/App.jsx`** aparece en el diff del backend (vacío) — ruido: el frontend ya migró a TypeScript (`.tsx`).
-5. **`seed_mongo.py` y `test_db.py` en la raíz**, no en `backend/`.
+También `tsc --noEmit` en `frontend/` → **exit 0**.
 
 ---
 
-## 6. Bloque de contexto para el agente
+## 5. Datos: todavía NO hay datos reales ⚠️
 
-> Pega esto en el contexto / `CLAUDE.md` / instrucciones del agente.
+| Cosa | Estado |
+|---|---|
+| `.env` con `MONGO_URI` | ❌ no existe (no está en el repo ni en el historial: es correcto) |
+| `.env.example` | ✅ creado |
+| Python + deps | ✅ `backend/.venv` (faltaba `pymongo`; instalado) |
+| Mongo local / Docker | ❌ no hay |
+| Contenido de `candidates` | ❌ 3 documentos de ejemplo (Marte/Luna) |
+
+### El contrato real (§05 del plan maestro)
+
+Cada candidato debe ser un **análogo terrestre** con:
+
+```
+_id, name, region_type, country,
+location: GeoJSON Point [lon, lat]  (EN LA TIERRA),
+target: "moon_south_pole" | "mars_surface" | "lava_tubes",
+analog_category[],
+scores: {relieve, iluminacion, frio, hielo, polvo}   ← [0,1]
+similar_properties[], similar_processes[], differences_and_limits[],
+exploration_use_cases[],
+subsurface_and_biology: {subsurface_potential, extremophiles_note},
+datasets_used[]
+```
+
+El seed actual **no lo cumple** (no hay `scores`, ni ficha, y son sitios de Marte y
+la Luna): el adaptador `lib/candidateAdapter.ts` los descarta y la UI mostrará
+"0 candidatos válidos de 3". Es el **B34** del plan.
+
+---
+
+## 6. Pendientes (en orden)
+
+1. **Cargar `candidates.json` real con contrato §05** (coordenadas terrestres + `scores`).
+   Necesita `MONGO_URI` de Atlas o un Mongo local.
+2. **Decidir infra:** `docker-compose.yml` levanta PostGIS + MinIO + Adminer, pero el
+   backend usa Mongo Atlas. O se elimina del camino crítico (D6) o se añade Mongo.
+3. **`POST /api/process` sin body:** `processScene` manda POST vacío pero el endpoint
+   solo acepta query params → funciona, pero conviene documentarlo o mover a body.
+4. **`env.ts` del frontend:** quitar la idea de `VITE_DATA_API_BASE` (una sola URL ya).
+5. **`seed_mongo.py` tiene mojibake** en los textos ("SatǸlite", "Crǭter"): hay que
+   reescribirlo junto con el dataset real.
+
+---
+
+## 7. Bloque de contexto para el agente
 
 ```markdown
 ## Proyecto NASA_SPACE (MN03SGO/NASA_SPACE)
 
-Monorepo: `frontend/` (React + TypeScript + Vite + pnpm) y `backend/` (FastAPI, Python).
+Monorepo: `frontend/` (React + TypeScript + Vite + pnpm) y `backend/` (FastAPI + PyMongo).
 Rama de trabajo del frontend: `Frontend/WebGIS`.
 
-### Stack
-- Frontend: React, TypeScript, Vite, i18n (`src/i18n/{es,en}.json`), módulos en `src/modules/` (p. ej. `analogs/AnalogsView.tsx`), globos 3D.
-- Backend: FastAPI + PyMongo + python-dotenv. DB: **MongoDB Atlas**, base `nasa_space`, índice `2dsphere`.
-- Scripts frontend: `dev`, `build` (tsc && vite build), `typecheck` (tsc), `lint` (eslint), `test` (vitest), `e2e` (playwright).
+### Backend (UNIFICADO, una sola app)
+- Se arranca desde `backend/`: `.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000`
+- Un solo `requirements.txt` en `backend/` (fastapi, uvicorn, httpx, numpy, scipy, rasterio,
+  Pillow, python-multipart, pymongo, python-dotenv).
+- `backend/main.py` monta `backend/mongo_api.py` como router.
+- Rutas: GET / · GET /candidates · GET /candidates/near?lat&lon&radius_km · GET /targets ·
+  GET /export · GET /api/search · POST /api/process · GET /api/export/geotiff
+- Conexión a Mongo perezosa: sin MONGO_URI la app arranca y solo los endpoints de datos dan 503.
+- `MONGO_URI` desde `.env` en la raíz (plantilla en `.env.example`).
 
-### API (contrato vigente)
-- Base: `VITE_API_BASE` (default `http://localhost:8000`). CORS abierto.
-- `GET /` health · `GET /candidates` · `GET /candidates/near?lat&lon&radius_km` · `GET /targets` · `GET /export`
-- `MONGO_URI` es obligatoria (.env); sin ella el backend no arranca.
+### Frontend
+- Una sola URL: `VITE_API_BASE` (default http://localhost:8000). `VITE_DATA_API_BASE` ya no aplica.
+- TS estricto: no agregar `.jsx`. i18n en `src/i18n/{es,en}.json`.
+- Módulo A (buscador de análogos) consume `/candidates` y valida con `lib/candidateAdapter.ts`.
+- Módulo B (explorador) consume `/api/search`, `/api/process`, `/api/export/geotiff`.
 
-### Estado de integración (2026-11-14)
-- Merge `c3e2be9` integró `feature/database` en `Frontend/WebGIS`.
-- Pendiente: unificar `main.py`/`requirements.txt` duplicados (raíz vs `backend/`).
-- Pendiente: decidir si se usa Mongo Atlas o el Postgres/PostGIS de `docker-compose.yml`.
-- Pendiente: añadir `.env.example` con `MONGO_URI`.
-- `.gitignore` ya es la unión de frontend + backend.
+### Contrato §05 de `candidates` (obligatorio)
+_id, name, region_type, country, location (GeoJSON Point [lon,lat] TERRESTRE),
+target (moon_south_pole|mars_surface|lava_tubes), analog_category[],
+scores{relieve,iluminacion,frio,hielo,polvo} en [0,1], similar_properties[],
+similar_processes[], differences_and_limits[], exploration_use_cases[],
+subsurface_and_biology{subsurface_potential,extremophiles_note}, datasets_used[]
+
+### Estado (2026-11-14)
+- Merge `c3e2be9` + unificación `7f0968a` aplicados en local (sin push).
+- PENDIENTE CRÍTICO: `candidates` solo tiene 3 documentos de ejemplo (Marte/Luna) sin
+  `scores` ni ficha → el adaptador los descarta. Falta cargar el dataset real §05.
+- PENDIENTE: decidir PostGIS del docker-compose vs Mongo Atlas.
+- `.env` con MONGO_URI no existe todavía.
 
 ### Convenciones
-- No commitear `.env`; usar `.env.local` en frontend.
-- El frontend es TypeScript: no añadir `.jsx` nuevos.
+- No commitear `.env`; `.env.local` en frontend.
+- Ejecutar el backend siempre desde `backend/` (imports y `sample_data/` son relativos).
 ```
 
 ---
 
-## 7. Cómo revertir
+## 8. Cómo revertir
 
 ```powershell
-git reset --hard backup/pre-merge-20261114-1908   # vuelve a 093a1a8
+# solo la unificación del backend
+git revert --no-commit 7f0968a
+
+# todo (merge + unificación)
+git reset --hard backup/pre-merge-20261114-1908
 ```

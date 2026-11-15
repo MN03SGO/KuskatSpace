@@ -7,19 +7,19 @@ venv/
 env/
 ENV/
 
-# Cach├® y compilaci├│n de Python
+# CachÔö£┬« y compilaciÔö£Ôöén de Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# Distribuci├│n y empaquetado
+# DistribuciÔö£Ôöén y empaquetado
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# Pruebas y an├ílisis est├ítico
+# Pruebas y anÔö£├¡lisis estÔö£├¡tico
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -67,14 +67,14 @@ lerna-debug.log*
 Thumbs.db
 
 # ==========================================
-# Herramientas de IA / configuraci├│n local
+# Herramientas de IA / configuraciÔö£Ôöén local
 # ==========================================
 .claude/
 .cursor/
 .aider*
 
 # ==========================================
-# Cach├®s y artefactos de build adicionales
+# CachÔö£┬«s y artefactos de build adicionales
 # ==========================================
 *.tsbuildinfo
 .vite/
@@ -95,7 +95,7 @@ coverage/
 develop-eggs/
 downloads/
 eggs/
-# Anclados a la raíz: sin la "/" inicial ignoraban también frontend/src/lib/ (código TypeScript).
+# Anclados a la ra├¡z: sin la "/" inicial ignoraban tambi├®n frontend/src/lib/ (c├│digo TypeScript).
 /lib/
 /lib64/
 parts/
@@ -132,3 +132,17 @@ Desktop.ini
 *.temp
 tmp/
 temp/
+
+# ==========================================
+# Datos geoespaciales - aportado por datos-planetarios
+# ==========================================
+.env.local
+.env.*.local
+*.tif
+*.tiff
+*.geotiff
+*.nc
+*.hdf
+*.h5
+*.jp2
+data/cache_*.json

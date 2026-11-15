@@ -58,7 +58,7 @@ Por diapositiva: título (ES/EN), **máximo 3 viñetas**, visual sugerido y nota
 | JAXA | G-Portal (GPM/GSMaP, GCOM-C, AMSR2) | Catálogo de referencia | `backend/connectors.py` |
 | CSA | RADARSAT Constellation y RADARSAT-1 | Catálogo de referencia | `backend/connectors.py` |
 | NASA/ESA/JAXA/CSA | Datasets del plan (LOLA, Diviner, MODIS, Copernicus DEM, EMIT, G-Portal, RADARSAT-1…) | **Planificados** para el pipeline de P1/P2; no integrados todavía | plan_maestro §03 |
-| — (infraestructura del equipo) | **MongoDB Atlas** con índice `2dsphere` (colecciones `candidates` y `targets`) y API `/`, `/candidates`, `/candidates/near`, `/targets`, `/export` | **Ya existe** (integrada en `c3e2be9`). **Sus datos de ejemplo aún no cumplen el contrato §05** (sin `scores` ni ficha; los 3 "candidatos" son de Marte y la Luna) y no se pudo probar contra Atlas desde la máquina del frontend | plan_P5 §2.5, B34 y B35; `main.py` de la raíz |
+| — (infraestructura del equipo) | **MongoDB Atlas** con índice `2dsphere` (colecciones `candidates` y `targets`) y API `/`, `/candidates`, `/candidates/near`, `/targets`, `/export` | **Ya existe**, dentro de la app única `backend/main.py` (que monta `backend/mongo_api.py`; `c3e2be9` y `7f0968a`). **Sus datos de ejemplo aún no cumplen el contrato §05** (sin `scores` ni ficha; los 3 "candidatos" son de Marte y la Luna) y no se pudo probar contra Atlas desde la máquina del frontend | plan_P5 §2.5, B34 y B35; `main.py` de la raíz |
 
 **Visual sugerido:** cuatro logos de agencia (con permiso de uso y atribución) y debajo la tabla anterior con tres colores (en vivo · textura · catálogo). `PENDIENTE: verificar licencias de logos y atribuciones — P6 con el equipo`.
 
@@ -113,7 +113,7 @@ Por diapositiva: título (ES/EN), **máximo 3 viñetas**, visual sugerido y nota
 
 **Viñetas**
 1. **Equipo (alias del README):** P1 Jorge (datos terrestres) · P2 Ansorje (datos planetarios) · P3 Abel (algoritmo y fichas) · P4 Anthony (backend y base de datos) · P5 Amiguito (frontend) · P6 Paola (UX y pitch). `[README.md §"Distribución de los roles"]`
-2. **Próximos pasos:** cargar en Mongo los datos reales de P3 con el contrato del plan maestro; unir las dos APIs en una sola; generar el Plan B (`candidates.json`) con `/export`; módulo A con IFA, presets y fichas; y sustituir los datos simulados por datos reales de las agencias. `[plan_P5 §2.5, D7, D8, B34, B38 y §7; plan_maestro §05 y §06]`
+2. **Próximos pasos:** cargar en Mongo los datos reales de P3 con el contrato del plan maestro; construir el adaptador que valida el contrato (B37, todavía sin hacer); generar el Plan B (`candidates.json`) con `/export`; módulo A con IFA, presets y fichas; y sustituir los datos simulados por datos reales de las agencias. `[plan_P5 §2.5, D8, B34, B37, B38 y §7; plan_maestro §05 y §06]`
 3. Cierre: *una cartera de análogos parciales que dice qué probar y qué no.* `[plan_maestro §"Tesis Central"]`
 
 **Visual sugerido:** línea de tiempo corta con las fases del plan y la zona "hecho" (módulo B) en `ok` y "por hacer" (módulo A) en `ink-muted`. `PENDIENTE: fechas — hora real de H0, ver cronograma-checkins.md`.

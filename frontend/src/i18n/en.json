@@ -36,7 +36,43 @@
       "label": "3D globe of the selected body",
       "hint": "Drag to rotate · scroll or pinch to zoom · click or tap to move the BBox",
       "loading": "Loading mosaic {loaded} of {total}",
-      "noWebgl": "Your browser cannot show the 3D globe (WebGL is not available). Switch to the 2D map to continue."
+      "noWebgl": "Your browser cannot show the 3D globe (WebGL is not available). Switch to the 2D map to continue.",
+      "hintShort": "Drag to rotate · tap to move the BBox",
+      "tileErrors": "Some detail did not load; showing the local texture."
+    },
+    "layers": {
+      "title": "Planet layers",
+      "hint": "Show one variable over the whole visible planet.",
+      "temperature": "Show temperature",
+      "humidity": "Show humidity",
+      "precipitation": "Show precipitation",
+      "names": {
+        "temperature": "temperature",
+        "humidity": "relative humidity",
+        "precipitation": "precipitation"
+      },
+      "unavailable": {
+        "moon": "The Moon has no atmosphere: there is no humidity or rain. Only temperature (model) is available.",
+        "mars": "There is no daily global humidity or rain data for Mars. Only temperature (model) is available."
+      },
+      "sources": {
+        "temperature": "NASA AIRS, surface air temperature (daytime pass)",
+        "humidity": "NASA AIRS, surface relative humidity (daytime pass)",
+        "precipitation": "NASA GPM IMERG, daily precipitation rate"
+      },
+      "sourceEarth": "Satellite data: {source}. Date: {date} (latest published).",
+      "gapsNote": "Empty stripes are areas the satellite did not pass over that day.",
+      "sourceModel": "Approximate thermal model for now ({date} {time} UTC). This is not a measurement.",
+      "subsolar": "Subsolar point: lat. {lat}°, lon. {lon}°",
+      "modelNote": {
+        "moon": "Computed from the Sun's position: about 390 K under the Sun, about 95 K at night and about 40 K at the poles. It ignores relief and thermal inertia.",
+        "mars": "Computed from the Sun's position: about 290 K under the Sun and 150–190 K at night. It ignores dust, relief and thermal inertia."
+      },
+      "legendLabel": "{name} scale: from {min} to {max} {unit}",
+      "logScale": "logarithmic scale",
+      "opacity": "Layer opacity: {value}%",
+      "loading": "Loading layer {loaded} of {total}",
+      "failed": "The layer could not be loaded for that date. Try another date."
     },
     "mapHint": "Tap or click the map to move the BBox",
     "gibsDate": "NASA Worldview GIBS layer date",
@@ -68,8 +104,8 @@
         "sar_db": "Process SAR dB + Lee filter",
         "ndvi": "Calculate NDVI",
         "ndwi": "Calculate NDWI (water)",
-        "jaxa_precip": "Show precipitation",
-        "diviner_thermal": "Show temperature (Diviner-like)"
+        "jaxa_precip": "Process simulated precipitation",
+        "diviner_thermal": "Process simulated thermal profile"
       }
     },
     "result": {

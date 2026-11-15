@@ -1,13 +1,13 @@
 import { exportGeotiffUrl } from '../../api/explorer'
 import { StatusBanner } from '../../components/StatusBanner'
 import { apiErrorText } from '../../components/apiErrorText'
+import { focusRing, secondaryButton } from '../../components/ui'
 import { PALETTE_BY_MODE, PALETTE_STOPS, PROCESS_MODES } from '../../config/processModes'
-import { type TFunction, useT } from '../../i18n/useT'
+import { type TFunction, useLang, useT } from '../../i18n/useT'
+import { cssGradient } from '../../lib/colormap'
+import { formatNumber } from '../../lib/format'
 import { useExplorerStore } from '../../store/useExplorerStore'
 import type { CryosphereComparison, ProcessedScene } from '../../types/explorer'
-
-const buttonClass =
-  'rounded bg-surface px-2 py-2 text-xs font-medium text-ink ring-1 ring-line hover:bg-line focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info disabled:cursor-not-allowed disabled:opacity-60 aria-pressed:ring-2 aria-pressed:ring-info'
 
 export function ProcessingPanel() {
   const t = useT()
@@ -18,9 +18,11 @@ export function ProcessingPanel() {
   const loading = process.state === 'loading'
 
   return (
-    <section className="space-y-3 rounded-md bg-raised p-3">
-      <h2 className="text-sm font-semibold">{t('explorer.processing.title')}</h2>
-      <div className="grid grid-cols-2 gap-1.5">
+    <section className="space-y-3 rounded-md bg-raised p-3" aria-labelledby="processing-title">
+      <h2 id="processing-title" className="text-sm font-bold">
+        {t('explorer.processing.title')}
+      </h2>
+      <div className="grid grid-cols-2 gap-2">
         {PROCESS_MODES.map((m) => (
           <button
             key={m.id}
@@ -28,7 +30,7 @@ export function ProcessingPanel() {
             disabled={loading || !!bboxError}
             aria-pressed={scene?.request.mode === m.id}
             onClick={() => void runProcess(m.id)}
-            className={buttonClass}
+            className={secondaryButton}
           >
             {loading && process.mode === m.id ? t('explorer.processing.running') : t(`explorer.processing.modes.${m.id}`)}
           </button>
@@ -45,26 +47,30 @@ export function ProcessingPanel() {
 }
 
 function SceneResult({ scene, t }: { scene: ProcessedScene; t: TFunction }) {
+  const lang = useLang((s) => s.lang)
   const body = useExplorerStore((s) => s.body)
   const opacity = useExplorerStore((s) => s.opacity)
   const setOpacity = useExplorerStore((s) => s.setOpacity)
   const { response } = scene
   const stops = PALETTE_STOPS[PALETTE_BY_MODE[response.mode]]
+  const num = (v: number) => formatNumber(lang, v, 3)
 
   return (
     <div className="space-y-2 border-t border-line pt-3 text-xs">
       <p className="font-bold break-all text-info">{scene.label ?? t(`bodies.${body}.region`)}</p>
       <p>
-        <span className="font-semibold">{t('explorer.result.unit')}:</span> {response.unit}
+        <span className="font-bold">{t('explorer.result.unit')}:</span> {response.unit}
       </p>
 
       <div>
+        {/* B22: la leyenda tiene nombre accesible con su unidad. */}
         <div
-          className="h-2.5 rounded-sm"
-          style={{ background: `linear-gradient(to right, ${stops.join(', ')})` }}
-          aria-hidden="true"
+          role="img"
+          aria-label={`${t('explorer.result.legendLow')} → ${t('explorer.result.legendHigh')} (${response.unit})`}
+          className="h-3 rounded-sm"
+          style={{ background: cssGradient(stops) }}
         />
-        <div className="mt-0.5 flex justify-between text-ink-muted">
+        <div className="mt-1 flex justify-between text-ink-muted">
           <span>{t('explorer.result.legendLow')}</span>
           <span>{t('explorer.result.legendHigh')}</span>
         </div>
@@ -72,14 +78,14 @@ function SceneResult({ scene, t }: { scene: ProcessedScene; t: TFunction }) {
 
       <dl className="grid grid-cols-3 gap-1 text-center">
         {(['min', 'mean', 'max'] as const).map((k) => (
-          <div key={k} className="rounded bg-surface px-1 py-1">
+          <div key={k} className="rounded bg-surface p-1">
             <dt className="text-ink-muted">{t(`explorer.result.${k}`)}</dt>
-            <dd className="font-mono">{response.stats[k]}</dd>
+            <dd className="font-mono">{num(response.stats[k])}</dd>
           </div>
         ))}
       </dl>
 
-      {/* B12: el backend siempre usa muestras de ejemplo; se dice explícitamente. */}
+      {/* B12: el backend usa datos simulados; se dice explícitamente. */}
       <StatusBanner tone="warn">{t('explorer.result.demoSample', { file: response.source_file })}</StatusBanner>
 
       <div>
@@ -94,35 +100,34 @@ function SceneResult({ scene, t }: { scene: ProcessedScene; t: TFunction }) {
           step={0.05}
           value={opacity}
           onChange={(e) => setOpacity(Number(e.target.value))}
-          className="w-full accent-info"
+          className="h-10 w-full accent-info"
         />
       </div>
 
-      {/* B3: la descarga usa el bbox y el modo con los que se procesó, no el bbox actual. */}
+      {/* B3: la descarga usa el bbox y el modo con los que se procesó. */}
       <a
         href={exportGeotiffUrl(scene.request)}
         download
-        className="block rounded bg-accent px-3 py-2 text-center font-bold text-ink no-underline hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info"
+        className={`flex min-h-10 items-center justify-center rounded bg-accent px-3 py-2 text-center font-bold text-ink no-underline hover:brightness-110 ${focusRing}`}
       >
         {t('explorer.result.download')}
       </a>
 
-      {response.cryosphere_comparison && <CryospherePanel data={response.cryosphere_comparison} t={t} />}
+      {response.cryosphere_comparison && <CryospherePanel data={response.cryosphere_comparison} t={t} lang={lang} />}
     </div>
   )
 }
 
 /** B16: la conclusión se arma con los números calculados, no con el texto fijo del backend. */
-function CryospherePanel({ data, t }: { data: CryosphereComparison; t: TFunction }) {
+function CryospherePanel({ data, t, lang }: { data: CryosphereComparison; t: TFunction; lang: string }) {
   const delta = data.delta_vs_earth_ice_k
-  const sentence = t(delta < 0 ? 'explorer.cryo.colder' : 'explorer.cryo.warmer', {
-    delta: Math.abs(delta).toFixed(1),
-  })
+  const num = (v: number) => formatNumber(lang, v, 1)
+  const sentence = t(delta < 0 ? 'explorer.cryo.colder' : 'explorer.cryo.warmer', { delta: num(Math.abs(delta)) })
   return (
     <div className="space-y-1 rounded border-l-4 border-info bg-surface p-2">
-      <p className="font-semibold">{t('explorer.cryo.title')}</p>
-      <p>{t('explorer.cryo.lunarMin', { value: data.lunar_psr_min_k })}</p>
-      <p>{t('explorer.cryo.earthAvg', { value: data.earth_antarctica_avg_k })}</p>
+      <p className="font-bold">{t('explorer.cryo.title')}</p>
+      <p>{t('explorer.cryo.lunarMin', { value: num(data.lunar_psr_min_k) })}</p>
+      <p>{t('explorer.cryo.earthAvg', { value: num(data.earth_antarctica_avg_k) })}</p>
       <p className="text-ink-muted">{sentence}</p>
     </div>
   )

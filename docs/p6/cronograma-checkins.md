@@ -25,8 +25,8 @@ flowchart LR
 | P3 | P1 | `earth_features.csv` y mapa de calor PNG | H6 (parte de H4–H8) | Plan maestro §07: pasar la grilla de 5 km a 15 km |
 | P3 | P2 | `targets.json` (perfil: media, p10 y p90) | H4 | Perfil mínimo de 3 dimensiones (Relieve, Frío, Hielo) |
 | P4 | P3 | `candidates.json` (≈ 2.000 celdas) | H8 | Seguir con datos *mock* con el mismo contrato |
-| P5 | P4 | `/candidates`, `/candidates/near`, `/targets` y `/export` en la API de Mongo (**ya existen**, `c3e2be9`), **con datos que cumplan el contrato §05** (B34/B35) y `candidates.json` estático generado con `/export` (B38) | H8 (`/candidates/near`: H16–H20) | P5 trabaja con `candidates.mock.json` solo para desarrollo y pruebas; el adaptador descarta y cuenta los documentos inválidos; el módulo B sostiene la demo de datos |
-| P5 | P4 | **D7:** una sola aplicación FastAPI (routers `/api/*` y `/candidates*`) y un solo `requirements.txt`; **`.env.example`** con `MONGO_URI` (B32, B33) | H4 (corto plazo: Mongo en el puerto 8001) | Frontend con dos URLs (`VITE_API_BASE` y `VITE_DATA_API_BASE`) y Mongo en el puerto 8001 |
+| P5 | P4 | `/candidates`, `/candidates/near`, `/targets` y `/export` (**ya existen** en la app unificada `backend/main.py`, que monta `backend/mongo_api.py`; `c3e2be9` y `7f0968a`), **con datos que cumplan el contrato §05** (B34/B35) y `candidates.json` estático generado con `/export` (B38) | H8 (`/candidates/near`: H16–H20) | P5 trabaja con `candidates.mock.json` solo para desarrollo y pruebas; cuando se construya el adaptador (B37, **todavía no existe**) descartará y contará los documentos inválidos; el módulo B sostiene la demo de datos |
+| P5 | P4 | ~~**D7:** una sola aplicación FastAPI y un solo `requirements.txt`; `.env.example` con `MONGO_URI` (B32, B33)~~ **RESUELTO** en `7f0968a`: una sola app, un solo `requirements.txt` y `.env.example` en la raíz. El frontend usa **una sola URL** (`VITE_API_BASE`); `VITE_DATA_API_BASE` ya no aplica | — | — |
 | P5 | P3 | Fichas redactadas | H16 | Ficha con "Pendiente" en cada campo ausente (no se oculta) |
 | P5 | P1/P2 | Pares de imágenes del comparador (Top 5) | H20 | El comparador se oculta si falta el par |
 | P5 | P6 | Wireframes (H3), paleta y tipografía (H4), textos ES/EN (H10) | según columna | Claves con texto provisional `TODO:` que no rompen la UI |
@@ -89,7 +89,7 @@ Cada checkpoint tiene un **criterio verificable** (algo que se puede comprobar c
 | Criterio verificable | Cómo se comprueba | Responsable |
 | :--- | :--- | :--- |
 | `earth_features.csv` publicado (señal de alerta del plan maestro: a H6 no existe → pasar a grilla de 15 km) | Abrir el archivo | P1 |
-| `/candidates` devuelve documentos que **pasan el adaptador del contrato §05 con coordenadas terrestres** (no basta con que la API responda: hoy los datos de `seed_mongo.py` son de Marte y la Luna y no traen `scores`, B34) | Petición a `/candidates`; `lib/candidateAdapter.ts` acepta los documentos y el contador de descartados es 0 (o conocido) | P3 + P4 |
+| `/candidates` devuelve documentos que **cumplen el contrato §05 con coordenadas terrestres** (no basta con que la API responda: hoy los datos de `seed_mongo.py` son de Marte y la Luna y no traen `scores`, B34) | Petición a `/candidates` y validación con el adaptador `lib/candidateAdapter.ts` (**todavía no existe, B37**); cuando exista, acepta los documentos y el contador de descartados es 0 (o conocido). Mientras tanto, revisión manual de los campos del contrato | P3 + P4 (datos) · P5 (adaptador) |
 | `/targets` con los 3 identificadores (`moon_south_pole`, `mars_surface`, `lava_tubes`) y el perfil de 5 dimensiones (B35) | Petición a `/targets` | P2 + P3 |
 | Archivo estático de respaldo (Plan B) generado con `GET /export` y guardado como `public/data/candidates.json` (B38) | Existe en el repo y la app lo carga cuando se bloquea la API | P4 + P5 |
 | El IFA del frontend coincide con el de P3 en 5 casos fijos, diferencia ≤ 0,001 | Pruebas Vitest de `ifa.ts` en verde | P5 + P3 |
@@ -205,9 +205,9 @@ Tomado de las casillas del plan P5 §7 y de las entregas de P6 reportadas por el
 | 3 | `useT()` y textos finales ES/EN | P5/P6 | Textos revisados (T3): **aceptados con cambios menores**; claves del módulo A propuestas, sin integrar |
 | 4 | Prueba de usabilidad con 3 personas | P6 | `[ ]` — protocolo en T8 (pendiente) |
 | 5–6 | Comparador, `/candidates/near`, carga diferida, QA visual, congelamiento | P5/P6 | `[ ]` |
-| — | Backend: `/candidates`, `/candidates/near`, `/targets` y `/export` | P4 | **Existen** en la API de Mongo (`c3e2be9`), pero sus datos **no cumplen el contrato §05** (B34/B35): sin `scores` ni ficha, y los 3 "candidatos" son lugares de Marte y la Luna. No se pudo probar contra Atlas (no hay `MONGO_URI` en la máquina del frontend) |
-| — | Unir las dos APIs (la de Mongo y la de `back-AR`, ambas en el puerto 8000) y un solo `requirements.txt` (D7, B32) | P4 | `[ ]` — corto plazo: Mongo en el puerto 8001 |
-| — | `.env.example` con `MONGO_URI` (B33) | P4 | `[ ]` |
+| — | Backend: `/candidates`, `/candidates/near`, `/targets` y `/export` | P4 | **Existen** en la app unificada (`7f0968a`), pero sus datos **no cumplen el contrato §05** (B34/B35): sin `scores` ni ficha, y los 3 "candidatos" son lugares de Marte y la Luna. No se pudo probar contra Atlas (no hay `MONGO_URI` en la máquina del frontend) |
+| — | Unir las dos APIs en una sola aplicación con un solo `requirements.txt` (D7, B32) | P4 | `[x]` — `7f0968a` (`backend/main.py` monta `backend/mongo_api.py`). También resuelto B36 (`test_db.py`) y B13 (README del backend) |
+| — | `.env.example` con `MONGO_URI` (B33) | P4 | `[x]` — en la raíz del repo (`7f0968a`) |
 | — | `candidates.json` real con el contrato §05 cargado en Mongo | P3/P4 | `[ ]` — `PENDIENTE: fecha de entrega — P3/P4` |
 | — | NASA CMR devuelve siempre lista vacía; PDS no trae productos (B10) | P4 | Pendiente de P4 |
 
@@ -249,7 +249,7 @@ Reglas: (1) "hecho" solo cuenta si hay prueba; (2) un bloqueo sin responsable y 
 | Falla la prueba de cordura en H10 | Calibrar σ<sub>d</sub> o activar el modo robusto de 3 dimensiones |
 | La demo tarda más de 15 s en cargar datos | Abrir la URL de Render 3 minutos antes; interruptor de Plan B |
 | Bugs después de H16 | Congelar a H20 y dedicar las últimas 3 horas a narrativa, video y envío |
-| A H8 `/candidates` no devuelve documentos que pasen el adaptador del contrato §05 con coordenadas terrestres | Seguir con `candidates.mock.json` **solo para desarrollo** (nunca en la demo, D8); el módulo B sostiene la demo de datos |
+| A H8 `/candidates` no devuelve documentos que cumplan el contrato §05 con coordenadas terrestres | Seguir con `candidates.mock.json` **solo para desarrollo** (nunca en la demo, D8); el módulo B sostiene la demo de datos |
 | Textos de P6 tarde | Claves provisionales `TODO:`; P6 los sustituye sin tocar código |
 
 ---
@@ -268,5 +268,5 @@ Reglas: (1) "hecho" solo cuenta si hay prueba; (2) un bloqueo sin responsable y 
 
 ### Dudas abiertas
 1. **`PENDIENTE: hora real de H0`** (la fija el equipo); con ella se pueden poner las horas del reloj.
-2. **`PENDIENTE: fecha de entrega del candidates.json real cargado en Mongo con el contrato §05`** (P3/P4); condiciona el checkpoint H8. **Actualización S2:** `/candidates` ya existe (`c3e2be9`), pero con datos que no cumplen el contrato (B34/B35); D7 (una sola app) y `.env.example` (B33) son dependencias de P4.
+2. **`PENDIENTE: fecha de entrega del candidates.json real cargado en Mongo con el contrato §05`** (P3/P4); condiciona el checkpoint H8. **Actualización S3:** la API ya existe y está unificada en una sola app y una sola URL (`7f0968a`; D7, B32, B33, B36 y B13 resueltos); el cuello de botella sigue siendo **B34** (datos reales §05) y **B37** (adaptador, sin hacer).
 3. En §3, la fila "Globo 3D" se tomó del README y del plan P5 §3 (D2), no de una casilla del plan; el PM puede marcarla en la sección 7.
