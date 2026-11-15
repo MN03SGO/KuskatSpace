@@ -50,7 +50,7 @@ interface CandidateDoc {
   is_understudied?: boolean
   analog_category?: string[]
   location: { type: string; coordinates: [number, number] }
-  scores: CandidateScores
+  scores?: CandidateScores | null
   similar_properties?: string[]
   similar_processes?: string[]
   differences_and_limits?: string[]
@@ -126,17 +126,22 @@ const PRESETS: Preset[] = [
 ]
 
 function computeIFA(
-  s: CandidateScores,
+  s: CandidateScores | null | undefined,
   w: { relieve: number; iluminacion: number; frio: number; hielo: number; polvo: number },
 ): number {
-  const polvoVal = s.polvo ?? 0.5
+  // Fail-safe: docs NASA sin scores → 0 en cada dimensión (evita TypeError / pantalla negra)
+  const relieve = s?.relieve || 0
+  const iluminacion = s?.iluminacion || 0
+  const frio = s?.frio || 0
+  const hielo = s?.hielo || 0
+  const polvoVal = s?.polvo || 0
   const sumW = w.relieve + w.iluminacion + w.frio + w.hielo + w.polvo
   if (sumW <= 0) return 0
   return (
-    (s.relieve * w.relieve +
-      s.iluminacion * w.iluminacion +
-      s.frio * w.frio +
-      s.hielo * w.hielo +
+    (relieve * w.relieve +
+      iluminacion * w.iluminacion +
+      frio * w.frio +
+      hielo * w.hielo +
       polvoVal * w.polvo) /
     sumW
   )
@@ -521,7 +526,7 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
                   </span>
                 </div>
                 {dimLabels.map(({ key, es, en }) => {
-                  const val = selected.doc.scores[key] ?? 0.5
+                  const val = selected.doc.scores?.[key] || 0
                   return (
                     <div key={key} className="space-y-0.5">
                       <div className="flex justify-between text-xs">
