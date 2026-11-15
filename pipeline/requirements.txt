@@ -1,0 +1,8 @@
+# Dependencias P1 (pipeline de datos terrestres). Independiente de backend/requirements.txt
+earthengine-api==1.7.52
+pandas==3.1.1
+numpy==2.5.4
+matplotlib==3.11.2
+pystac-client==0.9.1
+planetary-computer==1.0.0
+requests==2.34.2

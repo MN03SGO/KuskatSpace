@@ -1,0 +1,5 @@
+# Datos intermedios y pesados (>~50 MB) fuera de git
+tiles/
+*.tif
+*.parquet
+earth_features_full*.csv
