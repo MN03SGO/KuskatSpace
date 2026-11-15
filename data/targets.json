@@ -33,6 +33,13 @@
         "mean": 5.5,
         "p10": 0.8,
         "p90": 12.0
+      },
+      "polvo": {
+        "description": "Fracción de regolito fino abrasivo sin cubierta orgánica/vegetal (homólogo a polvo electrostático lunar)",
+        "unit": "índice adimensional [0-1]",
+        "mean": 0.85,
+        "p10": 0.60,
+        "p90": 0.98
       }
     },
     "environmental_factors": {
@@ -43,7 +50,7 @@
     "key_instruments": ["LOLA (LRO)", "Diviner Radiometer (LRO)", "LEND (LRO)", "Mini-RF"]
   },
   {
-    "_id": "moon_lava_tube",
+    "_id": "lava_tubes",
     "name": "Pozo de Mare Tranquillitatis (Tubos de Lava y Subsuelo)",
     "body": "Moon",
     "description": "Claraboya volcánica colapsada (skylight pit) de ~100m de profundidad en basaltos de inundación lunar. Ofrece acceso a galerías subterráneas térmicamente estables con protección natural contra radiación cósmica y micrometeoritos.",
@@ -76,6 +83,13 @@
         "mean": 0.0,
         "p10": 0.0,
         "p90": 0.1
+      },
+      "polvo": {
+        "description": "Tefra basáltica, bloques de colapso y polvo fino en el piso de la claraboya",
+        "unit": "índice adimensional [0-1]",
+        "mean": 0.65,
+        "p10": 0.30,
+        "p90": 0.90
       }
     },
     "environmental_factors": {
@@ -86,7 +100,7 @@
     "key_instruments": ["LROC NAC (LRO)", "Mini-RF", "SELENE Kaguya TC"]
   },
   {
-    "_id": "mars",
+    "_id": "mars_surface",
     "name": "Marte (Jezero, Arcadia Planitia y Llanuras Eólicas)",
     "body": "Mars",
     "description": "Planicie y cuencas sedimentarias/volcánicas marcianas. Relevante para hábitats permanentes, aprovechamiento de hielo de permafrost somero, tormentas globales de polvo, dunas basálticas y depósitos de arcillas/sales evaporíticas.",
@@ -119,6 +133,13 @@
         "mean": 0.8,
         "p10": 0.1,
         "p90": 2.5
+      },
+      "polvo": {
+        "description": "Espesor óptico de aerosoles eólicos y tormentas de polvo mineral (MODIS MAIAC AOD 550 nm homólogo a tau marciano)",
+        "unit": "AOD 550 nm",
+        "mean": 0.35,
+        "p10": 0.12,
+        "p90": 0.85
       }
     },
     "environmental_factors": {

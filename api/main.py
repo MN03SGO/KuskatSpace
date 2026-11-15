@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Query, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 import pymongo
 from pymongo import MongoClient
@@ -72,8 +73,7 @@ class Scores(BaseModel):
     iluminacion: float = Field(..., ge=0.0, le=1.0)
     frio: float = Field(..., ge=0.0, le=1.0)
     hielo: float = Field(..., ge=0.0, le=1.0)
-    # Contrato §05: quinta dimensión (Polvo/Aerosoles). Opcional mientras P1 la calcula.
-    polvo: Optional[float] = Field(None, ge=0.0, le=1.0)
+    polvo: Optional[float] = Field(0.5, ge=0.0, le=1.0)
 
 
 class CandidateResponse(BaseModel):
@@ -95,6 +95,8 @@ class CandidateResponse(BaseModel):
     exploration_use_cases: List[str] = []
     subsurface_and_biology: Optional[Dict[str, str]] = None
     datasets_used: List[str] = []
+    orbital_previews: Optional[Dict[str, Any]] = None
+    p1_cell_metrics: Optional[Dict[str, Any]] = None
 
     # --- Compatibilidad con documentos anteriores al §05 ---
     analog_type: Optional[str] = None
@@ -193,15 +195,27 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return r * c
 
 
+TARGET_ALIASES: Dict[str, List[str]] = {
+    "mars": ["mars", "mars_surface"],
+    "mars_surface": ["mars", "mars_surface"],
+    "moon_lava_tube": ["moon_lava_tube", "lava_tubes"],
+    "lava_tubes": ["moon_lava_tube", "lava_tubes"],
+    "moon_south_pole": ["moon_south_pole"],
+}
+
+
 def compute_weighted_score(
     scores: Dict[str, float],
     w_relieve: float,
     w_iluminacion: float,
     w_frio: float,
-    w_hielo: float
+    w_hielo: float,
+    w_polvo: float = 1.0,
 ) -> float:
-    """Calcula el puntaje ponderado normalizado [0.0 - 1.0]."""
-    total_weight = w_relieve + w_iluminacion + w_frio + w_hielo
+    """Calcula el Índice de Fidelidad Analógica (IFA §04) ponderado en las 5 dimensiones [0.0 - 1.0]."""
+    has_polvo = scores.get("polvo") is not None
+    eff_polvo = w_polvo if has_polvo else 0.0
+    total_weight = w_relieve + w_iluminacion + w_frio + w_hielo + eff_polvo
     if total_weight <= 0:
         total_weight = 1.0
 
@@ -209,7 +223,8 @@ def compute_weighted_score(
         scores.get("relieve", 0.0) * w_relieve +
         scores.get("iluminacion", 0.0) * w_iluminacion +
         scores.get("frio", 0.0) * w_frio +
-        scores.get("hielo", 0.0) * w_hielo
+        scores.get("hielo", 0.0) * w_hielo +
+        (scores.get("polvo", 0.0) or 0.0) * eff_polvo
     ) / total_weight
 
     return round(float(score_val), 4)
@@ -321,11 +336,12 @@ def export_all():
 
 @app.get("/candidates", response_model=List[CandidateResponse], tags=["Candidatos Análogos"])
 def get_candidates(
-    target: Optional[str] = Query(None, description="Filtrar por objetivo: moon_south_pole, moon_lava_tube o mars"),
+    target: Optional[str] = Query(None, description="Filtrar por objetivo: moon_south_pole, mars_surface (o mars), lava_tubes (o moon_lava_tube)"),
     relieve: float = Query(1.0, ge=0.0, le=5.0, description="Peso dinámico para relieve topográfico"),
     iluminacion: float = Query(1.0, ge=0.0, le=5.0, description="Peso dinámico para iluminación / insolación"),
     frio: float = Query(1.0, ge=0.0, le=5.0, description="Peso dinámico para frío extremo"),
     hielo: float = Query(1.0, ge=0.0, le=5.0, description="Peso dinámico para agua / hielo / permafrost"),
+    polvo: float = Query(1.0, ge=0.0, le=5.0, description="Peso dinámico para polvo / aerosoles (MODIS MAIAC P1)"),
     limit: int = Query(50, ge=1, le=200, description="Límite máximo de resultados"),
 ):
     """
@@ -334,11 +350,12 @@ def get_candidates(
     """
     candidates = []
     client = get_mongo_client()
+    allowed_targets = TARGET_ALIASES.get(target, [target]) if target else None
 
     if client:
         try:
             db = client[DB_NAME]
-            query = {"target": target} if target else {}
+            query = {"target": {"$in": allowed_targets}} if allowed_targets else {}
             candidates = list(db["candidates"].find(query))
         except PyMongoError:
             candidates = []
@@ -346,15 +363,15 @@ def get_candidates(
     if not candidates:
         # Fallback local
         raw_candidates = read_local_json("candidates.json")
-        if target:
-            candidates = [c for c in raw_candidates if c.get("target") == target]
+        if allowed_targets:
+            candidates = [c for c in raw_candidates if c.get("target") in allowed_targets]
         else:
             candidates = raw_candidates
 
-    # Recálculo dinámico ponderado de similitud
+    # Recálculo dinámico ponderado de similitud (5 dimensiones)
     for c in candidates:
         scores = c.get("scores", {})
-        c["weighted_score"] = compute_weighted_score(scores, relieve, iluminacion, frio, hielo)
+        c["weighted_score"] = compute_weighted_score(scores, relieve, iluminacion, frio, hielo, polvo)
 
     # Ordenar descendentemente por el puntaje resultante
     candidates.sort(key=lambda x: x.get("weighted_score", 0.0), reverse=True)
@@ -377,6 +394,7 @@ def get_candidates_near(
     Utiliza el operador geoespacial $near de MongoDB o cálculo geodésico Haversine en modo fallback.
     """
     search_dist_km = radius_km if radius_km is not None else max_distance_km
+    allowed_targets = TARGET_ALIASES.get(target, [target]) if target else None
     client = get_mongo_client()
     results = []
 
@@ -394,14 +412,15 @@ def get_candidates_near(
                     }
                 }
             }
-            if target:
-                query["target"] = target
+            if allowed_targets:
+                query["target"] = {"$in": allowed_targets}
 
             mongo_results = list(db["candidates"].find(query).limit(limit))
             for doc in mongo_results:
                 coords = doc.get("location", {}).get("coordinates", [0, 0])
                 doc["distance_km"] = round(haversine_km(lat, lon, coords[1], coords[0]), 2)
-                doc["weighted_score"] = compute_weighted_score(doc.get("scores", {}), 1.0, 1.0, 1.0, 1.0)
+                # 5D (incl. polvo) + clean_doc para serializar ObjectId
+                doc["weighted_score"] = compute_weighted_score(doc.get("scores", {}), 1.0, 1.0, 1.0, 1.0, 1.0)
                 results.append(clean_doc(doc))
             return results
         except PyMongoError:
@@ -411,18 +430,55 @@ def get_candidates_near(
     local_candidates = read_local_json("candidates.json")
     filtered = []
     for c in local_candidates:
-        if target and c.get("target") != target:
+        if allowed_targets and c.get("target") not in allowed_targets:
             continue
         coords = c.get("location", {}).get("coordinates", [0, 0])
         dist = haversine_km(lat, lon, coords[1], coords[0])
         if dist <= search_dist_km:
             c_copy = dict(c)
             c_copy["distance_km"] = round(dist, 2)
-            c_copy["weighted_score"] = compute_weighted_score(c_copy.get("scores", {}), 1.0, 1.0, 1.0, 1.0)
+            c_copy["weighted_score"] = compute_weighted_score(c_copy.get("scores", {}), 1.0, 1.0, 1.0, 1.0, 1.0)
             filtered.append(clean_doc(c_copy))
 
     filtered.sort(key=lambda x: x.get("distance_km", 999999))
     return filtered[:limit]
+
+
+# ---------------------------------------------------------------------------
+# Endpoints de Productos Geoespaciales P1 (Heatmaps GEE, Previews S1/S2 y QC)
+# ---------------------------------------------------------------------------
+
+if DATA_DIR.exists():
+    app.mount("/data", StaticFiles(directory=str(DATA_DIR)), name="data")
+
+
+@app.get("/api/p1/heatmaps", tags=["Pipeline Terrestre P1 (GEE)"])
+def get_p1_heatmaps():
+    """Devuelve `data/heatmap_bounds.json` con metadatos, bounds (Leaflet/MapLibre) y capas PNG en base64."""
+    bounds_file = DATA_DIR / "heatmap_bounds.json"
+    if not bounds_file.exists():
+        raise HTTPException(status_code=404, detail="heatmap_bounds.json no encontrado")
+    return json.loads(bounds_file.read_text(encoding="utf-8"))
+
+
+@app.get("/api/p1/orbital-previews", tags=["Pipeline Terrestre P1 (GEE)"])
+def get_p1_orbital_previews():
+    """Devuelve el catálogo `data/orbital_previews/orbital_previews.json` (Sentinel-2 RGB + Sentinel-1 SAR con filtro Lee)."""
+    previews_file = DATA_DIR / "orbital_previews" / "orbital_previews.json"
+    if not previews_file.exists():
+        raise HTTPException(status_code=404, detail="orbital_previews.json no encontrado")
+    return json.loads(previews_file.read_text(encoding="utf-8"))
+
+
+@app.get("/api/p1/qc-report", tags=["Pipeline Terrestre P1 (GEE)"])
+def get_p1_qc_report():
+    """Devuelve el reporte de control de calidad `data/qc_report.json` y `data/metadata.json`."""
+    qc_file = DATA_DIR / "qc_report.json"
+    meta_file = DATA_DIR / "metadata.json"
+    return {
+        "qc_report": json.loads(qc_file.read_text(encoding="utf-8")) if qc_file.exists() else {},
+        "metadata": json.loads(meta_file.read_text(encoding="utf-8")) if meta_file.exists() else {},
+    }
 
 
 # ---------------------------------------------------------------------------

@@ -1,30 +1,66 @@
 [
   {
-    "id": "copernicus_dem_glo90",
-    "name": "Copernicus DEM GLO-90 Digital Elevation Model",
-    "agency": "ESA",
-    "url": "https://planetarycomputer.microsoft.com/dataset/cop-dem-glo-90",
-    "license": "Copernicus Open Access / Open Data",
+    "id": "copernicus_dem",
+    "name": "Copernicus DEM GLO-30 (Release 2024_1 — Remuestreado Homólogo a 240 m)",
+    "agency": "ESA / Copernicus",
+    "url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+    "license": "Copernicus DEM Open License",
     "dimension": "relieve",
-    "usage": "Cálculo de pendiente topográfica (grados), rugosidad del terreno y sombras orográficas a 90m de resolución espacial."
+    "usage": "Elevación (elev_m), pendiente media/p90, relieve local y sombra solar en 4 fechas sobre ventanas circulares de 5 km a resolución homóloga de 240 m (GEE: COPERNICUS/DEM/GLO30_2024_1)."
   },
   {
-    "id": "modis_lst_terra_aqua",
-    "name": "MODIS Land Surface Temperature (MOD11A2 / MYD11A2)",
-    "agency": "NASA Earthdata & Planetary Computer",
-    "url": "https://planetarycomputer.microsoft.com/dataset/modis-11A2-061",
+    "id": "modis_lst",
+    "name": "MODIS Terra Land Surface Temperature & Emissivity 8-Day 1km (MOD11A2.061)",
+    "agency": "NASA EOSDIS / LP DAAC",
+    "url": "https://doi.org/10.5067/MODIS/MOD11A2.061",
     "license": "NASA Open Data Policy",
     "dimension": "frio",
-    "usage": "Temperatura superficial diurna y nocturna a 1 km cada 8 días para evaluar gradientes de frío extremo y contrastes térmicos."
+    "usage": "Climatología térmica multianual 2019–2023 (lst_mean, lst_min, lst_max y amplitud diurna lst_amp en Kelvin)."
   },
   {
-    "id": "meteomatics_weather_era5",
-    "name": "Meteomatics Global High-Resolution Weather & ERA5 Reanalysis",
-    "agency": "Meteomatics",
-    "url": "https://www.meteomatics.com/en/weather-api/",
-    "license": "Commercial / Academic License (REST API)",
-    "dimension": "frio",
-    "usage": "Series climatológicas históricas de temperatura a 2m, precipitación acumulada, nieve fresca y vientos para modelos de aridez y polvo."
+    "id": "modis_snow",
+    "name": "MODIS Terra Snow Cover 8-Day L3 Global 500m (MOD10A2.061)",
+    "agency": "NASA EOSDIS / NSIDC DAAC",
+    "url": "https://doi.org/10.5067/MODIS/MOD10A2.061",
+    "license": "NASA Open Data Policy",
+    "dimension": "hielo",
+    "usage": "Persistencia criosférica multianual 2019–2023 (fracción de compuestos de 8 días con cobertura de nieve/hielo)."
+  },
+  {
+    "id": "modis_aod",
+    "name": "MODIS Terra & Aqua MAIAC Land Aerosol Optical Depth Daily 1km (MCD19A2.061)",
+    "agency": "NASA EOSDIS / LP DAAC",
+    "url": "https://doi.org/10.5067/MODIS/MCD19A2.061",
+    "license": "NASA Open Data Policy",
+    "dimension": "polvo",
+    "usage": "Carga atmosférica de polvo mineral y aerosoles a 550 nm (aod_mean y aod_p90) para la 5.ª dimensión del IFA."
+  },
+  {
+    "id": "modis_ndvi",
+    "name": "MODIS Terra Vegetation Indices 16-Day Global 1km (MOD13A2.061)",
+    "agency": "NASA EOSDIS / LP DAAC",
+    "url": "https://doi.org/10.5067/MODIS/MOD13A2.061",
+    "license": "NASA Open Data Policy",
+    "dimension": "relieve",
+    "usage": "Filtro cuantitativo de biosfera vegetal (ndvi_mean, ndvi_max) para aislar regolito desnudo e hiperárido."
+  },
+  {
+    "id": "sentinel1_sar",
+    "name": "Copernicus Sentinel-1 C-Band SAR GRD + Filtro Lee CSA (Sustituto RADARSAT-1/RCM)",
+    "agency": "ESA / Copernicus & CSA SAR Protocol",
+    "url": "https://www.asc-csa.gc.ca/eng/satellites/radarsat/radarsat-tutorial.asp",
+    "license": "Copernicus Open Access",
+    "dimension": "relieve",
+    "usage": "Retrodispersión radar en banda C (5.405 GHz, VV/HH en dB con filtro speckle Lee 5x5) homóloga a LRO Mini-RF."
+  },
+  {
+    "id": "sentinel2_sr",
+    "name": "Copernicus Sentinel-2 MSI Level-2A Harmonized Surface Reflectance",
+    "agency": "ESA / Copernicus",
+    "url": "https://dataspace.copernicus.eu/",
+    "license": "Copernicus Open Access",
+    "dimension": "iluminacion",
+    "usage": "Recortes ópticos RGB sin nubes a 10 m de resolución para comparación visual lado a lado en las fichas."
   },
   {
     "id": "nasa_lro_lola",
@@ -33,7 +69,7 @@
     "url": "https://pds-geosciences.wustl.edu/missions/lro/lola.htm",
     "license": "NASA Public Domain",
     "dimension": "relieve",
-    "usage": "Topografía de referencia del Polo Sur Lunar para correlacionar pendientes de cráteres de impacto con elevaciones terrestres."
+    "usage": "Topografía de referencia del Polo Sur Lunar (~240 m) para correlacionar pendientes de cráteres de impacto con elevaciones terrestres."
   },
   {
     "id": "nasa_lro_diviner",
@@ -42,43 +78,25 @@
     "url": "https://pds-geosciences.wustl.edu/missions/lro/diviner.htm",
     "license": "NASA Public Domain",
     "dimension": "frio",
-    "usage": "Mapeo térmico del Polo Sur lunar para identificar trampas frías PSR capaces de retener hielo estable por debajo de 100K."
+    "usage": "Mapeo térmico del Polo Sur Lunar para identificar trampas frías PSR capaces de retener hielo estable por debajo de 100 K."
   },
   {
     "id": "csa_rcm_sar",
-    "name": "RADARSAT Constellation Mission (RCM) Synthetic Aperture Radar",
+    "name": "RADARSAT Constellation Mission (RCM) & RADARSAT-1 SAR Archive",
     "agency": "CSA",
     "url": "https://www.asc-csa.gc.ca/eng/satellites/radarsat/default.asp",
     "license": "Canadian Open Government Licence",
     "dimension": "hielo",
-    "usage": "Detección de hielo glacial subsuperficial, rugosidad dieléctrica y humedad estructural mediante polarimetría radar en banda C."
-  },
-  {
-    "id": "csa_radarsat1_archive",
-    "name": "RADARSAT-1 Historical Open Data Archive",
-    "agency": "CSA",
-    "url": "https://donnees-data.asc-csa.gc.ca/en/dataset/radarsat1",
-    "license": "Open Data CSA",
-    "dimension": "relieve",
-    "usage": "Monitoreo morfológico y variabilidad geológica multidecadal en sitios análogos árticos y periglaciares."
-  },
-  {
-    "id": "esa_sentinel2_msi",
-    "name": "Sentinel-2 MultiSpectral Instrument (MSI) Surface Reflectance",
-    "agency": "ESA / Copernicus Data Space",
-    "url": "https://dataspace.copernicus.eu/",
-    "license": "Copernicus Open Access",
-    "dimension": "iluminacion",
-    "usage": "Albedo de superficie, índice NDSI (Normalized Difference Snow Index) y clasificación de vegetación nula o hiperárida."
+    "usage": "Detección de hielo subsuperficial, rugosidad dieléctrica y textura en banda C para sitios árticos y periglaciares."
   },
   {
     "id": "jaxa_gportal_precip_snow",
-    "name": "JAXA G-Portal Global Precipitation Measurement (GPM/GSMaP) & Snow",
+    "name": "JAXA G-Portal Global Precipitation Measurement (GPM/GSMaP) & GCOM-C Snow",
     "agency": "JAXA",
     "url": "https://gportal.jaxa.jp/gpr/",
     "license": "JAXA Terms of Use - Open Science",
     "dimension": "hielo",
-    "usage": "Validación independiente de tasas globales de precipitación líquida/sólida y acumulación nival en análogos hiperáridos."
+    "usage": "Validación cruzada de precipitación líquida/sólida y cobertura criosférica en análogos hiperáridos."
   },
   {
     "id": "nasa_earthdata_gibs",
@@ -87,6 +105,6 @@
     "url": "https://worldview.earthdata.nasa.gov/",
     "license": "NASA Open Data",
     "dimension": "iluminacion",
-    "usage": "Visualización y verificación de nubes, radiación solar incidente y aerosoles atmosféricos en tiempo cuasi-real."
+    "usage": "Teselas WMTS/TMS de contexto global para el visor interactivo 2D/3D."
   }
 ]

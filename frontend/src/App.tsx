@@ -11,8 +11,7 @@ const TABS: Tab[] = ['analogs', 'explorer']
 export default function App() {
   const t = useT()
   useDocumentLang()
-  // Mientras el módulo A está en construcción, se abre directamente el explorador.
-  const [tab, setTab] = useState<Tab>('explorer')
+  const [tab, setTab] = useState<Tab>('analogs')
 
   return (
     <div className="flex h-dvh flex-col bg-canvas text-ink">
