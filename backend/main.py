@@ -4,9 +4,10 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from connectors import run_federated_search
+from mongo_api import close_db, router as data_router
 from processor import execute_pipeline, export_geotiff_bytes
 
-app = FastAPI(title="Cloud GIS & Remote Sensing Platform", version="0.3.0")
+app = FastAPI(title="Cloud GIS & Remote Sensing Platform", version="0.4.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,6 +15,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Módulo A (datos en MongoDB): /candidates, /candidates/near, /targets, /export
+app.include_router(data_router)
+
+
+@app.on_event("shutdown")
+def shutdown() -> None:
+    close_db()
 
 
 @app.get("/api/search")
