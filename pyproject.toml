@@ -1,7 +1,9 @@
-# Metadatos del proyecto. Sin [tool.vercel] / entrypoint: evita que Vercel
-# active el modo "services" + FastAPI framework y deje de compilar api/.
+# Entrypoint FastAPI del servicio `api` (root = ".").
+# Docs: https://vercel.com/docs/frameworks/backend/fastapi
 [project]
 name = "terraanaloga"
 version = "1.0.0"
 requires-python = ">=3.11,<3.14"
-# Dependencias de producción = requirements.txt (ligeras). Ráster → backend/requirements-local.txt
+
+[tool.vercel]
+entrypoint = "api.main:app"

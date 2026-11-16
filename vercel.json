@@ -1,22 +1,29 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd frontend && pnpm install && pnpm build",
-  "outputDirectory": "frontend/dist",
-  "installCommand": "cd frontend && pnpm install",
-  "framework": null,
-  "functions": {
-    "api/main.py": {
-      "maxDuration": 60,
-      "includeFiles": "data/**\nbackend/*.py"
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite"
+    },
+    "api": {
+      "root": ".",
+      "framework": "fastapi",
+      "entrypoint": "api.main:app",
+      "functions": {
+        "api/main.py": {
+          "maxDuration": 60,
+          "includeFiles": "data/**\nbackend/*.py"
+        }
+      }
     }
   },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/main.py" },
-    { "source": "/health", "destination": "/api/main.py" },
-    { "source": "/targets", "destination": "/api/main.py" },
-    { "source": "/datasets", "destination": "/api/main.py" },
-    { "source": "/candidates(.*)", "destination": "/api/main.py" },
-    { "source": "/export", "destination": "/api/main.py" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/api/(.*)", "destination": { "service": "api" } },
+    { "source": "/health", "destination": { "service": "api" } },
+    { "source": "/targets", "destination": { "service": "api" } },
+    { "source": "/datasets", "destination": { "service": "api" } },
+    { "source": "/candidates(.*)", "destination": { "service": "api" } },
+    { "source": "/export", "destination": { "service": "api" } },
+    { "source": "/(.*)", "destination": { "service": "frontend" } }
   ]
 }

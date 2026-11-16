@@ -8,6 +8,7 @@ frontend/dist
 backend/sample_data
 backend/requirements-local.txt
 backend/__pycache__
+pipeline
 **/.pytest_cache
 **/.mypy_cache
 *.tif
