@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Map as MapLibreMap,
-  NavigationControl,
   Popup,
   type GeoJSONSource,
   type MapLayerMouseEvent,
@@ -9,7 +8,14 @@ import {
   type StyleSpecification,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { focusRing } from '../../components/ui'
+import {
+  focusRing,
+  focusRingInset,
+  hudCardClass,
+  hudPanelClass,
+  ifaBadgeClass,
+  sliderClass,
+} from '../../components/ui'
 import { ESRI_ATTRIBUTION, ESRI_WORLD_IMAGERY } from '../../config/bodies'
 import { API_BASE } from '../../config/env'
 import { useLang } from '../../i18n/useT'
@@ -264,6 +270,9 @@ interface CandidateDoc {
   similar_processes?: string[]
   differences_and_limits?: string[]
   exploration_use_cases?: string[]
+  similar_values?: string[]
+  earth_limits?: string[]
+  exploration_use?: string
   subsurface_and_biology?: {
     subsurface_potential?: string
     extremophiles_note?: string
@@ -386,6 +395,7 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
   const [gridMeta, setGridMeta] = useState<{ n_cells: number; n_regions: number } | null>(null)
   const [inspectorCell, setInspectorCell] = useState<InspectorCell | null>(null)
   const [inspectorCandidate, setInspectorCandidate] = useState<InspectorCandidate | null>(null)
+  const [drawerOpen, setDrawerOpen] = useState(true)
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
@@ -488,7 +498,6 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     }
 
     mapRef.current = map
-    map.addControl(new NavigationControl({ showCompass: false }), 'top-right')
     popupRef.current = new Popup({
       closeButton: true,
       closeOnClick: true,
@@ -937,519 +946,730 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     }
   }
 
+  const perspectiveTabs = [
+    { id: 'combined' as const, icon: 'public', label: isEs ? 'Índice Global' : 'Combined Index' },
+    { id: 'moon_south_pole' as const, icon: 'ac_unit', label: isEs ? 'Luna PSR / Frío' : 'Moon PSR / Cold' },
+    { id: 'mars_surface' as const, icon: 'landscape', label: isEs ? 'Marte Árido / Polvo' : 'Mars Arid / Dust' },
+  ]
+
+  const dimShortLabels: { key: keyof CandidateScores; es: string; en: string; bar: string; text: string }[] = [
+    { key: 'relieve', es: 'Relieve (DEM 240 m)', en: 'Relief (DEM 240 m)', bar: 'bg-accent', text: 'text-info' },
+    { key: 'iluminacion', es: 'Iluminación / Sombra', en: 'Illumination / Shadow', bar: 'bg-accent', text: 'text-info' },
+    { key: 'frio', es: 'Frío Extremo (LST)', en: 'Extreme Cold (LST)', bar: 'bg-ok', text: 'text-ok' },
+    { key: 'hielo', es: 'Hielo / Criosfera', en: 'Ice / Cryosphere', bar: 'bg-ok', text: 'text-ok' },
+    { key: 'polvo', es: 'Polvo (MODIS AOD)', en: 'Dust (MODIS AOD)', bar: 'bg-ink-muted', text: 'text-ink-muted' },
+  ]
+
+  const simProperties = selected?.doc.similar_properties?.length
+    ? selected.doc.similar_properties
+    : (selected?.doc.similar_values ?? [])
+  const simProcesses = selected?.doc.similar_processes ?? []
+  const diffLimits = selected?.doc.differences_and_limits?.length
+    ? selected.doc.differences_and_limits
+    : (selected?.doc.earth_limits ?? [])
+  const useCases = selected?.doc.exploration_use_cases?.length
+    ? selected.doc.exploration_use_cases
+    : selected?.doc.exploration_use
+      ? [selected.doc.exploration_use]
+      : []
+
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
-      {/* Panel izquierdo: Escenarios, pesos 5D y listado */}
-      <aside className="flex w-full shrink-0 flex-col gap-3 border-b border-line bg-surface p-3 lg:w-96 lg:overflow-y-auto lg:border-r lg:border-b-0">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold">
-            {isEs ? '1 · Escenario y Pesos IFA (5D)' : '1 · Scenario & IFA Weights (5D)'}
-          </h2>
-          <span
-            className={`rounded px-2 py-0.5 text-xs ${
-              sourceMode === 'api'
-                ? 'bg-raised text-ink-muted'
-                : 'bg-amber-500/15 font-semibold text-amber-700 dark:text-amber-300'
-            }`}
-            title={apiFallbackReason ?? undefined}
-          >
-            {sourceMode === 'api'
-              ? isEs
-                ? 'Fuente: API en vivo'
-                : 'Source: Live API'
-              : isEs
-                ? 'Fuente: Respaldo local (§05) — API no disponible'
-                : 'Source: Local backup (§05) — API unavailable'}
-          </span>
-        </div>
-        {sourceMode === 'backup' && apiFallbackReason && (
-          <p className="rounded border border-amber-500/40 bg-amber-500/10 px-2.5 py-1.5 text-xs text-amber-800 dark:text-amber-200">
-            {isEs
-              ? `Usando candidatos en disco porque la API no respondió bien. Motivo: ${apiFallbackReason}.`
-              : `Using on-disk candidates because the API did not respond correctly. Reason: ${apiFallbackReason}.`}
-          </p>
-        )}
+    <div className="custom-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto bg-canvas">
+      {/* WORKBENCH CARTOGRÁFICO SUPERIOR */}
+      <div className="relative flex flex-col lg:h-[calc(100dvh-3.5rem)] lg:min-h-[600px] lg:shrink-0 lg:overflow-hidden">
+        {/* Contenedor del Mapa MapLibre (protagonista) */}
+        <div className="relative h-[460px] w-full shrink-0 lg:absolute lg:inset-0 lg:h-full">
+          <div
+            ref={mapContainerRef}
+            className="h-full w-full"
+            aria-label={
+              isEs
+                ? `Mapa satelital Esri con grilla IFA ${heatmapLayer}`
+                : `Esri satellite map with IFA grid ${heatmapLayer}`
+            }
+          />
 
-        {/* Presets por zona funcional */}
-        <div className="space-y-1.5">
-          <p className="text-xs font-semibold text-ink-muted">
-            {isEs ? 'Escenarios rápidos (§4.3):' : 'Quick scenarios (§4.3):'}
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {PRESETS.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => applyPreset(p)}
-                className={`rounded border border-line bg-raised px-2 py-1 text-xs hover:border-info ${focusRing}`}
-              >
-                {isEs ? p.labelEs : p.labelEn}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Filtro por objetivo y descubrimientos */}
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <label htmlFor="target-select" className="block text-xs text-ink-muted">
-              {isEs ? 'Objetivo planetario' : 'Planetary target'}
-            </label>
-            <select
-              id="target-select"
-              value={targetFilter}
-              onChange={(e) => setTargetFilter(e.target.value as TargetFilter)}
-              className={`mt-1 w-full rounded border border-line bg-canvas px-2 py-1.5 text-xs text-ink ${focusRing}`}
-            >
-              <option value="all">{isEs ? 'Todos los objetivos' : 'All targets'}</option>
-              <option value="moon_south_pole">{isEs ? 'Luna · Polo Sur' : 'Moon · South Pole'}</option>
-              <option value="mars_surface">{isEs ? 'Marte · Superficie' : 'Mars · Surface'}</option>
-              <option value="lava_tubes">{isEs ? 'Subsuelo · Tubos de lava' : 'Subsurface · Lava tubes'}</option>
-            </select>
-          </div>
-          <div className="flex items-end">
-            <label className="flex cursor-pointer items-center gap-2 rounded border border-line bg-canvas px-2.5 py-1.5 text-xs">
-              <input
-                type="checkbox"
-                checked={onlyDiscoveries}
-                onChange={(e) => setOnlyDiscoveries(e.target.checked)}
-              />
-              <span>{isEs ? 'Solo descubrimientos' : 'Discoveries only'}</span>
-            </label>
-          </div>
-        </div>
-
-        {/* Sliders de las 5 dimensiones */}
-        <div className="space-y-2 rounded border border-line bg-canvas p-2.5">
-          {dimLabels.map(({ key, es, en }) => (
-            <div key={key} className="space-y-0.5">
-              <div className="flex justify-between text-xs">
-                <span>{isEs ? es : en}</span>
-                <span className="font-mono text-ink-muted">{Math.round(weights[key] * 100)}%</span>
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.05}
-                value={weights[key]}
-                onChange={(e) => setWeights((w) => ({ ...w, [key]: parseFloat(e.target.value) }))}
-                className="w-full accent-info"
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Lista de candidatos ordenados por IFA */}
-        <div className="flex items-center justify-between pt-1">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-            {isEs ? `Ranking de Análogos (${ranked.length})` : `Analog Ranking (${ranked.length})`}
-          </h3>
-        </div>
-
-        {loading ? (
-          <p className="text-xs text-ink-muted">{isEs ? 'Cargando candidatos...' : 'Loading candidates...'}</p>
-        ) : (
-          <div className="flex flex-col gap-1.5 overflow-y-auto pr-1" style={{ maxHeight: '340px' }}>
-            {ranked.map(({ doc, ifa }, idx) => {
-              const isSelected = selected?.doc._id === doc._id
-              const isDiscovery = doc.region_type === 'understudied_discovery' || doc.is_understudied
-              return (
-                <button
-                  key={doc._id}
-                  type="button"
-                  onClick={() => setSelectedId(doc._id)}
-                  className={`flex flex-col gap-1 rounded border p-2 text-left transition ${focusRing} ${
-                    isSelected
-                      ? 'border-info bg-raised shadow-sm'
-                      : 'border-line bg-canvas hover:bg-raised/60'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-xs font-bold leading-snug">
-                      #{idx + 1} · {doc.name}
-                    </span>
-                    <span className="shrink-0 rounded bg-accent px-1.5 py-0.5 font-mono text-xs font-bold text-ink">
-                      IFA {(ifa * 100).toFixed(0)}%
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-ink-muted">
-                    <span>{doc.country}</span>
-                    <span>·</span>
-                    <span
-                      className={`rounded px-1.5 py-0.2 font-semibold ${
-                        isDiscovery ? 'bg-info/20 text-info' : 'bg-surface text-ink-muted'
-                      }`}
-                    >
-                      {isDiscovery
-                        ? isEs
-                          ? 'Descubrimiento'
-                          : 'Discovery'
-                        : isEs
-                          ? 'Calibración'
-                          : 'Calibration'}
-                    </span>
-                    {doc.orbital_previews && (
-                      <span className="rounded bg-emerald-500/20 px-1.5 py-0.2 font-semibold text-emerald-300">
-                        S2 + SAR
-                      </span>
-                    )}
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        )}
-      </aside>
-
-      {/* Panel central y derecho: Mapa de calor global P1 + Ficha científica §05 */}
-      <section className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
-        {/* Mapa de calor global GEE P1 con marcadores */}
-        <div className="rounded border border-line bg-surface p-3">
-          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <h2
-                className="text-sm font-bold"
+          {/* Barra HUD flotante superior */}
+          <div className="pointer-events-none absolute top-3 right-3 left-3 z-20 flex flex-wrap items-center justify-between gap-2">
+            <div className={`pointer-events-auto flex items-center gap-2.5 px-3 py-1.5 ${hudPanelClass}`}>
+              <span className="h-2 w-2 rounded-full bg-ok" aria-hidden="true" />
+              <span
+                className="text-xs font-bold tracking-tight text-ink"
                 title={
                   isEs
-                    ? '240 m es la escala del DEM dentro de cada celda (homóloga a LOLA/MOLA), no el tamaño de la celda (15 o 60 km). Sin color = fuera del dominio analizado (ROI + dorsal).'
-                    : '240 m is the DEM scale inside each cell (homologous to LOLA/MOLA), not the cell size (15 or 60 km). No color = outside the analyzed domain (ROI + backbone).'
+                    ? '240 m es la escala del DEM dentro de cada celda (homóloga a LOLA/MOLA), no el tamaño de la celda (15 o 60 km).'
+                    : '240 m is the DEM scale inside each cell (homologous to LOLA/MOLA), not the cell size (15 or 60 km).'
                 }
               >
-                {isEs
-                  ? 'Fidelidad analógica · regiones de interés y dorsal global (15 y 60 km)'
-                  : 'Analog fidelity · priority regions and global backbone (15 & 60 km)'}
-              </h2>
-              <p className="text-xs text-ink-muted">
-                {gridMeta
-                  ? isEs
+                {isEs ? 'Fidelidad analógica' : 'Analog fidelity'}
+              </span>
+              {gridMeta && (
+                <span className="hidden font-mono text-[10px] text-ink-muted sm:inline">
+                  {isEs
                     ? `${gridMeta.n_cells.toLocaleString('es-ES')} celdas · ${gridMeta.n_regions} regiones`
-                    : `${gridMeta.n_cells.toLocaleString('en-US')} cells · ${gridMeta.n_regions} regions`
-                  : isEs
-                    ? 'Cargando conteo de celdas…'
-                    : 'Loading cell count…'}
-                {' · '}
-                {isEs
-                  ? 'Clic en marcador o celda para inspeccionar. Zoom bajo = manchas; zoom ≥4 = polígonos.'
-                  : 'Click a marker or cell to inspect. Low zoom = blobs; zoom ≥4 = polygons.'}
-              </p>
+                    : `${gridMeta.n_cells.toLocaleString('en-US')} cells · ${gridMeta.n_regions} regions`}
+                </span>
+              )}
             </div>
-            <div className="flex gap-1">
-              {(
-                [
-                  ['combined', isEs ? 'Índice Global' : 'Combined Index'],
-                  ['moon_south_pole', isEs ? 'Luna PSR / Frío' : 'Moon PSR / Cold'],
-                  ['mars_surface', isEs ? 'Marte Árido / Polvo' : 'Mars Arid / Dust'],
-                ] as const
-              ).map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => applyHeatmapTab(id)}
-                  className={`rounded px-2.5 py-1 text-xs ${focusRing} ${
-                    heatmapLayer === id
-                      ? 'bg-info font-bold text-canvas'
-                      : 'border border-line bg-canvas text-ink-muted hover:text-ink'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+
+            <div
+              role="group"
+              aria-label={isEs ? 'Perspectiva de mapa IFA' : 'IFA map perspective'}
+              className={`pointer-events-auto flex items-center gap-1 p-1 ${hudPanelClass}`}
+            >
+              {perspectiveTabs.map(({ id, icon, label }) => {
+                const active = heatmapLayer === id
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => applyHeatmapTab(id)}
+                    className={`flex min-h-8 items-center gap-1.5 rounded-lg px-2.5 py-1 font-mono text-[11px] transition-all ${focusRingInset} ${
+                      active
+                        ? 'bg-accent font-semibold text-white shadow-xs dark:text-[#002b42]'
+                        : 'font-medium text-ink-muted hover:bg-raised hover:text-ink'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[15px]" aria-hidden="true">
+                      {icon}
+                    </span>
+                    <span>{label}</span>
+                  </button>
+                )
+              })}
             </div>
           </div>
 
-          {/* Mapa: alto explícito. Paneles absolute encima; no alteran el tamaño del mapa. */}
-          <div
-            className="relative w-full overflow-hidden rounded border border-line"
-            style={{ height: 560, minHeight: 480 }}
-          >
-            <div
-              ref={mapContainerRef}
-              className="h-full w-full"
-              style={{ height: 560, minHeight: 480 }}
-              aria-label={
-                isEs
-                  ? `Mapa Dark Matter con grilla IFA ${heatmapLayer}`
-                  : `Dark Matter map with IFA grid ${heatmapLayer}`
-              }
-            />
-            <LayerPanel
-              isEs={isEs}
-              ifaOpacity={ifaOpacity}
-              onIfaOpacity={handleIfaOpacity}
-              ifaMode="polygons"
-              gridNotice={gridNotice}
-              candidatesVisible={candidatesVisible}
-              onCandidatesVisible={setCandidatesVisible}
-              contextVisibility={contextVisibility}
-              contextOpacity={contextOpacity}
-              onContextVisible={handleContextVisible}
-              onContextOpacity={handleContextOpacity}
-            />
-            <Legend
-              isEs={isEs}
-              scenario={layerToMode(heatmapLayer)}
-              contextVisibility={contextVisibility}
-            />
-            <Inspector isEs={isEs} cell={inspectorCell} candidate={inspectorCandidate} />
-            <TimeBar
-              isEs={isEs}
-              date={contextDate}
-              onDate={handleContextDate}
-              contextVisibility={contextVisibility}
-            />
+          {/* Pila flotante derecha: controles de zoom + Inspector + LayerPanel + Legend */}
+          <div className="pointer-events-none absolute top-16 right-3 bottom-9 z-20 hidden w-64 flex-col items-end gap-2.5 overflow-y-auto pr-0.5 custom-scrollbar md:flex">
+            <div className={`pointer-events-auto flex flex-col gap-1 p-1 ${hudPanelClass}`}>
+              <button
+                type="button"
+                onClick={() => mapRef.current?.zoomIn()}
+                title={isEs ? 'Aumentar zoom' : 'Zoom in'}
+                aria-label={isEs ? 'Aumentar zoom' : 'Zoom in'}
+                className={`flex h-8 w-8 items-center justify-center rounded-lg bg-raised text-ink transition-colors hover:bg-line ${focusRing}`}
+              >
+                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                  add
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => mapRef.current?.zoomOut()}
+                title={isEs ? 'Disminuir zoom' : 'Zoom out'}
+                aria-label={isEs ? 'Disminuir zoom' : 'Zoom out'}
+                className={`flex h-8 w-8 items-center justify-center rounded-lg bg-raised text-ink transition-colors hover:bg-line ${focusRing}`}
+              >
+                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                  remove
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => mapRef.current?.easeTo({ center: [-20, 15], zoom: 1.4, duration: 450 })}
+                title={isEs ? 'Restablecer vista global' : 'Reset global view'}
+                aria-label={isEs ? 'Restablecer vista global' : 'Reset global view'}
+                className={`flex h-8 w-8 items-center justify-center rounded-lg bg-raised text-info transition-colors hover:bg-line ${focusRing}`}
+              >
+                <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                  restart_alt
+                </span>
+              </button>
+            </div>
+
+            <div className="pointer-events-auto w-full">
+              <Inspector isEs={isEs} cell={inspectorCell} candidate={inspectorCandidate} />
+            </div>
+
+            <div className="pointer-events-auto w-full">
+              <LayerPanel
+                isEs={isEs}
+                ifaOpacity={ifaOpacity}
+                onIfaOpacity={handleIfaOpacity}
+                ifaMode="polygons"
+                gridNotice={gridNotice}
+                candidatesVisible={candidatesVisible}
+                onCandidatesVisible={setCandidatesVisible}
+                contextVisibility={contextVisibility}
+                contextOpacity={contextOpacity}
+                onContextVisible={handleContextVisible}
+                onContextOpacity={handleContextOpacity}
+              />
+            </div>
+
+            <div className="pointer-events-auto w-full">
+              <Legend
+                isEs={isEs}
+                scenario={layerToMode(heatmapLayer)}
+                contextVisibility={contextVisibility}
+              />
+            </div>
           </div>
-          <p className="mt-1.5 text-[11px] text-ink-muted">
-            {isEs
-              ? 'Fondo: Carto Dark Matter. IFA: círculos (z<4) / polígonos (z≥4). Sin color = fuera del dominio. Contexto opcional: GIBS.'
-              : 'Basemap: Carto Dark Matter. IFA: circles (z<4) / polygons (z≥4). No color = outside domain. Optional context: GIBS.'}
-          </p>
+
+          <TimeBar
+            isEs={isEs}
+            date={contextDate}
+            onDate={handleContextDate}
+            contextVisibility={contextVisibility}
+          />
+
+          {/* Franja inferior de créditos del mapa */}
+          <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 flex items-center justify-between border-t border-line bg-surface/85 px-4 py-1 font-mono text-[10px] text-ink-muted backdrop-blur-md">
+            <span className="truncate">
+              {isEs
+                ? 'Fondo: Esri World Imagery · IFA: círculos (z<4) / polígonos (z≥4) · Sin color = fuera del dominio · Contexto: NASA GIBS'
+                : 'Basemap: Esri World Imagery · IFA: circles (z<4) / polygons (z≥4) · No color = outside domain · Context: NASA GIBS'}
+            </span>
+            <span className="hidden shrink-0 items-center gap-1 rounded border border-line bg-raised px-2 py-0.5 text-ink sm:flex">
+              <span>Esri World Imagery | MapLibre GL</span>
+            </span>
+          </div>
         </div>
 
-        {/* Ficha detallada del candidato seleccionado (Contrato §05) */}
-        {selected && (
-          <div className="grid grid-cols-1 gap-4 rounded border border-line bg-surface p-4 xl:grid-cols-12">
-            {/* Columna izquierda de la ficha: Encabezado, 5 dimensiones, métricas GEE y recortes S2/S1 */}
-            <div className="space-y-4 xl:col-span-5">
-              <div className="flex flex-wrap items-start justify-between gap-2 border-b border-line pb-3">
-                <div>
-                  <span className="text-xs font-semibold uppercase text-info">
-                    {selected.doc.target === 'moon_south_pole'
-                      ? isEs
-                        ? 'Objetivo: Polo Sur Lunar (Artemis)'
-                        : 'Target: Lunar South Pole (Artemis)'
-                      : selected.doc.target === 'lava_tubes' || selected.doc.target === 'moon_lava_tube'
-                        ? isEs
-                          ? 'Objetivo: Tubos de Lava / Subsuelo'
-                          : 'Target: Lava Tubes / Subsurface'
-                        : isEs
-                          ? 'Objetivo: Superficie de Marte'
-                          : 'Target: Mars Surface'}
-                  </span>
-                  <h3 className="text-base font-bold">{selected.doc.name}</h3>
-                  <p className="text-xs text-ink-muted">
-                    {selected.doc.country} · Coord: {selected.doc.location.coordinates[1].toFixed(3)}°,{' '}
-                    {selected.doc.location.coordinates[0].toFixed(3)}°
-                  </p>
-                </div>
+        {/* Botón flotante para colapsar/expandir el drawer izquierdo en escritorio */}
+        <button
+          type="button"
+          onClick={() => setDrawerOpen((v) => !v)}
+          title={drawerOpen ? (isEs ? 'Colapsar panel' : 'Collapse panel') : isEs ? 'Abrir panel' : 'Open panel'}
+          aria-label={drawerOpen ? (isEs ? 'Colapsar panel' : 'Collapse panel') : isEs ? 'Abrir panel' : 'Open panel'}
+          className={`pointer-events-auto hidden h-8 w-8 items-center justify-center rounded-full border border-line bg-surface text-info shadow-lg transition-all hover:bg-raised lg:absolute lg:top-16 lg:z-30 lg:flex ${
+            drawerOpen ? 'lg:left-[380px]' : 'lg:left-3'
+          } ${focusRing}`}
+        >
+          <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+            {drawerOpen ? 'chevron_left' : 'chevron_right'}
+          </span>
+        </button>
+
+        {/* DRAWER PARAMÉTRICO IZQUIERDO (flotante en lg+, flujo normal en < lg) */}
+        <aside
+          aria-label={isEs ? 'Configuración de escenario, pesos IFA y ranking' : 'Scenario, IFA weights and ranking'}
+          className={`flex w-full shrink-0 flex-col border-b border-line bg-surface lg:absolute lg:top-16 lg:bottom-9 lg:left-3 lg:z-20 lg:w-[370px] lg:overflow-hidden lg:rounded-2xl lg:hud-panel ${
+            drawerOpen ? '' : 'lg:hidden'
+          }`}
+        >
+          {/* Cabecera del drawer */}
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-line px-3.5 py-2.5">
+            <div className="flex items-center gap-2">
+              <span className="h-4 w-1.5 rounded-full bg-accent" aria-hidden="true" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-ink">
+                {isEs ? '1 · Escenario y Pesos IFA (5D)' : '1 · Scenario & IFA Weights (5D)'}
+              </h2>
+            </div>
+            <span
+              className={`rounded-md px-2 py-0.5 font-mono text-[10px] font-semibold ${
+                sourceMode === 'api'
+                  ? 'border border-ok/30 bg-ok/15 text-ok'
+                  : 'border border-warn/40 bg-warn/15 text-warn'
+              }`}
+              title={apiFallbackReason ?? undefined}
+            >
+              {sourceMode === 'api'
+                ? isEs
+                  ? 'API en vivo'
+                  : 'Live API'
+                : isEs
+                  ? 'Respaldo local'
+                  : 'Local backup'}
+            </span>
+          </div>
+
+          {/* Contenido scrollable del drawer */}
+          <div className="custom-scrollbar flex-1 space-y-3 overflow-y-auto p-3.5">
+            {sourceMode === 'backup' && apiFallbackReason && (
+              <p className="rounded-lg border border-warn/40 bg-warn/10 px-2.5 py-1.5 text-[11px] text-warn">
+                {isEs
+                  ? `Usando candidatos en disco (${apiFallbackReason}).`
+                  : `Using on-disk candidates (${apiFallbackReason}).`}
+              </p>
+            )}
+
+            {/* Presets rápidos (§4.3) */}
+            <div className="space-y-1.5">
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-muted">
+                {isEs ? 'Escenarios rápidos (§4.3)' : 'Quick scenarios (§4.3)'}
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {PRESETS.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => applyPreset(p)}
+                    className={`rounded-lg border border-line bg-raised px-2 py-1 font-mono text-[11px] text-ink transition-colors hover:border-info/60 hover:text-info ${focusRing}`}
+                  >
+                    {isEs ? p.labelEs : p.labelEn}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Filtro por objetivo y descubrimientos */}
+            <div className="space-y-1.5 rounded-xl border border-line bg-raised/70 p-2.5">
+              <label htmlFor="target-select" className="block font-mono text-[10px] font-bold uppercase text-ink-muted">
+                {isEs ? 'Objetivo planetario' : 'Planetary target'}
+              </label>
+              <div className="flex items-center gap-2">
+                <select
+                  id="target-select"
+                  value={targetFilter}
+                  onChange={(e) => setTargetFilter(e.target.value as TargetFilter)}
+                  className={`min-w-0 flex-1 rounded-lg border border-line bg-surface px-2 py-1.5 text-xs text-ink ${focusRing}`}
+                >
+                  <option value="all">{isEs ? 'Todos los objetivos' : 'All targets'}</option>
+                  <option value="moon_south_pole">{isEs ? 'Luna · Polo Sur' : 'Moon · South Pole'}</option>
+                  <option value="mars_surface">{isEs ? 'Marte · Superficie' : 'Mars · Surface'}</option>
+                  <option value="lava_tubes">{isEs ? 'Subsuelo · Tubos de lava' : 'Subsurface · Lava tubes'}</option>
+                </select>
+                <label className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-line bg-surface px-2 py-1.5 text-[11px] font-medium text-ink">
+                  <input
+                    type="checkbox"
+                    checked={onlyDiscoveries}
+                    onChange={(e) => setOnlyDiscoveries(e.target.checked)}
+                    className="h-3.5 w-3.5 rounded accent-accent"
+                  />
+                  <span>{isEs ? 'Descubrimientos' : 'Discoveries'}</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Sliders 5D */}
+            <div className="space-y-2 rounded-xl border border-line bg-raised/50 p-2.5">
+              <div className="flex items-center justify-between border-b border-line pb-1">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-ink-muted">
+                  {isEs ? 'Ponderación IFA (Vector 5D)' : 'IFA Weighting (5D Vector)'}
+                </span>
                 <button
                   type="button"
-                  onClick={() => handleOpenInExplorer(selected.doc)}
-                  className={`rounded bg-accent px-3 py-1.5 text-xs font-bold text-ink hover:brightness-110 ${focusRing}`}
+                  onClick={() => {
+                    setWeights(BASE_WEIGHTS)
+                    setDebouncedWeights(BASE_WEIGHTS)
+                  }}
+                  className={`font-mono text-[10px] font-semibold text-info hover:underline ${focusRing}`}
                 >
-                  {isEs ? 'Abrir en Globo 3D / Explorador' : 'Open in 3D Globe / Explorer'}
+                  {isEs ? 'Restablecer' : 'Reset'}
                 </button>
               </div>
-
-              {/* Perfil de 5 dimensiones */}
-              <div className="space-y-2 rounded border border-line bg-canvas p-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase text-ink-muted">
-                    {isEs ? 'Fidelidad por Dimensión (5D)' : 'Similarity by Dimension (5D)'}
-                  </h4>
-                  <span className="font-mono text-sm font-bold text-accent">
-                    IFA {(selected.ifa * 100).toFixed(1)}%
-                  </span>
-                </div>
-                {dimLabels.map(({ key, es, en }) => {
-                  const val = selected.doc.scores?.[key] || 0
-                  return (
-                    <div key={key} className="space-y-0.5">
-                      <div className="flex justify-between text-xs">
-                        <span>{isEs ? es : en}</span>
-                        <span className="font-mono font-semibold">{(val * 100).toFixed(0)}%</span>
-                      </div>
-                      <div className="h-2 w-full overflow-hidden rounded bg-surface">
-                        <div
-                          className="h-full rounded bg-info transition-all"
-                          style={{ width: `${Math.round(val * 100)}%` }}
-                        />
-                      </div>
+              {dimLabels.map(({ key, es, en }) => {
+                const isColdOrIce = key === 'frio' || key === 'hielo'
+                return (
+                  <div key={key} className="space-y-0.5">
+                    <div className="flex justify-between font-mono text-[11px]">
+                      <span className="text-ink">{isEs ? es : en}</span>
+                      <span className={`font-bold ${isColdOrIce ? 'text-ok' : 'text-info'}`}>
+                        {Math.round(weights[key] * 100)}%
+                      </span>
                     </div>
-                  )
-                })}
+                    <input
+                      type="range"
+                      min={0}
+                      max={1}
+                      step={0.05}
+                      value={weights[key]}
+                      onChange={(e) => setWeights((w) => ({ ...w, [key]: parseFloat(e.target.value) }))}
+                      className={`${sliderClass} ${isColdOrIce ? 'accent-ok' : ''}`}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Ranking de candidatos */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-mono text-[10px] font-bold uppercase tracking-wider text-ink-muted">
+                  {isEs ? `Ranking de Análogos (${ranked.length})` : `Analog Ranking (${ranked.length})`}
+                </h3>
+                {(targetFilter !== 'all' || onlyDiscoveries) && (
+                  <span className="rounded border border-ok/30 bg-ok/15 px-1.5 py-0.5 font-mono text-[9px] font-bold text-ok">
+                    {isEs ? 'Filtro activo' : 'Filter active'}
+                  </span>
+                )}
               </div>
 
-              {/* Métricas físicas reales de la celda GEE P1 */}
-              {selected.doc.p1_cell_metrics && (
-                <div className="rounded border border-line bg-canvas p-3">
-                  <h4 className="mb-2 text-xs font-bold uppercase text-ink-muted">
-                    {isEs
-                      ? `Mediciones Físicas GEE (${selected.doc.p1_cell_metrics.cell_id} · Ventana 5 km)`
-                      : `GEE Physical Measurements (${selected.doc.p1_cell_metrics.cell_id} · 5 km Window)`}
-                  </h4>
-                  <div className="grid grid-cols-3 gap-2 text-xs">
-                    <div className="rounded bg-surface p-1.5">
-                      <span className="block text-[10px] text-ink-muted">Elev. / Relieve</span>
-                      <span className="font-mono font-semibold">
-                        {selected.doc.p1_cell_metrics.elev_m ?? '—'} m / Δ
-                        {selected.doc.p1_cell_metrics.relief_local_m ?? '—'} m
-                      </span>
-                    </div>
-                    <div className="rounded bg-surface p-1.5">
-                      <span className="block text-[10px] text-ink-muted">Pendiente 240 m</span>
-                      <span className="font-mono font-semibold">
-                        {selected.doc.p1_cell_metrics.slope_mean_deg ?? '—'}° (p90:{' '}
-                        {selected.doc.p1_cell_metrics.slope_p90_deg ?? '—'}°)
-                      </span>
-                    </div>
-                    <div className="rounded bg-surface p-1.5">
-                      <span className="block text-[10px] text-ink-muted">Sombra Solar Máx</span>
-                      <span className="font-mono font-semibold">
-                        {((selected.doc.p1_cell_metrics.shadow_frac_max ?? 0) * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                    <div className="rounded bg-surface p-1.5">
-                      <span className="block text-[10px] text-ink-muted">MODIS LST Mín / Amp</span>
-                      <span className="font-mono font-semibold">
-                        {selected.doc.p1_cell_metrics.lst_min_k ?? '—'} K / Δ
-                        {selected.doc.p1_cell_metrics.lst_amp_k ?? '—'} K
-                      </span>
-                    </div>
-                    <div className="rounded bg-surface p-1.5">
-                      <span className="block text-[10px] text-ink-muted">Nieve MOD10A2</span>
-                      <span className="font-mono font-semibold">
-                        {((selected.doc.p1_cell_metrics.snow_persist ?? 0) * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                    <div className="rounded bg-surface p-1.5">
-                      <span className="block text-[10px] text-ink-muted">Polvo AOD p90 / NDVI</span>
-                      <span className="font-mono font-semibold">
-                        {selected.doc.p1_cell_metrics.aod_p90 ?? '—'} /{' '}
-                        {selected.doc.p1_cell_metrics.ndvi_max ?? '—'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Comparador Orbital Lado a Lado: Sentinel-2 RGB vs Sentinel-1 SAR (Filtro Lee) */}
-              {selected.doc.orbital_previews && (
-                <div className="rounded border border-line bg-canvas p-3">
-                  <h4 className="mb-2 text-xs font-bold uppercase text-ink-muted">
-                    {isEs
-                      ? 'Comparador Orbital P1: Óptico (Sentinel-2) vs. Radar Banda C (Sentinel-1 SAR Filtro Lee)'
-                      : 'P1 Orbital Comparator: Optical (Sentinel-2) vs. C-Band Radar (Sentinel-1 SAR Lee Filter)'}
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <img
-                        src={selected.doc.orbital_previews.sentinel2_rgb_url}
-                        alt="Sentinel-2 True Color"
-                        className="aspect-square w-full rounded border border-line object-cover"
-                      />
-                      <p className="mt-1 text-[11px] text-ink-muted">
-                        ESA Sentinel-2 L2A RGB (10 m)
-                      </p>
-                    </div>
-                    <div>
-                      <img
-                        src={selected.doc.orbital_previews.sentinel1_sar_url}
-                        alt="Sentinel-1 C-Band SAR"
-                        className="aspect-square w-full rounded border border-line object-cover"
-                      />
-                      <p className="mt-1 text-[11px] text-ink-muted">
-                        Sentinel-1 SAR Banda C (σ⁰ media:{' '}
-                        {selected.doc.orbital_previews.sar_stats_db?.mean ?? '—'} dB)
-                      </p>
-                    </div>
-                  </div>
+              {loading ? (
+                <p className="text-xs text-ink-muted">{isEs ? 'Cargando candidatos...' : 'Loading candidates...'}</p>
+              ) : (
+                <div className="custom-scrollbar flex max-h-[300px] flex-col gap-1.5 overflow-y-auto pr-1">
+                  {ranked.map(({ doc, ifa }, idx) => {
+                    const isSelected = selected?.doc._id === doc._id
+                    const isDiscovery = doc.region_type === 'understudied_discovery' || doc.is_understudied
+                    return (
+                      <button
+                        key={doc._id}
+                        type="button"
+                        onClick={() => setSelectedId(doc._id)}
+                        className={`flex flex-col gap-1 rounded-xl border p-2.5 text-left transition-all ${focusRing} ${
+                          isSelected
+                            ? 'border-info bg-info/10 shadow-xs'
+                            : 'border-line bg-surface hover:bg-raised'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="text-xs leading-snug font-bold text-ink">
+                            <span className={`mr-1 font-mono ${isSelected ? 'text-info' : 'text-ink-muted'}`}>
+                              #{idx + 1}
+                            </span>
+                            {doc.name}
+                          </span>
+                          <span className={`shrink-0 ${ifaBadgeClass(ifa)}`}>
+                            IFA {(ifa * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-ink-muted">
+                          <span>{doc.country}</span>
+                          <span>·</span>
+                          <span
+                            className={`rounded px-1.5 py-0.2 font-mono text-[10px] font-semibold ${
+                              isDiscovery ? 'bg-ok/15 text-ok' : 'bg-raised text-ink-muted'
+                            }`}
+                          >
+                            {isDiscovery
+                              ? isEs
+                                ? 'Descubrimiento'
+                                : 'Discovery'
+                              : isEs
+                                ? 'Calibración'
+                                : 'Calibration'}
+                          </span>
+                          {doc.orbital_previews && (
+                            <span className="rounded bg-info/15 px-1.5 py-0.2 font-mono text-[10px] font-semibold text-info">
+                              S2 + SAR
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    )
+                  })}
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Columna derecha de la ficha: Propiedades vs. Procesos, Límites, Exploración y Biología (§05) */}
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:col-span-7">
-              <div className="rounded border border-line bg-canvas p-3">
-                <h4 className="mb-1.5 text-xs font-bold text-info">
-                  {isEs
-                    ? '1 · Similitud de Propiedad Física'
-                    : '1 · Physical Property Similarity'}
-                </h4>
-                <ul className="list-disc space-y-1 pl-4 text-xs">
-                  {(selected.doc.similar_properties ?? []).map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
+          {/* Pie de telemetría del drawer */}
+          {selected && (
+            <div className="flex shrink-0 items-center justify-between border-t border-line bg-raised/70 px-3.5 py-2 font-mono text-[10px] text-ink-muted">
+              <span>COPERNICUS · SENTINEL 2/1</span>
+              <span className="font-semibold text-info">
+                {selected.doc.location.coordinates[1].toFixed(2)}°, {selected.doc.location.coordinates[0].toFixed(2)}°
+              </span>
+            </div>
+          )}
+        </aside>
+      </div>
+
+      {/* Controles móviles de capas/leyenda (visibles solo en < md donde la pila derecha se oculta) */}
+      <div className="space-y-3 border-b border-line bg-surface p-3 md:hidden">
+        <Inspector isEs={isEs} cell={inspectorCell} candidate={inspectorCandidate} />
+        <LayerPanel
+          isEs={isEs}
+          ifaOpacity={ifaOpacity}
+          onIfaOpacity={handleIfaOpacity}
+          ifaMode="polygons"
+          gridNotice={gridNotice}
+          candidatesVisible={candidatesVisible}
+          onCandidatesVisible={setCandidatesVisible}
+          contextVisibility={contextVisibility}
+          contextOpacity={contextOpacity}
+          onContextVisible={handleContextVisible}
+          onContextOpacity={handleContextOpacity}
+        />
+        <Legend isEs={isEs} scenario={layerToMode(heatmapLayer)} contextVisibility={contextVisibility} />
+      </div>
+
+      {/* DOSSIER CIENTÍFICO INFERIOR (§05) */}
+      {selected && (
+        <section className="space-y-4 border-t border-line bg-canvas p-4 sm:p-6">
+          {/* Barra de encabezado de la región seleccionada */}
+          <div className={`${hudCardClass} flex flex-col justify-between gap-4 p-4 lg:flex-row lg:items-center`}>
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-md border border-info/30 bg-info/10 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-info">
+                  {selected.doc.target === 'moon_south_pole'
+                    ? isEs
+                      ? 'Objetivo: Polo Sur Lunar (Artemis)'
+                      : 'Target: Lunar South Pole (Artemis)'
+                    : selected.doc.target === 'lava_tubes' || selected.doc.target === 'moon_lava_tube'
+                      ? isEs
+                        ? 'Objetivo: Tubos de Lava / Subsuelo'
+                        : 'Target: Lava Tubes / Subsurface'
+                      : isEs
+                        ? 'Objetivo: Superficie de Marte'
+                        : 'Target: Mars Surface'}
+                </span>
+                <span className="font-mono text-[11px] text-ink-muted">
+                  {selected.doc.country} · Coord: {selected.doc.location.coordinates[1].toFixed(3)}°,{' '}
+                  {selected.doc.location.coordinates[0].toFixed(3)}°
+                </span>
               </div>
+              <h3 className="text-xl font-bold tracking-tight text-ink">{selected.doc.name}</h3>
+            </div>
 
-              <div className="rounded border border-line bg-canvas p-3">
-                <h4 className="mb-1.5 text-xs font-bold text-info">
-                  {isEs
-                    ? '2 · Similitud de Proceso Dinámico'
-                    : '2 · Dynamic Process Similarity'}
+            <button
+              type="button"
+              onClick={() => handleOpenInExplorer(selected.doc)}
+              className={`inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2 font-mono text-xs font-bold text-white shadow-sm transition-all hover:brightness-110 dark:text-[#002b42] ${focusRing}`}
+            >
+              <span className="material-symbols-outlined text-[17px]" aria-hidden="true">
+                travel_explore
+              </span>
+              <span>{isEs ? 'Abrir en Globo 3D / Explorador' : 'Open in 3D Globe / Explorer'}</span>
+            </button>
+          </div>
+
+          {/* Banda horizontal 5D IFA */}
+          <div className={`${hudCardClass} space-y-3 p-4`}>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px] text-info" aria-hidden="true">
+                  equalizer
+                </span>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-ink">
+                  {isEs ? 'Fidelidad por Dimensión (IFA 5D)' : 'Similarity by Dimension (5D)'}
                 </h4>
-                <ul className="list-disc space-y-1 pl-4 text-xs">
-                  {(selected.doc.similar_processes ?? []).map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
               </div>
-
-              <div className="rounded border border-line bg-canvas p-3">
-                <h4 className="mb-1.5 text-xs font-bold text-amber-400">
-                  {isEs
-                    ? '3 · Diferencias y Límites de la Analogía Terrestre'
-                    : '3 · Differences & Limits of the Earth Analog'}
-                </h4>
-                <ul className="list-disc space-y-1 pl-4 text-xs">
-                  {(selected.doc.differences_and_limits ?? []).map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs text-ink-muted">
+                  {isEs ? 'Índice Global Ponderado:' : 'Weighted Global Index:'}
+                </span>
+                <span className={ifaBadgeClass(selected.ifa)}>
+                  {(selected.ifa * 100).toFixed(1)}%
+                </span>
               </div>
+            </div>
 
-              <div className="rounded border border-line bg-canvas p-3">
-                <h4 className="mb-1.5 text-xs font-bold text-emerald-400">
-                  {isEs
-                    ? '4 · Aplicaciones de Ingeniería y Exploración'
-                    : '4 · Engineering & Exploration Use Cases'}
-                </h4>
-                <ul className="list-disc space-y-1 pl-4 text-xs">
-                  {(selected.doc.exploration_use_cases ?? []).map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded border border-line bg-canvas p-3 md:col-span-2">
-                <h4 className="mb-1.5 text-xs font-bold uppercase text-ink-muted">
-                  {isEs
-                    ? '5 · Potencial Subterráneo y Astrobiología / Extremófilos'
-                    : '5 · Subsurface Potential & Astrobiology / Extremophiles'}
-                </h4>
-                <div className="grid grid-cols-1 gap-2 text-xs md:grid-cols-2">
-                  <div>
-                    <span className="font-semibold text-ink-muted">
-                      {isEs ? 'Subsuelo / Cavidades: ' : 'Subsurface / Cavities: '}
-                    </span>
-                    <span>{selected.doc.subsurface_and_biology?.subsurface_potential}</span>
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-5">
+              {dimShortLabels.map(({ key, es, en, bar, text }) => {
+                const val = selected.doc.scores?.[key] || 0
+                return (
+                  <div key={key} className="space-y-1.5 rounded-xl border border-line bg-raised/60 p-3">
+                    <div className="flex justify-between gap-2 font-mono text-[11px]">
+                      <span className="truncate text-ink-muted">{isEs ? es : en}</span>
+                      <span className={`font-bold ${text}`}>{(val * 100).toFixed(0)}%</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-surface">
+                      <div
+                        className={`h-full rounded-full transition-all duration-300 ${bar}`}
+                        style={{ width: `${Math.round(val * 100)}%` }}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-semibold text-ink-muted">
-                      {isEs ? 'Extremófilos / Biofirmas: ' : 'Extremophiles / Biosignatures: '}
-                    </span>
-                    <span>{selected.doc.subsurface_and_biology?.extremophiles_note}</span>
-                  </div>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1 border-t border-line pt-2">
-                  <span className="text-[11px] text-ink-muted">
-                    {isEs ? 'Datasets oficiales:' : 'Official datasets:'}
+                )
+              })}
+            </div>
+          </div>
+
+          {/* 4 Tarjetas científicas cualitativas (§05) */}
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div className={`${hudCardClass} space-y-2.5 p-4`}>
+              <div className="flex items-center gap-2 text-info">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-info/15">
+                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                    science
                   </span>
-                  {(selected.doc.datasets_used ?? []).map((ds) => (
-                    <span
-                      key={ds}
-                      className="rounded bg-surface px-1.5 py-0.5 font-mono text-[10px] text-ink-muted"
-                    >
-                      {ds}
+                </span>
+                <h4 className="text-sm font-bold text-ink">
+                  {isEs ? '1 · Similitud de Propiedad Física' : '1 · Physical Property Similarity'}
+                </h4>
+              </div>
+              <ul className="list-disc space-y-1 pl-4 text-xs leading-relaxed text-ink-muted">
+                {simProperties.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className={`${hudCardClass} space-y-2.5 p-4`}>
+              <div className="flex items-center gap-2 text-ok">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ok/15">
+                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                    cyclone
+                  </span>
+                </span>
+                <h4 className="text-sm font-bold text-ink">
+                  {isEs ? '2 · Similitud de Proceso Dinámico' : '2 · Dynamic Process Similarity'}
+                </h4>
+              </div>
+              <ul className="list-disc space-y-1 pl-4 text-xs leading-relaxed text-ink-muted">
+                {simProcesses.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className={`${hudCardClass} space-y-2.5 p-4`}>
+              <div className="flex items-center gap-2 text-warn">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warn/15">
+                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                    warning
+                  </span>
+                </span>
+                <h4 className="text-sm font-bold text-ink">
+                  {isEs ? '3 · Diferencias y Límites' : '3 · Differences & Limits'}
+                </h4>
+              </div>
+              <ul className="list-disc space-y-1 pl-4 text-xs leading-relaxed text-ink-muted">
+                {diffLimits.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className={`${hudCardClass} space-y-2.5 p-4`}>
+              <div className="flex items-center gap-2 text-accent">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/15">
+                  <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+                    precision_manufacturing
+                  </span>
+                </span>
+                <h4 className="text-sm font-bold text-ink">
+                  {isEs ? '4 · Ingeniería y Exploración' : '4 · Engineering & Exploration'}
+                </h4>
+              </div>
+              <ul className="list-disc space-y-1 pl-4 text-xs leading-relaxed text-ink-muted">
+                {useCases.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Mediciones físicas GEE, comparador orbital S2/S1 y astrobiología */}
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+            {selected.doc.p1_cell_metrics && (
+              <div className={`${hudCardClass} space-y-2.5 p-4 xl:col-span-5`}>
+                <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-ink-muted">
+                  {isEs
+                    ? `Mediciones Físicas GEE (${selected.doc.p1_cell_metrics.cell_id} · Ventana 5 km)`
+                    : `GEE Physical Measurements (${selected.doc.p1_cell_metrics.cell_id} · 5 km Window)`}
+                </h4>
+                <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-3">
+                  <div className="rounded-lg border border-line bg-raised/60 p-2">
+                    <span className="block text-[10px] text-ink-muted">Elev. / Relieve</span>
+                    <span className="font-mono font-semibold text-ink">
+                      {selected.doc.p1_cell_metrics.elev_m ?? '—'} m / Δ
+                      {selected.doc.p1_cell_metrics.relief_local_m ?? '—'} m
                     </span>
-                  ))}
+                  </div>
+                  <div className="rounded-lg border border-line bg-raised/60 p-2">
+                    <span className="block text-[10px] text-ink-muted">Pendiente 240 m</span>
+                    <span className="font-mono font-semibold text-ink">
+                      {selected.doc.p1_cell_metrics.slope_mean_deg ?? '—'}° (p90:{' '}
+                      {selected.doc.p1_cell_metrics.slope_p90_deg ?? '—'}°)
+                    </span>
+                  </div>
+                  <div className="rounded-lg border border-line bg-raised/60 p-2">
+                    <span className="block text-[10px] text-ink-muted">Sombra Solar Máx</span>
+                    <span className="font-mono font-semibold text-ink">
+                      {((selected.doc.p1_cell_metrics.shadow_frac_max ?? 0) * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="rounded-lg border border-line bg-raised/60 p-2">
+                    <span className="block text-[10px] text-ink-muted">MODIS LST Mín / Amp</span>
+                    <span className="font-mono font-semibold text-ink">
+                      {selected.doc.p1_cell_metrics.lst_min_k ?? '—'} K / Δ
+                      {selected.doc.p1_cell_metrics.lst_amp_k ?? '—'} K
+                    </span>
+                  </div>
+                  <div className="rounded-lg border border-line bg-raised/60 p-2">
+                    <span className="block text-[10px] text-ink-muted">Nieve MOD10A2</span>
+                    <span className="font-mono font-semibold text-ink">
+                      {((selected.doc.p1_cell_metrics.snow_persist ?? 0) * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="rounded-lg border border-line bg-raised/60 p-2">
+                    <span className="block text-[10px] text-ink-muted">Polvo AOD p90 / NDVI</span>
+                    <span className="font-mono font-semibold text-ink">
+                      {selected.doc.p1_cell_metrics.aod_p90 ?? '—'} /{' '}
+                      {selected.doc.p1_cell_metrics.ndvi_max ?? '—'}
+                    </span>
+                  </div>
                 </div>
+              </div>
+            )}
+
+            {selected.doc.orbital_previews && (
+              <div className={`${hudCardClass} space-y-2.5 p-4 xl:col-span-4`}>
+                <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-ink-muted">
+                  {isEs
+                    ? 'Comparador Orbital P1: Sentinel-2 vs. Sentinel-1 SAR (Lee)'
+                    : 'P1 Orbital Comparator: Sentinel-2 vs. Sentinel-1 SAR (Lee)'}
+                </h4>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <img
+                      src={selected.doc.orbital_previews.sentinel2_rgb_url}
+                      alt="Sentinel-2 True Color"
+                      className="aspect-square w-full rounded-lg border border-line object-cover"
+                    />
+                    <p className="mt-1 font-mono text-[10px] text-ink-muted">
+                      ESA Sentinel-2 L2A RGB (10 m)
+                    </p>
+                  </div>
+                  <div>
+                    <img
+                      src={selected.doc.orbital_previews.sentinel1_sar_url}
+                      alt="Sentinel-1 C-Band SAR"
+                      className="aspect-square w-full rounded-lg border border-line object-cover"
+                    />
+                    <p className="mt-1 font-mono text-[10px] text-ink-muted">
+                      S1 SAR C-Band (σ⁰ media: {selected.doc.orbital_previews.sar_stats_db?.mean ?? '—'} dB)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div
+              className={`${hudCardClass} space-y-2.5 p-4 ${
+                selected.doc.p1_cell_metrics && selected.doc.orbital_previews
+                  ? 'xl:col-span-3'
+                  : selected.doc.p1_cell_metrics || selected.doc.orbital_previews
+                    ? 'xl:col-span-7'
+                    : 'xl:col-span-12'
+              }`}
+            >
+              <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-ink-muted">
+                {isEs
+                  ? '5 · Potencial Subterráneo y Astrobiología'
+                  : '5 · Subsurface & Astrobiology'}
+              </h4>
+              <div className="space-y-2 text-xs">
+                <div>
+                  <span className="font-semibold text-ink">
+                    {isEs ? 'Subsuelo / Cavidades: ' : 'Subsurface / Cavities: '}
+                  </span>
+                  <span className="text-ink-muted">
+                    {selected.doc.subsurface_and_biology?.subsurface_potential ?? '—'}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-semibold text-ink">
+                    {isEs ? 'Extremófilos / Biofirmas: ' : 'Extremophiles / Biosignatures: '}
+                  </span>
+                  <span className="text-ink-muted">
+                    {selected.doc.subsurface_and_biology?.extremophiles_note ?? '—'}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1 border-t border-line pt-2">
+                <span className="text-[11px] text-ink-muted">
+                  {isEs ? 'Datasets oficiales:' : 'Official datasets:'}
+                </span>
+                {(selected.doc.datasets_used ?? []).map((ds) => (
+                  <span
+                    key={ds}
+                    className="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[10px] text-ink-muted"
+                  >
+                    {ds}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
-        )}
-      </section>
+        </section>
+      )}
     </div>
   )
 }

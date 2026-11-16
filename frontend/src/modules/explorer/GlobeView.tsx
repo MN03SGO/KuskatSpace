@@ -15,7 +15,7 @@ interface Progress {
   failed: number
 }
 
-export default function GlobeView() {
+export default function GlobeView({ sidebarOpen = true }: { sidebarOpen?: boolean }) {
   const t = useT()
   const containerRef = useRef<HTMLDivElement>(null)
   const engineRef = useRef<GlobeEngine | null>(null)
@@ -113,13 +113,13 @@ export default function GlobeView() {
 
   if (noWebgl) {
     return (
-      <div className="flex h-full items-center justify-center p-6">
+      <div className="flex h-full items-center justify-center bg-[#030712] p-6 text-[#dde2f5]">
         <div className="max-w-sm space-y-3 text-center text-sm">
           <p>{t('explorer.globe.noWebgl')}</p>
           <button
             type="button"
             onClick={() => setView('map')}
-            className="min-h-10 rounded bg-accent px-4 py-2 font-bold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info"
+            className="min-h-10 rounded-lg bg-accent px-4 py-2 font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info dark:text-[#002b42]"
           >
             {t('explorer.view.map')}
           </button>
@@ -132,14 +132,35 @@ export default function GlobeView() {
   const layerLoading = layerProgress !== null && layerProgress.loaded < layerProgress.total
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-canvas" role="region" aria-label={t('explorer.globe.label')}>
+    <div
+      className="relative h-full w-full overflow-hidden bg-[#030712]"
+      role="region"
+      aria-label={t('explorer.globe.label')}
+    >
       <div ref={containerRef} className="absolute inset-0 cursor-grab active:cursor-grabbing" />
 
-      {/* B21: pista completa en escritorio y corta en móvil. */}
-      <p className={`absolute top-3 left-3 max-w-[calc(100%-12rem)] ${mapLabel}`}>
+      {/* Píldora superior de navegación (Stitch) */}
+      <div
+        className={`absolute top-3 flex max-w-[calc(100%-15rem)] items-center gap-2 transition-[left] ${
+          sidebarOpen ? 'left-3' : 'left-15'
+        } ${mapLabel}`}
+      >
+        <span className="material-symbols-outlined shrink-0 text-[16px] text-info" aria-hidden="true">
+          drag_pan
+        </span>
         <span className="hidden sm:inline">{t('explorer.globe.hint')}</span>
         <span className="sm:hidden">{t('explorer.globe.hintShort')}</span>
-      </p>
+      </div>
+
+      {/* Brújula superior derecha */}
+      <div className="pointer-events-none absolute top-16 right-3 hidden flex-col items-center gap-0.5 sm:flex">
+        <div className="hud-panel flex h-8 w-8 items-center justify-center rounded-full text-info">
+          <span className="material-symbols-outlined text-[18px]" aria-hidden="true">
+            explore
+          </span>
+        </div>
+        <span className="font-mono text-[10px] font-bold text-[#a3b1c6]">N</span>
+      </div>
 
       <div className="pointer-events-none absolute bottom-3 left-3 flex flex-col items-start gap-1" role="status">
         {loading && <p className={mapLabel}>{t('explorer.globe.loading', { loaded: progress.loaded, total: progress.total })}</p>}
@@ -154,12 +175,12 @@ export default function GlobeView() {
         )}
       </div>
 
-      {/* N5: el aviso de modelo se ve sobre la imagen, también en móvil. */}
+      {/* Aviso de modelo aproximado (Luna/Marte) */}
       {layer?.kind === 'model' && (
-        <p className={`absolute top-16 left-3 border-l-4 border-warn ${mapLabel}`}>{t('explorer.layers.modelBadge')}</p>
+        <p className={`absolute top-14 left-3 border-l-4 border-l-warn ${mapLabel}`}>{t('explorer.layers.modelBadge')}</p>
       )}
 
-      <p className={`absolute right-2 bottom-2 ${mapLabel}`}>{GLOBE_TEXTURES[body].attribution}</p>
+      <p className={`absolute right-3 bottom-3 hidden sm:block ${mapLabel}`}>{GLOBE_TEXTURES[body].attribution}</p>
     </div>
   )
 }

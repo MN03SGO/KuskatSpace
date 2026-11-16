@@ -175,7 +175,7 @@ export function EarthMapLibre() {
       zoom: BODIES.earth.zoom,
       maxPitch: 0,
     })
-    map.addControl(new NavigationControl({ showCompass: false }), 'top-right')
+    map.addControl(new NavigationControl({ showCompass: false }), 'bottom-right')
     mapRef.current = map
 
     const onClick = (e: MapMouseEvent) => {

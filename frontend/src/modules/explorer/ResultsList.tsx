@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { focusRing } from '../../components/ui'
+import { focusRing, hudCardClass } from '../../components/ui'
 import { type TFunction, useT } from '../../i18n/useT'
 import { useExplorerStore } from '../../store/useExplorerStore'
 import type { SelectableResult } from '../../types/explorer'
@@ -25,29 +25,35 @@ function Group({
   t: TFunction
 }) {
   const selectResult = useExplorerStore((s) => s.selectResult)
+  const selectedId = useExplorerStore((s) => s.selectedResult?.sceneId)
   const busy = useExplorerStore((s) => s.process.state === 'loading')
   if (rows.length === 0 && !showEmpty) return null
 
   return (
-    <div className="space-y-2">
-      <h3 className="text-xs font-bold">{title}</h3>
+    <div className="space-y-1.5">
+      <h3 className="font-mono text-[10px] font-bold uppercase tracking-wider text-ink-muted">{title}</h3>
       {rows.length === 0 ? (
         <p className="text-xs text-ink-muted">{t('explorer.results.empty')}</p>
       ) : (
-        <ul className="space-y-2">
-          {rows.map((row) => (
-            <li key={row.key}>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => void selectResult(row.result)}
-                className={`min-h-10 w-full rounded border-l-4 bg-raised px-2 py-2 text-left text-xs hover:bg-line ${focusRing} disabled:opacity-60 ${accent}`}
-              >
-                <span className="block font-bold break-all">{row.title}</span>
-                <span className="block text-ink-muted">{row.meta}</span>
-              </button>
-            </li>
-          ))}
+        <ul className="space-y-1.5">
+          {rows.map((row) => {
+            const isSelected = Boolean(row.result.sceneId && selectedId === row.result.sceneId)
+            return (
+              <li key={row.key}>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void selectResult(row.result)}
+                  className={`min-h-10 w-full rounded-lg border border-line border-l-4 px-2.5 py-2 text-left text-xs transition-all ${focusRing} disabled:opacity-60 ${accent} ${
+                    isSelected ? 'bg-info/10 ring-1 ring-info/50' : 'bg-raised hover:bg-line/40'
+                  }`}
+                >
+                  <span className="block font-mono text-[11px] font-bold break-all text-ink">{row.title}</span>
+                  <span className="mt-0.5 block text-[11px] text-ink-muted">{row.meta}</span>
+                </button>
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>
@@ -119,34 +125,33 @@ export function ResultsList() {
   }))
 
   return (
-    <section className="space-y-3">
-      <p className="text-xs text-ink-muted">{t('explorer.results.hint')}</p>
-      {/* B10: una lista vacía puede ser "sin resultados" o "fuente caída"; el backend aún no lo distingue. */}
+    <section className={`${hudCardClass} space-y-3`}>
+      <p className="text-xs font-medium text-ink-muted">{t('explorer.results.hint')}</p>
       {isEarth && (
         <>
           <Group
             title={t('explorer.results.copernicus', { count: copernicus.length })}
             rows={copernicus}
-            accent="border-ok"
+            accent="border-l-ok"
             showEmpty
             t={t}
           />
           <Group
             title={t('explorer.results.earthdata', { count: earthdata.length })}
             rows={earthdata}
-            accent="border-accent"
+            accent="border-l-accent"
             showEmpty
             t={t}
           />
         </>
       )}
       {!isEarth && (
-        <Group title={t('explorer.results.pds', { count: pds.length })} rows={pds} accent="border-warn" showEmpty t={t} />
+        <Group title={t('explorer.results.pds', { count: pds.length })} rows={pds} accent="border-l-warn" showEmpty t={t} />
       )}
       <Group
         title={t('explorer.results.partners', { count: partners.length })}
         rows={partners}
-        accent="border-line"
+        accent="border-l-ink-muted"
         showEmpty
         t={t}
       />
