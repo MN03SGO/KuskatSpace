@@ -112,7 +112,16 @@ export default function PlanetMap() {
           <ImageOverlay
             key={scene.id}
             url={scene.response.overlay_png_base64}
-            bounds={scene.response.bounds}
+            bounds={
+              scene.response.bbox && scene.response.bbox.length === 4
+                ? toLeafletBounds([
+                    scene.response.bbox[0],
+                    scene.response.bbox[1],
+                    scene.response.bbox[2],
+                    scene.response.bbox[3],
+                  ])
+                : scene.response.bounds
+            }
             opacity={opacity}
           />
         )}

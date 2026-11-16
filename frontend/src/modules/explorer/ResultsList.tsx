@@ -67,14 +67,36 @@ export function ResultsList() {
   const copernicus: Row[] = results.live_copernicus.map((i) => ({
     key: i.id,
     title: i.id,
-    meta: `${i.collection} · ${t('explorer.results.clouds', { value: i.cloud_cover == null ? na : `${i.cloud_cover}%` })}`,
-    result: { bbox: i.bbox, mode: i.recommended_mode, label: i.id },
+    meta: `${i.collection} · ${t('explorer.results.date', { value: i.date || na })} · ${t('explorer.results.clouds', { value: i.cloud_cover == null ? na : `${i.cloud_cover}%` })}`,
+    result: {
+      bbox: i.bbox,
+      mode: i.collection.includes('sentinel-2')
+        ? i.recommended_mode === 'sar_db'
+          ? 'ndvi'
+          : i.recommended_mode
+        : i.recommended_mode,
+      label: i.id,
+      sceneId: i.collection.includes('sentinel-2') ? i.id : undefined,
+      cloudCover: i.cloud_cover,
+      date: i.date,
+      collection: i.collection,
+    },
   }))
   const earthdata: Row[] = results.live_earthdata.map((i) => ({
     key: i.id,
     title: i.title,
-    meta: t('explorer.results.date', { value: i.date || na }),
-    result: { bbox: i.bbox, mode: i.recommended_mode, label: i.title },
+    meta: `${t('explorer.results.date', { value: i.date || na })}${
+      i.cloud_cover == null ? '' : ` · ${t('explorer.results.clouds', { value: `${i.cloud_cover}%` })}`
+    }`,
+    result: {
+      bbox: i.bbox,
+      mode: 'ndvi',
+      label: i.title,
+      sceneId: i.title,
+      cloudCover: i.cloud_cover ?? null,
+      date: i.date,
+      collection: i.collection ?? 'HLSS30',
+    },
   }))
   const pds: Row[] = results.live_pds_planetary.map((i, idx) => ({
     key: `${i.id}-${idx}`,

@@ -21,9 +21,18 @@
   },
   "bodies": {
     "label": "Cuerpo planetario",
-    "earth": { "label": "Tierra (Worldview)", "region": "Tierra · Cuenca Mesoamericana y Caribe" },
-    "moon": { "label": "Luna (LRO/Diviner)", "region": "Luna · Región Polar Sur (LRO Diviner)" },
-    "mars": { "label": "Marte (PDS)", "region": "Marte · Valles Marineris (NASA PDS)" }
+    "earth": {
+      "label": "Tierra (Worldview)",
+      "region": "Tierra · Cuenca Mesoamericana y Caribe"
+    },
+    "moon": {
+      "label": "Luna (LRO/Diviner)",
+      "region": "Luna · Región Polar Sur (LRO Diviner)"
+    },
+    "mars": {
+      "label": "Marte (PDS)",
+      "region": "Marte · Valles Marineris (NASA PDS)"
+    }
   },
   "explorer": {
     "mapLabel": "Mapa del explorador de datos",
@@ -104,14 +113,29 @@
     "searching": "Consultando catálogos...",
     "processing": {
       "title": "Procesamiento con datos simulados",
+      "titleReal": "Datos reales (escena seleccionada)",
+      "titleDemo": "Demostración (simulado)",
+      "modeGroup": "Modo de datos",
+      "modeReal": "Datos reales",
+      "modeDemo": "Demostración",
+      "catalogGroup": "Catálogo óptico",
+      "catalogS2": "Sentinel-2 (ESA)",
+      "catalogHls": "HLS (NASA)",
+      "demoBadge": "Demostración",
+      "realBadge": "Real",
+      "pickScene": "Elige una escena de la lista para NDVI/NDWI reales (y una HLS L30 para el térmico).",
+      "selectedScene": "Escena: {id}",
+      "needScene": "Elige una escena de la lista",
       "running": "Procesando...",
       "modes": {
         "sar_db": "Procesar SAR dB + filtro Lee",
         "ndvi": "Calcular NDVI",
         "ndwi": "Calcular NDWI (agua)",
+        "hls_thermal": "Temperatura de brillo (HLS L30 TIRS)",
         "jaxa_precip": "Procesar precipitación simulada",
         "diviner_thermal": "Procesar perfil térmico simulado"
-      }
+      },
+      "needL30Scene": "El térmico real necesita una escena HLS L30 (Landsat). Elige una de la lista NASA Earthdata con colección HLSL30."
     },
     "result": {
       "unit": "Unidad",
@@ -121,8 +145,11 @@
       "opacity": "Opacidad: {value} %",
       "download": "Descargar resultado GeoTIFF (.tif)",
       "demoSample": "Datos simulados de demostración ({file}): no son mediciones de ninguna misión ni de esta zona. La imagen no se recorta al BBox; solo se coloca sobre él.",
+      "realMeta": "{mission} · {date} · nubes {clouds} · mín {min} · media {mean} · máx {max}",
+      "provenanceLine": "{product} · {date} · nubes {clouds} · válidos {valid} · {catalog}",
       "legendLow": "Bajo",
-      "legendHigh": "Alto"
+      "legendHigh": "Alto",
+      "downloadDemoOnly": "La descarga GeoTIFF solo está disponible para datos de demostración."
     },
     "cryo": {
       "title": "Ejemplo simulado: polo lunar frente a la Tierra",
@@ -146,9 +173,16 @@
     }
   },
   "errors": {
-    "network": "No pudimos conectar con el servidor de datos ({api}). Comprueba que esté en marcha e inténtalo de nuevo.",
+    "network": "No se pudo conectar con el servidor de datos. Comprueba que esté en marcha e inténtalo de nuevo.",
     "timeout": "El servidor de datos tardó demasiado en responder. Inténtalo de nuevo en unos segundos.",
-    "http": "El servidor de datos respondió con un error ({status}): {detail}. Prueba con otra escena o inténtalo más tarde.",
-    "parse": "El servidor de datos envió una respuesta que no pudimos leer. Inténtalo de nuevo."
+    "http": "El servidor de datos respondió con un error ({status}). Prueba con otra escena o inténtalo más tarde.",
+    "parse": "Respuesta inválida del servidor (no era JSON). Suele indicar un proxy o URL mal configurados.",
+    "retry": "Reintentar",
+    "sceneNotFoundCog": "Esta escena no tiene COG disponible. Elige otra.",
+    "earthdataAuth": "Se requiere un token Earthdata válido (NASA_TOKEN). Renueva el User Token en urs.earthdata.nasa.gov.",
+    "noValidPixels": "Sin píxeles válidos en esta ventana. Elige otra escena o un área con menos nubes.",
+    "thermalRequiresL30": "El térmico solo existe en HLS L30 (Landsat 8/9 TIRS); Sentinel-2/HLS S30 no tiene bandas térmicas. Elige una escena HLSL30.",
+    "thermalUnavailable": "Esta escena no tiene banda térmica utilizable en el BBox. No se usan datos simulados: prueba otra fecha o escena L30.",
+    "thermalRealOnly": "El térmico HLS solo funciona con datos reales. El perfil simulado está en modo Demostración."
   }
 }

@@ -3,8 +3,17 @@ import { processScene, searchCatalogs } from '../api/explorer'
 import { ApiError } from '../api/http'
 import { BODIES } from '../config/bodies'
 import { type PlanetLayerId, isLayerAvailable } from '../config/planetLayers'
+import { DEMO_PROCESS_MODES, REAL_ONLY_PROCESS_MODES, isHlsL30 } from '../config/processModes'
 import { type BBox, type BBoxError, formatBBox, parseBBox, sameBBox, validateBBox } from '../lib/bbox'
-import type { BodyId, ProcessMode, ProcessedScene, SearchResponse, SelectableResult } from '../types/explorer'
+import type {
+  BodyId,
+  OpticalCatalog,
+  ProcessDataMode,
+  ProcessMode,
+  ProcessedScene,
+  SearchResponse,
+  SelectableResult,
+} from '../types/explorer'
 
 export type RequestState = 'idle' | 'loading' | 'success' | 'error'
 
@@ -57,6 +66,14 @@ interface ExplorerState {
   /** Separado de la búsqueda (B5). */
   process: RequestStatus & { mode?: ProcessMode }
   scene: ProcessedScene | null
+  /** Escena elegida en la lista de resultados (necesaria para NDVI/NDWI reales). */
+  selectedResult: SelectableResult | null
+  /** real = COG de la escena; demo = GeoTIFF local. */
+  processDataMode: ProcessDataMode
+  /** Catálogo óptico real: Sentinel-2 o HLS. */
+  opticalCatalog: OpticalCatalog
+  /** Aviso UI cuando el usuario pulsa NDVI/NDWI sin escena. */
+  processHint: string | null
 
   setView: (view: ExplorerViewMode) => void
   setBody: (body: BodyId) => void
@@ -70,8 +87,11 @@ interface ExplorerState {
   /** Activa la capa; si ya estaba activa, la oculta. */
   togglePlanetLayer: (layer: PlanetLayerId) => void
   setPlanetLayerOpacity: (opacity: number) => void
+  setProcessDataMode: (mode: ProcessDataMode) => void
+  setOpticalCatalog: (catalog: OpticalCatalog) => void
+  clearProcessHint: () => void
   runSearch: () => Promise<void>
-  runProcess: (mode: ProcessMode, opts?: { bbox?: BBox; label?: string | null }) => Promise<void>
+  runProcess: (mode: ProcessMode, opts?: { bbox?: BBox; label?: string | null; sceneId?: string }) => Promise<void>
   selectResult: (result: SelectableResult) => Promise<void>
 }
 
@@ -96,6 +116,10 @@ export const useExplorerStore = create<ExplorerState>((set, get) => ({
   results: null,
   process: { state: 'idle' },
   scene: null,
+  selectedResult: null,
+  processDataMode: 'real',
+  opticalCatalog: 'sentinel2',
+  processHint: null,
 
   setView: (view) => set({ view }),
 
@@ -117,6 +141,8 @@ export const useExplorerStore = create<ExplorerState>((set, get) => ({
       results: null,
       process: { state: 'idle' },
       scene: null,
+      selectedResult: null,
+      processHint: null,
     })
   },
 
@@ -145,6 +171,9 @@ export const useExplorerStore = create<ExplorerState>((set, get) => ({
     set({ planetLayer: get().planetLayer === layer ? null : layer })
   },
   setPlanetLayerOpacity: (planetLayerOpacity) => set({ planetLayerOpacity }),
+  setProcessDataMode: (processDataMode) => set({ processDataMode, processHint: null }),
+  setOpticalCatalog: (opticalCatalog) => set({ opticalCatalog, processHint: null, selectedResult: null }),
+  clearProcessHint: () => set({ processHint: null }),
 
   runSearch: async () => {
     const { bbox, body, variable, startDate, endDate } = get()
@@ -161,15 +190,50 @@ export const useExplorerStore = create<ExplorerState>((set, get) => ({
   },
 
   runProcess: async (mode, opts = {}) => {
-    const bbox = opts.bbox ?? get().bbox
-    const request = { mode, bbox }
+    const state = get()
+    const bbox = opts.bbox ?? state.bbox
+    const selected = state.selectedResult
+    const optical = mode === 'ndvi' || mode === 'ndwi'
+    const realOnly = REAL_ONLY_PROCESS_MODES.has(mode)
+    const demoOnly = DEMO_PROCESS_MODES.has(mode)
+    // hls_thermal nunca se procesa en demo: no hay simulación silenciosa
+    const useDemo = !realOnly && (state.processDataMode === 'demo' || demoOnly)
+    const sceneId = opts.sceneId ?? selected?.sceneId
+
+    if ((optical || realOnly) && !useDemo && !sceneId) {
+      set({
+        processHint: 'needScene',
+        process: { state: 'idle', mode },
+      })
+      return
+    }
+    if (realOnly && !isHlsL30(sceneId, selected?.collection)) {
+      set({
+        processHint: 'needL30Scene',
+        process: { state: 'idle', mode },
+      })
+      return
+    }
+
+    const request = {
+      mode,
+      bbox,
+      sceneId: useDemo ? undefined : sceneId,
+      demo: useDemo,
+      source: useDemo ? undefined : realOnly ? ('hls' as OpticalCatalog) : state.opticalCatalog,
+    }
     const seq = ++processSeq
-    set({ process: { state: 'loading', mode } })
+    set({ process: { state: 'loading', mode }, processHint: null })
     try {
       const response = await processScene(request)
       if (seq !== processSeq) return
       set({
-        scene: { id: `${mode}:${formatBBox(bbox, 4)}:${seq}`, request, label: opts.label ?? null, response },
+        scene: {
+          id: `${mode}:${formatBBox(bbox, 4)}:${seq}`,
+          request,
+          label: opts.label ?? selected?.label ?? null,
+          response,
+        },
         process: { state: 'success', mode },
       })
     } catch (err) {
@@ -178,10 +242,39 @@ export const useExplorerStore = create<ExplorerState>((set, get) => ({
     }
   },
 
-  selectResult: async ({ bbox, mode, label }) => {
-    const valid = validateBBox(bbox)
+  selectResult: async (result) => {
+    const valid = validateBBox(result.bbox)
     const target = valid.ok ? valid.bbox : get().bbox
-    get().setBbox(target)
-    await get().runProcess(mode, { bbox: get().bbox, label })
+    // Recortar a ≤0.5° por lado para el modo real (límite del backend)
+    let processBbox = target
+    const [minLon, minLat, maxLon, maxLat] = target
+    const maxSide = 0.45
+    if (maxLon - minLon > maxSide || maxLat - minLat > maxSide) {
+      const cx = (minLon + maxLon) / 2
+      const cy = (minLat + maxLat) / 2
+      const halfLon = Math.min(maxSide / 2, (maxLon - minLon) / 2)
+      const halfLat = Math.min(maxSide / 2, (maxLat - minLat) / 2)
+      processBbox = [cx - halfLon, cy - halfLat, cx + halfLon, cy + halfLat]
+    }
+    get().setBbox(processBbox)
+    // Ajustar catálogo según la lista de origen
+    const catalog: OpticalCatalog =
+      result.collection?.startsWith('HLS') || result.collection === 'HLSS30' || result.collection === 'HLSL30'
+        ? 'hls'
+        : result.collection?.includes('sentinel-2')
+          ? 'sentinel2'
+          : get().opticalCatalog
+    set({
+      selectedResult: { ...result, bbox: [...processBbox] },
+      processHint: null,
+      opticalCatalog: catalog,
+      processDataMode: result.sceneId ? 'real' : get().processDataMode,
+    })
+    const mode = result.mode === 'ndvi' || result.mode === 'ndwi' ? result.mode : 'ndvi'
+    await get().runProcess(mode, {
+      bbox: get().bbox,
+      label: result.label,
+      sceneId: result.sceneId,
+    })
   },
 }))

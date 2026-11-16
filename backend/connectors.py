@@ -83,27 +83,68 @@ def _parse_cmr_box(boxes: list[str] | None, fallback: list[float]) -> list[float
 
 
 async def query_nasa_cmr(client: httpx.AsyncClient, bbox: str, start_date: str, end_date: str, limit: int):
+    """
+    CMR exige un identificador de colección en búsquedas de granules
+    (short_name / concept_id / …). Sin eso responde 400 y la lista queda vacía.
+    Docs: https://wiki.earthdata.nasa.gov/display/CMR/Granule+Queries+Now+Require+Collection+Identifiers
+    Colecciones HLS: HLSS30 (Sentinel-2) y HLSL30 (Landsat) en LPCLOUD.
+    """
     fallback = [float(x) for x in bbox.split(",")]
     url = "https://cmr.earthdata.nasa.gov/search/granules.json"
-    params = {
-        "bounding_box": bbox,
-        "temporal": f"{start_date}T00:00:00Z,{end_date}T23:59:59Z",
-        "page_size": limit,
-    }
-    res = await client.get(url, params=params)
-    res.raise_for_status()
-    entries = res.json().get("feed", {}).get("entry", [])
-    return [
-        {
-            "id": e.get("id"),
-            "title": e.get("title"),
-            "date": e.get("time_start", "")[:10],
-            "source": "NASA Earthdata (CMR)",
-            "bbox": _parse_cmr_box(e.get("boxes"), fallback),
-            "recommended_mode": "ndvi",
+    # Repartir el límite entre HLS-S30 y HLS-L30
+    per = max(1, (limit + 1) // 2)
+    results = []
+    for short_name in ("HLSS30", "HLSL30"):
+        params = {
+            "short_name": short_name,
+            "bounding_box": bbox,
+            "temporal": f"{start_date}T00:00:00Z,{end_date}T23:59:59Z",
+            "page_size": per,
         }
-        for e in entries
-    ]
+        res = await client.get(url, params=params)
+        if res.status_code >= 400:
+            # No silenciar: propaga para que gather lo registre
+            res.raise_for_status()
+        payload = res.json()
+        if "errors" in payload:
+            raise httpx.HTTPStatusError(
+                f"CMR errors: {payload['errors']}",
+                request=res.request,
+                response=res,
+            )
+        entries = payload.get("feed", {}).get("entry", [])
+        for e in entries:
+            links = e.get("links") or []
+            asset_links = [
+                {"href": ln.get("href"), "title": ln.get("title")}
+                for ln in links
+                if isinstance(ln, dict)
+                and ln.get("href")
+                and "data#" in str(ln.get("rel", ""))
+                and str(ln.get("href", "")).startswith("https://")
+            ][:12]
+            cloud = e.get("cloud_cover")
+            try:
+                cloud_f = float(cloud) if cloud is not None else None
+            except (TypeError, ValueError):
+                cloud_f = None
+            results.append(
+                {
+                    "id": e.get("id"),
+                    "title": e.get("title"),
+                    "date": e.get("time_start", "")[:10],
+                    "source": f"NASA Earthdata CMR ({short_name})",
+                    "collection": short_name,
+                    "cloud_cover": cloud_f,
+                    "bbox": _parse_cmr_box(e.get("boxes"), fallback),
+                    "recommended_mode": "ndvi",
+                    # Metadatos de descarga (requieren token Earthdata para leer los TIF protegidos)
+                    "asset_links": asset_links,
+                }
+            )
+            if len(results) >= limit:
+                return results[:limit]
+    return results[:limit]
 
 
 async def query_copernicus_stac(client: httpx.AsyncClient, bbox: str, start_date: str, end_date: str, limit: int):
@@ -165,16 +206,20 @@ async def run_federated_search(bbox: str, start_date: str, end_date: str, body: 
         "partner_resources": [],
     }
 
-    async with httpx.AsyncClient(timeout=6.0) as client:
+    async with httpx.AsyncClient(timeout=20.0) as client:
         if body == "earth":
             results = await asyncio.gather(
                 query_nasa_cmr(client, bbox, start_date, end_date, limit),
                 query_copernicus_stac(client, bbox, start_date, end_date, limit),
                 return_exceptions=True,
             )
-            if not isinstance(results[0], Exception):
+            if isinstance(results[0], Exception):
+                print(f"[teledetección] NASA CMR falló: {type(results[0]).__name__}: {results[0]}")
+            else:
                 response["live_earthdata"] = results[0]
-            if not isinstance(results[1], Exception):
+            if isinstance(results[1], Exception):
+                print(f"[teledetección] Copernicus STAC falló: {type(results[1]).__name__}: {results[1]}")
+            else:
                 response["live_copernicus"] = results[1]
         else:
             pds_res = await asyncio.gather(query_nasa_pds_lro(client, body, limit), return_exceptions=True)

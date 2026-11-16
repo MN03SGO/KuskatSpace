@@ -5,6 +5,7 @@ import {
   Popup,
   type GeoJSONSource,
   type MapLayerMouseEvent,
+  type MapMouseEvent,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { focusRing } from '../../components/ui'
@@ -13,15 +14,39 @@ import { useLang } from '../../i18n/useT'
 import { ensureMaplibreWorker } from '../../lib/maplibreSetup'
 import { useExplorerStore } from '../../store/useExplorerStore'
 import {
+  applyAllContextState,
+  ensureAllContextLayers,
+  setContextDate,
+  setContextOpacity,
+  setContextVisibility,
+  type ContextOpacity,
+  type ContextVisibility,
+} from './analogsContextLayers'
+import {
+  ensureIfaLayers,
+  ensureIfaPlaceholder,
+  GRID_CIRCLES_LAYER_ID,
+  GRID_LAYER_ID,
+  POINTS_LAYER_ID,
+  setIfaFillColor,
+  setIfaOpacity,
+} from './analogsIfaLayer'
+import { parseAnalogsUrl, writeAnalogsUrl } from './analogsUrlState'
+import { fetchAndValidateGrid, type GridGeometryReport } from './gridGeometry'
+import {
   assertGridIfaParity,
   computeGridIFA,
-  ifaColorExpr,
   MARS_ARID_WEIGHTS,
   MOON_PSR_WEIGHTS,
   type GridCellProps,
   type IfaMode,
   type IfaWeights,
 } from './ifaColorExpr'
+import { Inspector, type InspectorCandidate, type InspectorCell } from './Inspector'
+import { LayerPanel } from './LayerPanel'
+import { CONTEXT_LAYERS, type ContextLayerId } from './layerRegistry'
+import { Legend } from './Legend'
+import { TimeBar } from './TimeBar'
 
 ensureMaplibreWorker()
 
@@ -32,12 +57,17 @@ const CARTO_DARK_MATTER_STYLE =
 /** NO usar ±90°: en Web Mercator lat=90 → y=Infinity y el mapa crashea. */
 const MERCATOR_MAX_LAT = 85.05112878
 
-const GRID_SOURCE_ID = 'grid'
-const GRID_LAYER_ID = 'grid-fill'
 const GRID_GEOJSON_URL = '/data/grid.geojson'
 
 const POINTS_SOURCE_ID = 'candidates-geojson'
-const POINTS_LAYER_ID = 'candidates-circles'
+
+const BASE_WEIGHTS: IfaWeights = {
+  relieve: 0.25,
+  iluminacion: 0.2,
+  frio: 0.2,
+  hielo: 0.2,
+  polvo: 0.15,
+}
 
 type HeatmapLayer = 'combined' | 'moon_south_pole' | 'mars_surface'
 
@@ -45,6 +75,12 @@ function layerToMode(layer: HeatmapLayer): IfaMode {
   if (layer === 'moon_south_pole') return 'moon_psr'
   if (layer === 'mars_surface') return 'mars_arid'
   return 'global'
+}
+
+function modeToHeatmapLayer(mode: IfaMode): HeatmapLayer {
+  if (mode === 'moon_psr') return 'moon_south_pole'
+  if (mode === 'mars_arid') return 'mars_surface'
+  return 'combined'
 }
 
 function modeDefaultWeights(mode: IfaMode, current: IfaWeights): IfaWeights {
@@ -66,40 +102,6 @@ function readGridProps(raw: Record<string, unknown> | null | undefined): GridCel
     ice: num('ice'),
     dust: num('dust'),
     valid: num('valid'),
-  }
-}
-
-/** Source + capa fill de grilla (antes de candidates-circles). */
-function ensureGridLayer(map: MapLibreMap, weights: IfaWeights, mode: IfaMode) {
-  if (!map.getSource(GRID_SOURCE_ID)) {
-    map.addSource(GRID_SOURCE_ID, {
-      type: 'geojson',
-      data: GRID_GEOJSON_URL,
-    })
-  }
-
-  const colorExpr = ifaColorExpr(weights, mode)
-  if (!map.getLayer(GRID_LAYER_ID)) {
-    const beforeId = map.getLayer(POINTS_LAYER_ID) ? POINTS_LAYER_ID : undefined
-    map.addLayer(
-      {
-        id: GRID_LAYER_ID,
-        type: 'fill',
-        source: GRID_SOURCE_ID,
-        paint: {
-          'fill-color': colorExpr as never,
-          'fill-opacity': 0.8,
-          'fill-outline-color': 'rgba(0,0,0,0)',
-        },
-      },
-      beforeId,
-    )
-  } else {
-    map.setPaintProperty(GRID_LAYER_ID, 'fill-color', colorExpr as never)
-  }
-
-  if (map.getLayer(POINTS_LAYER_ID) && map.getLayer(GRID_LAYER_ID)) {
-    map.moveLayer(GRID_LAYER_ID, POINTS_LAYER_ID)
   }
 }
 
@@ -137,52 +139,55 @@ function toPointsGeoJSON(points: RankedPoint[]): GeoJSON.FeatureCollection {
 
 /** Capa circle GPU (GeoJSON) — mucho más rápida que Marker HTML. */
 function upsertCandidatesCircles(map: MapLibreMap, points: RankedPoint[]) {
-  const data = toPointsGeoJSON(points)
-  const existing = map.getSource(POINTS_SOURCE_ID) as GeoJSONSource | undefined
+  try {
+    const data = toPointsGeoJSON(points)
+    const existing = map.getSource(POINTS_SOURCE_ID) as GeoJSONSource | undefined
 
-  if (existing) {
-    existing.setData(data)
-  } else {
-    map.addSource(POINTS_SOURCE_ID, {
-      type: 'geojson',
-      data,
-      // Reduce trabajo en pan/zoom
-      cluster: false,
-    })
+    if (existing) {
+      existing.setData(data)
+    } else {
+      map.addSource(POINTS_SOURCE_ID, {
+        type: 'geojson',
+        data,
+        cluster: false,
+      })
 
-    map.addLayer({
-      id: POINTS_LAYER_ID,
-      type: 'circle',
-      source: POINTS_SOURCE_ID,
-      paint: {
-        'circle-radius': [
-          'case',
-          ['==', ['get', 'selected'], 1],
-          9,
-          ['<=', ['get', 'rank'], 3],
-          7,
-          5.5,
-        ],
-        'circle-color': [
-          'case',
-          ['==', ['get', 'selected'], 1],
-          '#38bdf8',
-          ['==', ['get', 'has_orbital'], 1],
-          '#34d399',
-          '#7dd3fc',
-        ],
-        'circle-stroke-width': ['case', ['==', ['get', 'selected'], 1], 2.5, 1],
-        'circle-stroke-color': '#f8fafc',
-        'circle-opacity': 0.95,
-      },
-    })
-  }
+      if (!map.getLayer(POINTS_LAYER_ID)) {
+        map.addLayer({
+          id: POINTS_LAYER_ID,
+          type: 'circle',
+          source: POINTS_SOURCE_ID,
+          paint: {
+            'circle-radius': [
+              'case',
+              ['==', ['get', 'selected'], 1],
+              9,
+              ['<=', ['get', 'rank'], 3],
+              7,
+              5.5,
+            ],
+            'circle-color': [
+              'case',
+              ['==', ['get', 'selected'], 1],
+              '#38bdf8',
+              ['==', ['get', 'has_orbital'], 1],
+              '#34d399',
+              '#7dd3fc',
+            ],
+            'circle-stroke-width': ['case', ['==', ['get', 'selected'], 1], 2.5, 1],
+            'circle-stroke-color': '#f8fafc',
+            'circle-opacity': 0.95,
+          },
+        })
+      }
+    }
 
-  // Orden: basemap < grid-fill < círculos
-  if (map.getLayer(GRID_LAYER_ID) && map.getLayer(POINTS_LAYER_ID)) {
-    map.moveLayer(GRID_LAYER_ID, POINTS_LAYER_ID)
-  } else if (map.getLayer(POINTS_LAYER_ID)) {
-    map.moveLayer(POINTS_LAYER_ID)
+    // Candidatos siempre encima
+    if (map.getLayer(POINTS_LAYER_ID)) {
+      map.moveLayer(POINTS_LAYER_ID)
+    }
+  } catch (err) {
+    console.error('[AnalogsView] candidatos', err)
   }
 }
 
@@ -326,30 +331,65 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
   const lang = useLang((s) => s.lang)
   const isEs = lang === 'es'
 
+  const urlBoot = useMemo(
+    () => parseAnalogsUrl(typeof window !== 'undefined' ? window.location.search : '', BASE_WEIGHTS),
+    [],
+  )
+
   const [candidates, setCandidates] = useState<CandidateDoc[]>([])
   const [sourceMode, setSourceMode] = useState<'api' | 'backup'>('backup')
+  const [apiFallbackReason, setApiFallbackReason] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [targetFilter, setTargetFilter] = useState<TargetFilter>('all')
   const [onlyDiscoveries, setOnlyDiscoveries] = useState(false)
-  const [heatmapLayer, setHeatmapLayer] = useState<HeatmapLayer>('combined')
-  const [weights, setWeights] = useState({
-    relieve: 0.25,
-    iluminacion: 0.2,
-    frio: 0.2,
-    hielo: 0.2,
-    polvo: 0.15,
-  })
+  const [heatmapLayer, setHeatmapLayer] = useState<HeatmapLayer>(() =>
+    modeToHeatmapLayer(urlBoot.scenario),
+  )
+  const [weights, setWeights] = useState<IfaWeights>(() => ({ ...urlBoot.weights }))
   // Ranking/mapa solo se recalculan 150ms después de soltar el slider
-  const [debouncedWeights, setDebouncedWeights] = useState(weights)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [debouncedWeights, setDebouncedWeights] = useState<IfaWeights>(() => ({ ...urlBoot.weights }))
+  const [selectedId, setSelectedId] = useState<string | null>(() => urlBoot.selectedId)
+  const [ifaOpacity, setIfaOpacityState] = useState(urlBoot.ifaOpacity)
+  const [candidatesVisible, setCandidatesVisible] = useState(true)
+  const [contextVisibility, setContextVisibilityState] = useState<ContextVisibility>(
+    () => ({ ...urlBoot.contextVisibility }),
+  )
+  const [contextOpacity, setContextOpacityState] = useState<ContextOpacity>(
+    () => ({ ...urlBoot.contextOpacity }),
+  )
+  const [contextDate, setContextDateState] = useState(
+    () => urlBoot.date ?? '2026-11-01',
+  )
+  const [gridNotice, setGridNotice] = useState<string | null>(null)
+  const [gridMeta, setGridMeta] = useState<{ n_cells: number; n_regions: number } | null>(null)
+  const [inspectorCell, setInspectorCell] = useState<InspectorCell | null>(null)
+  const [inspectorCandidate, setInspectorCandidate] = useState<InspectorCandidate | null>(null)
+
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const heatmapLayerRef = useRef<HeatmapLayer>(heatmapLayer)
   const weightsRef = useRef(debouncedWeights)
+  const ifaOpacityRef = useRef(ifaOpacity)
+  const gridFcRef = useRef<GeoJSON.FeatureCollection | null>(null)
+  const gridReportRef = useRef<GridGeometryReport | null>(null)
+  const contextVisRef = useRef(contextVisibility)
+  const contextOpRef = useRef(contextOpacity)
   const pointsRef = useRef<RankedPoint[]>([])
   const popupRef = useRef<Popup | null>(null)
   heatmapLayerRef.current = heatmapLayer
   weightsRef.current = debouncedWeights
+  ifaOpacityRef.current = ifaOpacity
+  contextVisRef.current = contextVisibility
+  contextOpRef.current = contextOpacity
+
+  useEffect(() => {
+    void fetch('/data/grid_meta.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((m: { n_cells?: number; n_regions?: number } | null) => {
+        if (m?.n_cells && m?.n_regions) setGridMeta({ n_cells: m.n_cells, n_regions: m.n_regions })
+      })
+      .catch(() => undefined)
+  }, [])
 
   useEffect(() => {
     const t = window.setTimeout(() => setDebouncedWeights(weights), 150)
@@ -361,21 +401,72 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     assertGridIfaParity(debouncedWeights, layerToMode(heatmapLayer))
   }, [debouncedWeights, heatmapLayer])
 
-  // Mapa base Carto Dark Matter; grilla GeoJSON + círculos en style.load
+  /** Aplica IFA (círculos + polígonos). Nunca PNG. */
+  function applyIfaData(map: MapLibreMap) {
+    const mode = layerToMode(heatmapLayerRef.current)
+    const opac = ifaOpacityRef.current
+    const fc = gridFcRef.current
+    try {
+      if (fc) {
+        ensureIfaLayers(map, weightsRef.current, mode, opac, fc)
+      } else {
+        ensureIfaPlaceholder(map, weightsRef.current, mode, opac)
+      }
+    } catch (err) {
+      console.error('[AnalogsView] applyIfaData', err)
+    }
+  }
+
+  /** Orden en 'load': IFA → GIBS (ocultas) → candidatos. Cada paso aislado. */
+  function mountCustomLayers(map: MapLibreMap) {
+    applyIfaData(map)
+    try {
+      ensureAllContextLayers(map, GRID_LAYER_ID)
+      applyAllContextState(map, contextVisRef.current, contextOpRef.current)
+    } catch (err) {
+      console.error('[AnalogsView] contexto GIBS', err)
+    }
+    try {
+      upsertCandidatesCircles(map, pointsRef.current)
+    } catch (err) {
+      console.error('[AnalogsView] candidatos', err)
+    }
+  }
+
+  // 1) Mapa SÍNCRONO al montar — sin await/fetch antes de new Map
   useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current) return
+    const el = mapContainerRef.current
+    if (!el) return
 
-    const map = new MapLibreMap({
-      container: mapContainerRef.current,
-      style: CARTO_DARK_MATTER_STYLE,
-      center: [-20, 15],
-      zoom: 1.4,
-      minZoom: 1,
-      renderWorldCopies: false,
-    })
+    // StrictMode: limpiar instancia previa del mismo contenedor si quedó huérfana
+    if (mapRef.current) {
+      try {
+        mapRef.current.remove()
+      } catch {
+        /* ignore */
+      }
+      mapRef.current = null
+    }
 
-    map.addControl(new NavigationControl({ showCompass: false }), 'top-right')
+    let cancelled = false
+    let loadHandled = false
+    let map: MapLibreMap
+    try {
+      map = new MapLibreMap({
+        container: el,
+        style: CARTO_DARK_MATTER_STYLE,
+        center: [-20, 15],
+        zoom: 1.4,
+        minZoom: 1,
+        renderWorldCopies: false,
+      })
+    } catch (err) {
+      console.error('[AnalogsView] new Map', err)
+      return
+    }
+
     mapRef.current = map
+    map.addControl(new NavigationControl({ showCompass: false }), 'top-right')
     popupRef.current = new Popup({
       closeButton: true,
       closeOnClick: true,
@@ -383,10 +474,60 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
       className: 'grid-ifa-popup',
     })
 
-    const remountCustomLayers = () => {
-      const mode = layerToMode(heatmapLayerRef.current)
-      ensureGridLayer(map, weightsRef.current, mode)
-      upsertCandidatesCircles(map, pointsRef.current)
+    const onMapError = (e: unknown) => {
+      const err = e && typeof e === 'object' && 'error' in e ? (e as { error: unknown }).error : e
+      console.error('[MapLibre]', err)
+    }
+
+    const onLoad = () => {
+      if (cancelled || loadHandled) return
+      loadHandled = true
+      map.resize()
+      mountCustomLayers(map)
+      // 2) Validación + fetch de grid DESPUÉS de 'load' (no bloquea basemap)
+      void (async () => {
+        try {
+          const { fc, report } = await fetchAndValidateGrid(GRID_GEOJSON_URL)
+          if (cancelled || mapRef.current !== map) return
+          gridFcRef.current = fc
+          gridReportRef.current = report
+          if (report.valid) {
+            setGridNotice(null)
+            console.info(
+              '[AnalogsView] Geometría IFA VÁLIDA → círculos (z<4) + polígonos (z≥4).',
+              `celdas=${report.featureCount}`,
+              `oversize=${report.oversizeCount}`,
+              `ifaOk=${(report.ifaCalculableRatio * 100).toFixed(1)}%`,
+              `candidatos=${report.candidateHits}/${report.candidateTotal}`,
+              `maxΔlon=${report.widthDeg.max.toFixed(3)}°`,
+              `maxΔlat=${report.heightDeg.max.toFixed(3)}°`,
+            )
+          } else {
+            // Aviso discreto; NO activar PNG (mismos datos sesgados)
+            setGridNotice(isEs ? 'Grilla en revisión' : 'Grid under review')
+            console.warn('[AnalogsView] Geometría IFA con avisos (sin PNG):', report.reason, report)
+          }
+          if (report.emptyLandBands.length > 0) {
+            console.info(
+              '[AnalogsView] Bandas sin celdas (ROI dataset, no invalida):',
+              report.emptyLandBands.join(', '),
+            )
+          }
+          applyIfaData(map)
+          try {
+            ensureAllContextLayers(map, GRID_LAYER_ID)
+          } catch (err) {
+            console.error('[AnalogsView] contexto tras grid', err)
+          }
+          try {
+            upsertCandidatesCircles(map, pointsRef.current)
+          } catch (err) {
+            console.error('[AnalogsView] candidatos tras grid', err)
+          }
+        } catch (err) {
+          console.error('[AnalogsView] fetch grid', err)
+        }
+      })()
     }
 
     const onPointClick = (e: MapLayerMouseEvent) => {
@@ -419,68 +560,203 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     }
     const onGridLeave = () => {
       map.getCanvas().style.cursor = ''
+      setInspectorCell(null)
     }
 
-    map.on('load', remountCustomLayers)
-    map.on('style.load', remountCustomLayers)
+    const onMousemove = (e: MapMouseEvent) => {
+      const layers: string[] = []
+      if (map.getLayer(POINTS_LAYER_ID)) layers.push(POINTS_LAYER_ID)
+      if (map.getLayer(GRID_LAYER_ID)) layers.push(GRID_LAYER_ID)
+      if (map.getLayer(GRID_CIRCLES_LAYER_ID)) layers.push(GRID_CIRCLES_LAYER_ID)
+      if (layers.length === 0) return
+      const feats = map.queryRenderedFeatures(e.point, { layers })
+      let cell: InspectorCell | null = null
+      let cand: InspectorCandidate | null = null
+      for (const f of feats) {
+        if (f.layer?.id === POINTS_LAYER_ID && !cand) {
+          const name = String(f.properties?.name ?? '')
+          const ifa = Number(f.properties?.ifa ?? 0)
+          if (name) cand = { name, ifa }
+        }
+        if (
+          (f.layer?.id === GRID_LAYER_ID || f.layer?.id === GRID_CIRCLES_LAYER_ID) &&
+          !cell
+        ) {
+          const props = readGridProps(f.properties as Record<string, unknown>)
+          if (props) {
+            const mode = layerToMode(heatmapLayerRef.current)
+            cell = {
+              ...props,
+              ifa: computeGridIFA(props, weightsRef.current, mode),
+            }
+          }
+        }
+      }
+      setInspectorCell(cell)
+      setInspectorCandidate(cand)
+    }
+
+    map.on('error', onMapError)
+    map.on('load', onLoad)
     map.on('click', POINTS_LAYER_ID, onPointClick)
     map.on('click', GRID_LAYER_ID, showGridPopup)
+    map.on('click', GRID_CIRCLES_LAYER_ID, showGridPopup)
     map.on('mouseenter', GRID_LAYER_ID, onGridEnter)
     map.on('mouseleave', GRID_LAYER_ID, onGridLeave)
+    map.on('mouseenter', GRID_CIRCLES_LAYER_ID, onGridEnter)
+    map.on('mouseleave', GRID_CIRCLES_LAYER_ID, onGridLeave)
+    map.on('mousemove', onMousemove)
     map.on('mouseenter', POINTS_LAYER_ID, () => {
       map.getCanvas().style.cursor = 'pointer'
     })
     map.on('mouseleave', POINTS_LAYER_ID, () => {
       map.getCanvas().style.cursor = ''
+      setInspectorCandidate(null)
     })
 
+    // Por si el estilo ya estaba cacheado
+    if (map.loaded()) {
+      onLoad()
+    }
+
     return () => {
-      map.off('load', remountCustomLayers)
-      map.off('style.load', remountCustomLayers)
+      cancelled = true
+      map.off('error', onMapError)
+      map.off('load', onLoad)
       map.off('click', POINTS_LAYER_ID, onPointClick)
       map.off('click', GRID_LAYER_ID, showGridPopup)
+      map.off('click', GRID_CIRCLES_LAYER_ID, showGridPopup)
       map.off('mouseenter', GRID_LAYER_ID, onGridEnter)
       map.off('mouseleave', GRID_LAYER_ID, onGridLeave)
+      map.off('mouseenter', GRID_CIRCLES_LAYER_ID, onGridEnter)
+      map.off('mouseleave', GRID_CIRCLES_LAYER_ID, onGridLeave)
+      map.off('mousemove', onMousemove)
       popupRef.current?.remove()
       popupRef.current = null
-      map.remove()
-      mapRef.current = null
+      try {
+        map.remove()
+      } catch (err) {
+        console.error('[AnalogsView] map.remove', err)
+      }
+      if (mapRef.current === map) mapRef.current = null
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mapa una vez al montar
   }, [])
 
-  // Pestañas Índice Global / Luna PSR / Marte Árido → solo setPaintProperty (sin PNG)
+  // Escenario / pesos → solo paint (sin recrear layers)
   useEffect(() => {
     const map = mapRef.current
-    if (!map) return
+    if (!map?.isStyleLoaded()) return
     const mode = layerToMode(heatmapLayer)
-    const apply = () => {
-      if (!map.getLayer(GRID_LAYER_ID)) {
-        ensureGridLayer(map, debouncedWeights, mode)
-        return
-      }
-      map.setPaintProperty(GRID_LAYER_ID, 'fill-color', ifaColorExpr(debouncedWeights, mode) as never)
+    try {
+      setIfaFillColor(map, debouncedWeights, mode)
+      setIfaOpacity(map, ifaOpacity)
+    } catch (err) {
+      console.error('[AnalogsView] update IFA paint', err)
     }
-    if (map.isStyleLoaded()) apply()
-    else map.once('load', apply)
-  }, [heatmapLayer, debouncedWeights])
+  }, [heatmapLayer, debouncedWeights, ifaOpacity])
+
+  // Visibilidad / opacidad contexto → solo layout/paint
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map?.isStyleLoaded()) return
+    applyAllContextState(map, contextVisibility, contextOpacity)
+  }, [contextVisibility, contextOpacity])
+
+  // Fecha GIBS → setTiles en capas temporales visibles
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map?.isStyleLoaded()) return
+    for (const def of CONTEXT_LAYERS) {
+      if (!def.period) continue
+      if (!contextVisibility[def.id]) continue
+      setContextDate(map, def.id, contextDate)
+    }
+  }, [contextDate, contextVisibility])
+
+  // Candidatos visible
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map?.getLayer(POINTS_LAYER_ID)) return
+    map.setLayoutProperty(POINTS_LAYER_ID, 'visibility', candidatesVisible ? 'visible' : 'none')
+  }, [candidatesVisible])
+
+  // URL compartible
+  useEffect(() => {
+    writeAnalogsUrl(
+      {
+        scenario: layerToMode(heatmapLayer),
+        weights: debouncedWeights,
+        selectedId,
+        contextVisibility,
+        contextOpacity,
+        date: CONTEXT_LAYERS.some((l) => l.period && contextVisibility[l.id])
+          ? contextDate
+          : null,
+        ifaOpacity,
+      },
+      BASE_WEIGHTS,
+    )
+  }, [
+    heatmapLayer,
+    debouncedWeights,
+    selectedId,
+    contextVisibility,
+    contextOpacity,
+    contextDate,
+    ifaOpacity,
+  ])
 
   useEffect(() => {
     let active = true
     async function load() {
       setLoading(true)
+      let fallbackReason: string | null = null
+      const url = `${API_BASE}/candidates?limit=100`
       try {
-        const res = await fetch(`${API_BASE}/candidates?limit=100`)
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const data = (await res.json()) as CandidateDoc[]
+        const res = await fetch(url)
+        const ct = res.headers.get('content-type') ?? ''
+        const text = await res.text()
+        if (!res.ok) {
+          fallbackReason = `HTTP ${res.status} en candidatos`
+          throw new Error(fallbackReason)
+        }
+        if (!ct.includes('application/json') && !ct.includes('+json')) {
+          fallbackReason = `respuesta no JSON (${ct || 'sin content-type'})`
+          if (import.meta.env.DEV) {
+            console.error('[AnalogsView] API candidatos inválida', {
+              status: res.status,
+              url,
+              bodySnippet: text.replace(/\s+/g, ' ').trim().slice(0, 200),
+            })
+          }
+          throw new Error(fallbackReason)
+        }
+        const data = JSON.parse(text) as CandidateDoc[]
         if (active && Array.isArray(data) && data.length > 0) {
           setCandidates(data)
           setSourceMode('api')
-          setSelectedId((prev) => prev ?? data[0]._id)
+          setApiFallbackReason(null)
+          setSelectedId((prev) => {
+            if (prev && data.some((d) => d._id === prev)) return prev
+            return prev ?? data[0]._id
+          })
           setLoading(false)
           return
         }
-      } catch {
-        // Fallback automático a Plan B estático en /data/candidates.json
+        fallbackReason = 'API devolvió lista vacía'
+      } catch (err) {
+        if (!fallbackReason) {
+          fallbackReason =
+            err instanceof TypeError
+              ? 'no se pudo conectar con la API'
+              : err instanceof Error
+                ? err.message
+                : 'error desconocido'
+        }
+        if (import.meta.env.DEV) {
+          console.warn('[AnalogsView] cayendo a respaldo local:', fallbackReason, err)
+        }
       }
       try {
         const resBackup = await fetch('/data/candidates.json')
@@ -488,7 +764,11 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
         if (active && Array.isArray(dataBackup)) {
           setCandidates(dataBackup)
           setSourceMode('backup')
-          setSelectedId((prev) => prev ?? (dataBackup[0]?._id || null))
+          setApiFallbackReason(fallbackReason ?? 'API no disponible')
+          setSelectedId((prev) => {
+            if (prev && dataBackup.some((d) => d._id === prev)) return prev
+            return prev ?? (dataBackup[0]?._id || null)
+          })
         }
       } catch {
         // Sin datos
@@ -601,6 +881,40 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     { key: 'polvo', es: 'Polvo (MODIS AOD)', en: 'Dust (MODIS AOD)' },
   ]
 
+  const handleIfaOpacity = (v: number) => {
+    setIfaOpacityState(v)
+    const map = mapRef.current
+    if (map) setIfaOpacity(map, v)
+  }
+
+  const handleContextVisible = (id: ContextLayerId, v: boolean) => {
+    setContextVisibilityState((prev) => ({ ...prev, [id]: v }))
+    const map = mapRef.current
+    if (map) {
+      setContextVisibility(map, id, v)
+      if (v) {
+        const def = CONTEXT_LAYERS.find((l) => l.id === id)
+        if (def?.period) setContextDate(map, id, contextDate)
+      }
+    }
+  }
+
+  const handleContextOpacity = (id: ContextLayerId, v: number) => {
+    setContextOpacityState((prev) => ({ ...prev, [id]: v }))
+    const map = mapRef.current
+    if (map) setContextOpacity(map, id, v)
+  }
+
+  const handleContextDate = (iso: string) => {
+    setContextDateState(iso)
+    const map = mapRef.current
+    if (!map) return
+    for (const def of CONTEXT_LAYERS) {
+      if (!def.period || !contextVisibility[def.id]) continue
+      setContextDate(map, def.id, iso)
+    }
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
       {/* Panel izquierdo: Escenarios, pesos 5D y listado */}
@@ -609,16 +923,30 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
           <h2 className="text-sm font-bold">
             {isEs ? '1 · Escenario y Pesos IFA (5D)' : '1 · Scenario & IFA Weights (5D)'}
           </h2>
-          <span className="rounded bg-raised px-2 py-0.5 text-xs text-ink-muted">
+          <span
+            className={`rounded px-2 py-0.5 text-xs ${
+              sourceMode === 'api'
+                ? 'bg-raised text-ink-muted'
+                : 'bg-amber-500/15 font-semibold text-amber-700 dark:text-amber-300'
+            }`}
+            title={apiFallbackReason ?? undefined}
+          >
             {sourceMode === 'api'
               ? isEs
                 ? 'Fuente: API en vivo'
                 : 'Source: Live API'
               : isEs
-                ? 'Fuente: Respaldo local (§05)'
-                : 'Source: Local backup (§05)'}
+                ? 'Fuente: Respaldo local (§05) — API no disponible'
+                : 'Source: Local backup (§05) — API unavailable'}
           </span>
         </div>
+        {sourceMode === 'backup' && apiFallbackReason && (
+          <p className="rounded border border-amber-500/40 bg-amber-500/10 px-2.5 py-1.5 text-xs text-amber-800 dark:text-amber-200">
+            {isEs
+              ? `Usando candidatos en disco porque la API no respondió bien. Motivo: ${apiFallbackReason}.`
+              : `Using on-disk candidates because the API did not respond correctly. Reason: ${apiFallbackReason}.`}
+          </p>
+        )}
 
         {/* Presets por zona funcional */}
         <div className="space-y-1.5">
@@ -758,15 +1086,30 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
         <div className="rounded border border-line bg-surface p-3">
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 className="text-sm font-bold">
+              <h2
+                className="text-sm font-bold"
+                title={
+                  isEs
+                    ? '240 m es la escala del DEM dentro de cada celda (homóloga a LOLA/MOLA), no el tamaño de la celda (15 o 60 km). Sin color = fuera del dominio analizado (ROI + dorsal).'
+                    : '240 m is the DEM scale inside each cell (homologous to LOLA/MOLA), not the cell size (15 or 60 km). No color = outside the analyzed domain (ROI + backbone).'
+                }
+              >
                 {isEs
-                  ? 'Mapa Global de Fidelidad Analógica (Grilla GEE EASE-Grid 2.0 · 13.688 celdas · Escala Homóloga 240 m)'
-                  : 'Global Analog Fidelity Heatmap (GEE EASE-Grid 2.0 · 13,688 cells · 240 m Homologous Scale)'}
+                  ? 'Fidelidad analógica · regiones de interés y dorsal global (15 y 60 km)'
+                  : 'Analog fidelity · priority regions and global backbone (15 & 60 km)'}
               </h2>
               <p className="text-xs text-ink-muted">
+                {gridMeta
+                  ? isEs
+                    ? `${gridMeta.n_cells.toLocaleString('es-ES')} celdas · ${gridMeta.n_regions} regiones`
+                    : `${gridMeta.n_cells.toLocaleString('en-US')} cells · ${gridMeta.n_regions} regions`
+                  : isEs
+                    ? 'Cargando conteo de celdas…'
+                    : 'Loading cell count…'}
+                {' · '}
                 {isEs
-                  ? 'Haz clic en cualquier marcador para inspeccionar su ficha científica y recortes orbitales Sentinel-2 / Sentinel-1 SAR.'
-                  : 'Click any marker to inspect its scientific card and Sentinel-2 / Sentinel-1 SAR orbital previews.'}
+                  ? 'Clic en marcador o celda para inspeccionar. Zoom bajo = manchas; zoom ≥4 = polígonos.'
+                  : 'Click a marker or cell to inspect. Low zoom = blobs; zoom ≥4 = polygons.'}
               </p>
             </div>
             <div className="flex gap-1">
@@ -793,21 +1136,51 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
             </div>
           </div>
 
-          {/* Contenedor MapLibre: Carto Dark Matter + capa raster GEE encima */}
+          {/* Mapa: alto explícito. Paneles absolute encima; no alteran el tamaño del mapa. */}
           <div
-            ref={mapContainerRef}
-            className="relative aspect-[2/1] w-full overflow-hidden rounded border border-line"
-            style={{ minHeight: 280 }}
-            aria-label={
-              isEs
-                ? `Mapa Dark Matter con grilla IFA ${heatmapLayer}`
-                : `Dark Matter map with IFA grid ${heatmapLayer}`
-            }
-          />
+            className="relative w-full overflow-hidden rounded border border-line"
+            style={{ height: 560, minHeight: 480 }}
+          >
+            <div
+              ref={mapContainerRef}
+              className="h-full w-full"
+              style={{ height: 560, minHeight: 480 }}
+              aria-label={
+                isEs
+                  ? `Mapa Dark Matter con grilla IFA ${heatmapLayer}`
+                  : `Dark Matter map with IFA grid ${heatmapLayer}`
+              }
+            />
+            <LayerPanel
+              isEs={isEs}
+              ifaOpacity={ifaOpacity}
+              onIfaOpacity={handleIfaOpacity}
+              ifaMode="polygons"
+              gridNotice={gridNotice}
+              candidatesVisible={candidatesVisible}
+              onCandidatesVisible={setCandidatesVisible}
+              contextVisibility={contextVisibility}
+              contextOpacity={contextOpacity}
+              onContextVisible={handleContextVisible}
+              onContextOpacity={handleContextOpacity}
+            />
+            <Legend
+              isEs={isEs}
+              scenario={layerToMode(heatmapLayer)}
+              contextVisibility={contextVisibility}
+            />
+            <Inspector isEs={isEs} cell={inspectorCell} candidate={inspectorCandidate} />
+            <TimeBar
+              isEs={isEs}
+              date={contextDate}
+              onDate={handleContextDate}
+              contextVisibility={contextVisibility}
+            />
+          </div>
           <p className="mt-1.5 text-[11px] text-ink-muted">
             {isEs
-              ? 'Fondo: Carto Dark Matter. Capa: polígonos GEE EASE-Grid (IFA en GPU). Clic en celda → popup.'
-              : 'Basemap: Carto Dark Matter. Layer: GEE EASE-Grid polygons (GPU IFA). Click a cell for popup.'}
+              ? 'Fondo: Carto Dark Matter. IFA: círculos (z<4) / polígonos (z≥4). Sin color = fuera del dominio. Contexto opcional: GIBS.'
+              : 'Basemap: Carto Dark Matter. IFA: circles (z<4) / polygons (z≥4). No color = outside domain. Optional context: GIBS.'}
           </p>
         </div>
 

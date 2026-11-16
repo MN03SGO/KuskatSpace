@@ -12,20 +12,55 @@ afterEach(() => {
 
 describe('requestJson', () => {
   it('devuelve el JSON cuando la respuesta es correcta', async () => {
-    mockFetch(async () => new Response(JSON.stringify({ a: 1 }), { status: 200 }))
+    mockFetch(
+      async () =>
+        new Response(JSON.stringify({ a: 1 }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+    )
     await expect(requestJson('/x')).resolves.toEqual({ a: 1 })
   })
 
   it('convierte un 500 de FastAPI en ApiError http con el detail (B1)', async () => {
-    mockFetch(async () => new Response(JSON.stringify({ detail: 'Modo no soportado' }), { status: 500 }))
+    mockFetch(
+      async () =>
+        new Response(JSON.stringify({ detail: 'Modo no soportado' }), {
+          status: 500,
+          headers: { 'content-type': 'application/json' },
+        }),
+    )
     const err = await requestJson('/x').catch((e: unknown) => e)
     expect(err).toBeInstanceOf(ApiError)
     expect(err).toMatchObject({ kind: 'http', status: 500, detail: 'Modo no soportado' })
   })
 
   it('marca como parse una respuesta 200 que no es JSON', async () => {
-    mockFetch(async () => new Response('<html>', { status: 200 }))
-    await expect(requestJson('/x')).rejects.toMatchObject({ kind: 'parse' })
+    mockFetch(
+      async () =>
+        new Response('<html>spa</html>', {
+          status: 200,
+          headers: { 'content-type': 'text/html' },
+        }),
+    )
+    const err = await requestJson('/x').catch((e: unknown) => e)
+    expect(err).toMatchObject({
+      kind: 'parse',
+      status: 200,
+      url: '/x',
+      bodySnippet: expect.stringContaining('<html>'),
+    })
+  })
+
+  it('parsea JSON cuando content-type es application/json', async () => {
+    mockFetch(
+      async () =>
+        new Response(JSON.stringify({ ok: true }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+    )
+    await expect(requestJson('/x')).resolves.toEqual({ ok: true })
   })
 
   it('marca como network un fallo de conexión', async () => {

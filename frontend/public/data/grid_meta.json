@@ -1,0 +1,10 @@
+{
+  "n_cells": 13304,
+  "n_regions": 67,
+  "n_excluded": 384,
+  "excluded_by_lat_band_10deg": {
+    "[-90,-80)": 384
+  },
+  "note_es": "Fidelidad anal\u00f3gica por regiones de inter\u00e9s (15 km) y dorsal global (60 km). 240 m = escala del DEM dentro de cada celda, no el tama\u00f1o de la celda.",
+  "note_en": "Analog fidelity for priority regions (15 km) and global backbone (60 km). 240 m = DEM scale inside each cell, not the cell size."
+}

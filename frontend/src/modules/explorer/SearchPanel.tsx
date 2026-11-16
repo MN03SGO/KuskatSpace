@@ -120,7 +120,19 @@ export function SearchPanel() {
       </button>
 
       {s.search.state === 'error' && s.search.error && (
-        <StatusBanner tone="error">{apiErrorText(t, s.search.error)}</StatusBanner>
+        <StatusBanner tone="error">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <span>{apiErrorText(t, s.search.error)}</span>
+            <button
+              type="button"
+              onClick={() => void s.runSearch()}
+              disabled={!canSearch}
+              className={`shrink-0 rounded border border-danger/40 bg-canvas px-2.5 py-1 text-xs font-semibold text-danger hover:bg-danger/10 ${focusRing} disabled:cursor-not-allowed disabled:opacity-60`}
+            >
+              {t('errors.retry')}
+            </button>
+          </div>
+        </StatusBanner>
       )}
     </section>
   )

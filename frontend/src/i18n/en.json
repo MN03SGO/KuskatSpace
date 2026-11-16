@@ -21,9 +21,18 @@
   },
   "bodies": {
     "label": "Planetary body",
-    "earth": { "label": "Earth (Worldview)", "region": "Earth · Mesoamerican & Caribbean Basin" },
-    "moon": { "label": "Moon (LRO/Diviner)", "region": "Moon · South Polar Region (LRO Diviner)" },
-    "mars": { "label": "Mars (PDS)", "region": "Mars · Valles Marineris (NASA PDS)" }
+    "earth": {
+      "label": "Earth (Worldview)",
+      "region": "Earth · Mesoamerican & Caribbean Basin"
+    },
+    "moon": {
+      "label": "Moon (LRO/Diviner)",
+      "region": "Moon · South Polar Region (LRO Diviner)"
+    },
+    "mars": {
+      "label": "Mars (PDS)",
+      "region": "Mars · Valles Marineris (NASA PDS)"
+    }
   },
   "explorer": {
     "mapLabel": "Data explorer map",
@@ -104,14 +113,29 @@
     "searching": "Querying catalogs...",
     "processing": {
       "title": "Processing with simulated data",
+      "titleReal": "Real data (selected scene)",
+      "titleDemo": "Demonstration (simulated)",
+      "modeGroup": "Data mode",
+      "modeReal": "Real data",
+      "modeDemo": "Demonstration",
+      "catalogGroup": "Optical catalog",
+      "catalogS2": "Sentinel-2 (ESA)",
+      "catalogHls": "HLS (NASA)",
+      "demoBadge": "Demo",
+      "realBadge": "Real",
+      "pickScene": "Pick a scene from the list for real NDVI/NDWI (and an HLS L30 scene for thermal).",
+      "selectedScene": "Scene: {id}",
+      "needScene": "Choose a scene from the list",
       "running": "Processing...",
       "modes": {
         "sar_db": "Process SAR dB + Lee filter",
         "ndvi": "Calculate NDVI",
         "ndwi": "Calculate NDWI (water)",
+        "hls_thermal": "Brightness temperature (HLS L30 TIRS)",
         "jaxa_precip": "Process simulated precipitation",
         "diviner_thermal": "Process simulated thermal profile"
-      }
+      },
+      "needL30Scene": "Real thermal needs an HLS L30 (Landsat) scene. Pick one from the NASA Earthdata list with collection HLSL30."
     },
     "result": {
       "unit": "Unit",
@@ -121,8 +145,11 @@
       "opacity": "Opacity: {value}%",
       "download": "Download GeoTIFF result (.tif)",
       "demoSample": "Simulated demo data ({file}): these are not measurements from any mission or from this area. The image is not clipped to the BBox; it is only placed over it.",
+      "realMeta": "{mission} · {date} · clouds {clouds} · min {min} · mean {mean} · max {max}",
+      "provenanceLine": "{product} · {date} · clouds {clouds} · valid {valid} · {catalog}",
       "legendLow": "Low",
-      "legendHigh": "High"
+      "legendHigh": "High",
+      "downloadDemoOnly": "GeoTIFF download is only available for demonstration data."
     },
     "cryo": {
       "title": "Simulated example: lunar pole vs. Earth",
@@ -146,9 +173,16 @@
     }
   },
   "errors": {
-    "network": "We could not reach the data server ({api}). Check that it is running and try again.",
+    "network": "Could not connect to the data server. Check that it is running and try again.",
     "timeout": "The data server took too long to respond. Please try again in a few seconds.",
-    "http": "The data server returned an error ({status}): {detail}. Try another scene or try again later.",
-    "parse": "The data server sent a response we could not read. Please try again."
+    "http": "The data server returned an error ({status}). Try another scene or try again later.",
+    "parse": "Invalid server response (not JSON). Usually a misconfigured proxy or API URL.",
+    "retry": "Retry",
+    "sceneNotFoundCog": "This scene has no COG available. Choose another.",
+    "earthdataAuth": "A valid Earthdata token (NASA_TOKEN) is required. Renew the User Token at urs.earthdata.nasa.gov.",
+    "noValidPixels": "No valid pixels in this window. Choose another scene or a less cloudy area.",
+    "thermalRequiresL30": "Thermal data only exists in HLS L30 (Landsat 8/9 TIRS); Sentinel-2/HLS S30 has no thermal bands. Pick an HLSL30 scene.",
+    "thermalUnavailable": "This scene has no usable thermal band in the BBox. No simulated data is used: try another L30 date or scene.",
+    "thermalRealOnly": "HLS thermal only works with real data. The simulated profile is in Demonstration mode."
   }
 }

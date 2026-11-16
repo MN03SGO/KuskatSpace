@@ -4,15 +4,19 @@ import type { BBox, LeafletBounds } from '../lib/bbox'
 
 export type BodyId = 'earth' | 'moon' | 'mars'
 
-export type ProcessMode = 'sar_db' | 'ndvi' | 'ndwi' | 'diviner_thermal' | 'jaxa_precip'
+/** hls_thermal = térmico REAL (HLS L30 B10); diviner_thermal = perfil SIMULADO (solo demo). */
+export type ProcessMode = 'sar_db' | 'ndvi' | 'ndwi' | 'hls_thermal' | 'diviner_thermal' | 'jaxa_precip'
 
 export interface EarthdataItem {
   id: string
   title: string
   date: string
   source: string
+  collection?: string
+  cloud_cover?: number | null
   bbox: number[]
   recommended_mode: ProcessMode
+  asset_links?: { href?: string; title?: string }[]
 }
 
 export interface CopernicusItem {
@@ -24,6 +28,13 @@ export interface CopernicusItem {
   bbox: number[]
   recommended_mode: ProcessMode
 }
+
+export type ProcessSourceMode = 'real' | 'demo'
+
+export type ProcessDataMode = 'real' | 'demo'
+
+/** Catálogo óptico real: Sentinel-2 (Element84) o HLS (LP DAAC). */
+export type OpticalCatalog = 'sentinel2' | 'hls'
 
 export interface PdsItem {
   id: string
@@ -72,11 +83,36 @@ export interface CryosphereComparison {
 
 export interface ProcessResponse {
   mode: ProcessMode
+  source_mode?: ProcessSourceMode
+  source?: OpticalCatalog | string
+  demo?: boolean
   source_file: string
+  mission?: string | null
+  product?: string | null
+  catalog?: string | null
+  provenance?: string | null
+  scene_id?: string | null
+  scene_date?: string | null
+  cloud_cover?: number | null
+  cloud_cover_scene?: number | null
+  valid_pixel_pct?: number | null
+  warning?: string | null
   unit: string
   stats: { min: number; max: number; mean: number }
+  /** Unidad física de stats (p. ej. "°C"); vacío para índices adimensionales. */
+  stats_unit?: string
+  colormap?: string
+  /** Rango [p2, p98] usado para colorear el PNG, en la unidad de stats. */
+  color_range?: [number, number]
+  qa_excluded_pixels?: { grid_pixels: number; excluded_total: number; by_class: Record<string, number> }
+  /** BBox pedido por el cliente. */
+  bbox_requested?: number[]
+  /** BBox efectivo del ráster leído [minLon, minLat, maxLon, maxLat]. */
+  bbox?: number[]
   bounds: LeafletBounds
   overlay_png_base64: string
+  band_assets_used?: Record<string, string>
+  qa_mask?: string | null
   cryosphere_comparison?: CryosphereComparison
 }
 
@@ -84,6 +120,9 @@ export interface ProcessParams {
   mode: ProcessMode
   bbox: BBox
   sampleName?: string
+  sceneId?: string
+  demo?: boolean
+  source?: OpticalCatalog
 }
 
 /** Resultado guardado junto con la petición que lo produjo (B3: la descarga usa ESTE bbox). */
@@ -99,4 +138,8 @@ export interface SelectableResult {
   bbox: number[]
   mode: ProcessMode
   label: string
+  sceneId?: string
+  cloudCover?: number | null
+  date?: string | null
+  collection?: string | null
 }

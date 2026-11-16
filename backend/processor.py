@@ -118,16 +118,23 @@ def _compute_matrix(mode: str, bbox: list[float], sample_path: str | None = None
 
 
 def execute_pipeline(mode: str, bbox: list[float], sample_path: str | None = None) -> dict:
+    """Pipeline de demostración con GeoTIFF locales (sample_data/)."""
     result, unit, palette, source_name, leaflet_bounds, extra_analysis = _compute_matrix(mode, bbox, sample_path)
     return {
         "mode": mode,
+        "source_mode": "demo",
+        "demo": True,
         "source_file": source_name,
+        "mission": "Demostración (ráster local)",
+        "scene_date": None,
+        "cloud_cover": None,
         "unit": unit,
         "stats": {
             "min": round(float(np.nanmin(result)), 3),
             "max": round(float(np.nanmax(result)), 3),
             "mean": round(float(np.nanmean(result)), 3),
         },
+        "bbox": list(bbox),
         "bounds": leaflet_bounds,
         "overlay_png_base64": f"data:image/png;base64,{render_colormap_png(result, palette)}",
         **extra_analysis,

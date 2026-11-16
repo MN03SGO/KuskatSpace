@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react'
 
-type Tone = 'error' | 'warn' | 'info'
+type Tone = 'error' | 'warn' | 'info' | 'ok'
 
 const TONE_CLASSES: Record<Tone, string> = {
   error: 'border-danger/60 bg-danger/10 text-danger',
   warn: 'border-warn/60 bg-warn/10 text-warn',
   info: 'border-info/60 bg-info/10 text-info',
+  ok: 'border-ok/60 bg-ok/10 text-ok',
 }
 
 /**

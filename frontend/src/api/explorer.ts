@@ -30,9 +30,12 @@ export function buildSearchUrl(p: SearchParams, base = API_BASE): string {
   return `${base}/api/search?${qs.toString()}`
 }
 
+/** @deprecated Preferir processScene (POST JSON). Se mantiene para tests de URL legacy. */
 export function buildProcessUrl(p: ProcessParams, base = API_BASE): string {
   const qs = new URLSearchParams({ mode: p.mode, bbox: bboxParam(p.bbox) })
   if (p.sampleName) qs.set('sample_name', p.sampleName)
+  if (p.demo) qs.set('demo', 'true')
+  if (p.sceneId) qs.set('scene_id', p.sceneId)
   return `${base}/api/process?${qs.toString()}`
 }
 
@@ -43,11 +46,23 @@ export function exportGeotiffUrl(p: ProcessParams, base = API_BASE): string {
 }
 
 export async function searchCatalogs(p: SearchParams): Promise<SearchResponse> {
-  // El backend consulta servicios externos; dejamos margen para evitar timeouts falsos.
   const data = await requestJson<Partial<SearchResponse>>(buildSearchUrl(p), { timeoutMs: 45000 })
   return normalizeSearchResponse(data)
 }
 
 export function processScene(p: ProcessParams): Promise<ProcessResponse> {
-  return requestJson<ProcessResponse>(buildProcessUrl(p), { method: 'POST', timeoutMs: 45000 })
+  const body = {
+    kind: p.mode,
+    bbox: [...p.bbox],
+    scene_id: p.sceneId ?? null,
+    source: p.source ?? 'sentinel2',
+    demo: Boolean(p.demo),
+    sample_name: p.sampleName ?? null,
+  }
+  return requestJson<ProcessResponse>(`${API_BASE}/api/process`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    timeoutMs: 90000,
+  })
 }

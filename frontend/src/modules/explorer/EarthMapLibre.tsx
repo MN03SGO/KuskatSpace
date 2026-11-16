@@ -179,8 +179,13 @@ export function EarthMapLibre() {
         // useActivePlanetLayer no está disponible aquí → se reaplica en el effect de activePlanet
       }
       if (state.scene?.response?.overlay_png_base64) {
+        const eff = state.scene.response.bbox
+        const overlayBbox: BBox =
+          eff && eff.length === 4
+            ? [eff[0], eff[1], eff[2], eff[3]]
+            : state.scene.request.bbox
         updateOverlayLayer(map, 'ndvi', {
-          bbox: state.scene.request.bbox,
+          bbox: overlayBbox,
           image: state.scene.response.overlay_png_base64,
           leafletBounds: state.scene.response.bounds,
           opacity: state.opacity > 0 ? state.opacity : OVERLAY_OPACITY_DEFAULT,
@@ -270,8 +275,12 @@ export function EarthMapLibre() {
         restackOverlays(map)
         return
       }
+      const eff = scene.response.bbox
+      const overlayBbox: BBox =
+        eff && eff.length === 4 ? [eff[0], eff[1], eff[2], eff[3]] : scene.request.bbox
       updateOverlayLayer(map, 'ndvi', {
-        bbox: scene.request.bbox,
+        // Preferir bbox efectivo del ráster (recorte real), no el pedido por el usuario
+        bbox: overlayBbox,
         image: scene.response.overlay_png_base64,
         leafletBounds: scene.response.bounds,
         opacity: opacity > 0 ? opacity : OVERLAY_OPACITY_DEFAULT,

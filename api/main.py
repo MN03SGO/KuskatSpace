@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Query, HTTPException, status
+from fastapi import Body, FastAPI, Query, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
@@ -46,6 +46,10 @@ except Exception as e:
     print(f"Error: {e}")
     print(f"[teledetección] Falló import de connectors → {REMOTE_SENSING_IMPORT_ERROR}")
 
+process_real_optical = None
+ProcessValidationError = None
+ProcessUpstreamError = None
+
 try:
     from processor import execute_pipeline as _execute_pipeline
     from processor import export_geotiff_bytes as _export_geotiff_bytes
@@ -57,6 +61,32 @@ except Exception as e:
     print(f"Error: {e}")
     print(f"[teledetección] Falló import de processor → {type(e).__name__}: {e}")
     print("[teledetección] Tip: pip install httpx rasterio scipy numpy Pillow")
+
+EarthdataAuthError = None
+SceneNotFoundError = None
+BandUnavailableError = None
+process_real_thermal = None
+
+try:
+    from real_optical import (
+        EarthdataAuthError as _EarthdataAuthError,
+        ProcessUpstreamError as _ProcessUpstreamError,
+        ProcessValidationError as _ProcessValidationError,
+        SceneNotFoundError as _SceneNotFoundError,
+        BandUnavailableError as _BandUnavailableError,
+        process_real_optical as _process_real_optical,
+        process_real_thermal as _process_real_thermal,
+    )
+    process_real_thermal = _process_real_thermal
+    BandUnavailableError = _BandUnavailableError
+    process_real_optical = _process_real_optical
+    ProcessValidationError = _ProcessValidationError
+    ProcessUpstreamError = _ProcessUpstreamError
+    EarthdataAuthError = _EarthdataAuthError
+    SceneNotFoundError = _SceneNotFoundError
+    print("[teledetección] real_optical OK (NDVI/NDWI COG + térmico HLS L30)")
+except Exception as e:
+    print(f"[teledetección] Falló import de real_optical → {type(e).__name__}: {e}")
 
 # Compatibilidad con checks legacy
 REMOTE_SENSING_AVAILABLE = CONNECTORS_AVAILABLE and PROCESSOR_AVAILABLE
@@ -620,24 +650,155 @@ async def search_catalogs(
     return _mock_federated_search(bbox, start_date, end_date, body, variable, limit)
 
 
+class ProcessRequest(BaseModel):
+    """Cuerpo JSON de POST /api/process."""
+
+    kind: str = Field(..., description="ndvi | ndwi | hls_thermal | sar_db | jaxa_precip | diviner_thermal")
+    bbox: List[float] = Field(..., description="[min_lon, min_lat, max_lon, max_lat]")
+    scene_id: Optional[str] = Field(None, description="Id de escena (S2 SAFE / Element84 / HLS)")
+    source: str = Field("sentinel2", description="sentinel2 | hls (solo modo real óptico)")
+    demo: bool = Field(False, description="True = forzar GeoTIFF de demostración local")
+    sample_name: Optional[str] = Field(None, description="Solo demo: nombre de archivo en sample_data/")
+
+
+REAL_OPTICAL_KINDS = frozenset({"ndvi", "ndwi"})
+# Térmico real (HLS L30 B10). Solo real: nunca cae a simulación.
+REAL_ONLY_KINDS = frozenset({"hls_thermal"})
+# diviner_thermal = perfil térmico SIMULADO (solo modo Demostración)
+DEMO_ONLY_KINDS = frozenset({"sar_db", "jaxa_precip", "diviner_thermal"})
+
+
+def _error_detail(exc: BaseException) -> Dict[str, Any]:
+    code = getattr(exc, "code", None) or "error"
+    return {"code": code, "message": str(exc)}
+
+
+def _real_error_to_http(exc: BaseException) -> HTTPException:
+    """Traduce errores de real_optical a HTTP. Nunca incluye el token."""
+    def _is(cls: Any) -> bool:
+        return cls is not None and isinstance(exc, cls)
+
+    if _is(SceneNotFoundError) or _is(BandUnavailableError):
+        return HTTPException(status_code=404, detail=_error_detail(exc))
+    if _is(EarthdataAuthError):
+        print("[teledetección] Earthdata auth required (token missing/invalid)")
+        return HTTPException(status_code=401, detail=_error_detail(exc))
+    if _is(ProcessValidationError):
+        return HTTPException(status_code=422, detail=_error_detail(exc))
+    if _is(ProcessUpstreamError):
+        return HTTPException(status_code=504, detail=_error_detail(exc))
+    print(f"[teledetección] process real falló: {type(exc).__name__}")
+    return HTTPException(
+        status_code=500,
+        detail={
+            "code": "process_failed",
+            "message": "Error al procesar la escena. Revisa los logs del servidor.",
+        },
+    )
+
+
 @app.post("/api/process", tags=["Teledetección Multi-Agencia"])
 def process_scene(
-    mode: str = Query("sar_db", description="Modo: sar_db, ndvi, ndwi, diviner_thermal, jaxa_precip"),
-    bbox: str = Query("-92.5,11.5,-83.0,17.5"),
+    body: Optional[ProcessRequest] = Body(None),
+    mode: Optional[str] = Query(None, description="(legacy) alias de kind"),
+    bbox: Optional[str] = Query(None, description="(legacy) bbox como string"),
     sample_name: Optional[str] = Query(None),
+    demo: bool = Query(False, description="(legacy) forzar demo"),
+    scene_id: Optional[str] = Query(None),
+    source: Optional[str] = Query(None),
 ):
-    """Procesa rásteres: SAR (filtro Lee), NDVI, NDWI, precipitación JAXA y radiometría térmica Diviner."""
+    """
+    Procesa índices ópticos reales (NDVI/NDWI desde COG Sentinel-2 o HLS)
+    o modos de demostración con GeoTIFF locales.
+    """
     if not PROCESSOR_AVAILABLE or execute_pipeline is None:
         raise HTTPException(
             status_code=503,
             detail="processor no disponible. Instalá: pip install rasterio scipy numpy Pillow",
         )
+
+    if body is not None:
+        kind = body.kind
+        coords = [float(x) for x in body.bbox]
+        use_demo = bool(body.demo)
+        sid = body.scene_id
+        sample = body.sample_name
+        src = body.source or "sentinel2"
+    else:
+        if not mode or not bbox:
+            raise HTTPException(
+                status_code=422,
+                detail="Envía JSON {kind, bbox, scene_id?, source?} o query mode+bbox",
+            )
+        kind = mode
+        try:
+            coords = [float(x) for x in bbox.split(",")]
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=f"bbox inválido: {exc}") from exc
+        use_demo = bool(demo)
+        sid = scene_id
+        sample = sample_name
+        src = source or "sentinel2"
+
+    kind = kind.strip().lower()
+    if kind not in REAL_OPTICAL_KINDS | REAL_ONLY_KINDS | DEMO_ONLY_KINDS:
+        raise HTTPException(status_code=422, detail=f"kind no soportado: {kind}")
+
+    if kind in DEMO_ONLY_KINDS:
+        use_demo = True
+
+    if kind in REAL_ONLY_KINDS:
+        if use_demo:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "code": "thermal_real_only",
+                    "message": "hls_thermal solo usa datos reales HLS L30. El perfil térmico "
+                    "simulado es kind=diviner_thermal (modo Demostración).",
+                },
+            )
+        if process_real_thermal is None:
+            raise HTTPException(status_code=503, detail="Módulo real_optical no disponible")
+        if str(src).strip().lower() != "hls":
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "code": "thermal_requires_l30",
+                    "message": "El térmico real requiere source=hls y una escena HLS L30.",
+                },
+            )
+        try:
+            return process_real_thermal(bbox=coords, scene_id=str(sid or ""))
+        except Exception as exc:
+            raise _real_error_to_http(exc) from exc
+
+    if kind in REAL_OPTICAL_KINDS and not use_demo:
+        if not sid or not str(sid).strip():
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "code": "scene_required",
+                    "message": "Elige una escena de la lista (scene_id) para NDVI/NDWI reales. "
+                    "No se usan datos de demostración por defecto.",
+                },
+            )
+        if process_real_optical is None:
+            raise HTTPException(status_code=503, detail="Módulo real_optical no disponible")
+        try:
+            return process_real_optical(
+                kind=kind,
+                bbox=coords,
+                scene_id=str(sid).strip(),
+                source=str(src).strip().lower(),
+            )
+        except Exception as exc:
+            raise _real_error_to_http(exc) from exc
+
     try:
-        coords = [float(x) for x in bbox.split(",")]
-        file_path = os.path.join(str(BACKEND_DIR), "sample_data", sample_name) if sample_name else None
-        return execute_pipeline(mode=mode, bbox=coords, sample_path=file_path)
+        file_path = os.path.join(str(BACKEND_DIR), "sample_data", sample) if sample else None
+        return execute_pipeline(mode=kind, bbox=coords, sample_path=file_path)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
 @app.get("/api/export/geotiff", tags=["Teledetección Multi-Agencia"])
