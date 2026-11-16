@@ -12,9 +12,15 @@
       "functions": {
         "api/main.py": {
           "maxDuration": 60,
-          "includeFiles": "{data/**,backend/**}"
+          "includeFiles": "data/**\nbackend/*.py"
         }
       }
+    }
+  },
+  "functions": {
+    "api/main.py": {
+      "maxDuration": 60,
+      "includeFiles": "data/**\nbackend/*.py"
     }
   },
   "rewrites": [

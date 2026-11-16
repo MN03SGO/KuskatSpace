@@ -23,12 +23,17 @@ from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
 # Asegurar importación de módulos de teledetección de backend/
-BACKEND_DIR = Path(__file__).resolve().parent.parent / "backend"
-if str(BACKEND_DIR) not in sys.path:
-    sys.path.insert(0, str(BACKEND_DIR))
+# En Vercel el cwd es /var/task; includeFiles coloca backend/*.py ahí.
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+BACKEND_DIR = _REPO_ROOT / "backend"
+for _candidate in (BACKEND_DIR, Path("/var/task/backend"), Path.cwd() / "backend"):
+    if _candidate.is_dir() and str(_candidate) not in sys.path:
+        sys.path.insert(0, str(_candidate))
 
 # Separar imports: /api/search solo necesita connectors (httpx).
-# processor (rasterio/scipy) es opcional para /api/process y /api/export/geotiff.
+# processor / real_optical (rasterio/scipy/numpy) son OPCIONALES y fallan en
+# Vercel a propósito (deps fuera del bundle ligero). Nunca deben tumbar el import
+# de api.main — eso provoca el error "could not import api/main.py".
 run_federated_search = None
 execute_pipeline = None
 export_geotiff_bytes = None
@@ -43,7 +48,6 @@ try:
     print("[teledetección] connectors OK (búsqueda federada disponible)")
 except Exception as e:
     REMOTE_SENSING_IMPORT_ERROR = f"connectors: {type(e).__name__}: {e}"
-    print(f"Error: {e}")
     print(f"[teledetección] Falló import de connectors → {REMOTE_SENSING_IMPORT_ERROR}")
 
 process_real_optical = None
@@ -58,9 +62,8 @@ try:
     PROCESSOR_AVAILABLE = True
     print("[teledetección] processor OK (procesamiento ráster disponible)")
 except Exception as e:
-    print(f"Error: {e}")
     print(f"[teledetección] Falló import de processor → {type(e).__name__}: {e}")
-    print("[teledetección] Tip: pip install httpx rasterio scipy numpy Pillow")
+    print("[teledetección] Tip local: pip install -r backend/requirements-local.txt")
 
 EarthdataAuthError = None
 SceneNotFoundError = None
@@ -91,7 +94,7 @@ except Exception as e:
 # Compatibilidad con checks legacy
 REMOTE_SENSING_AVAILABLE = CONNECTORS_AVAILABLE and PROCESSOR_AVAILABLE
 
-# Cargar variables de entorno
+# Cargar variables de entorno (no falla si .env ausente)
 load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI", "")
@@ -222,13 +225,17 @@ class HealthStatus(BaseModel):
 # ---------------------------------------------------------------------------
 
 def locate_data_dir() -> Path:
-    """Encuentra la carpeta data/ tanto si se ejecuta desde raíz como desde api/."""
-    current = Path(__file__).resolve().parent
-    if (current / "data").exists():
-        return current / "data"
-    if (current.parent / "data").exists():
-        return current.parent / "data"
-    return current.parent / "data"
+    """Encuentra data/ en local, Docker o Vercel (/var/task/data vía includeFiles)."""
+    candidates = [
+        Path(__file__).resolve().parent / "data",
+        Path(__file__).resolve().parent.parent / "data",
+        Path("/var/task/data"),
+        Path.cwd() / "data",
+    ]
+    for path in candidates:
+        if path.is_dir():
+            return path
+    return Path(__file__).resolve().parent.parent / "data"
 
 
 DATA_DIR = locate_data_dir()
@@ -528,8 +535,12 @@ def get_candidates_near(
 # Endpoints de Productos Geoespaciales P1 (Heatmaps GEE, Previews S1/S2 y QC)
 # ---------------------------------------------------------------------------
 
-if DATA_DIR.exists():
-    app.mount("/data", StaticFiles(directory=str(DATA_DIR)), name="data")
+# StaticFiles exige que el directorio exista; si falta en el bundle, no tumbar el import.
+try:
+    if DATA_DIR.is_dir():
+        app.mount("/data", StaticFiles(directory=str(DATA_DIR)), name="data")
+except Exception as _static_err:
+    print(f"[static] No se montó /data → {type(_static_err).__name__}: {_static_err}")
 
 
 def _sanitize_json(obj: Any) -> Any:

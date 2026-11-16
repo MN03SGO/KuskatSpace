@@ -1,4 +1,10 @@
-# Formato módulo:variable relativo a la raíz del servicio `api` (root = ".").
+# Entrypoint FastAPI para Vercel (módulo.variable, no ruta con /).
 # Docs: https://vercel.com/docs/frameworks/backend/fastapi#exporting-the-fastapi-application
+[project]
+name = "terraanaloga"
+version = "1.0.0"
+requires-python = ">=3.11,<3.14"
+# Dependencias de producción = requirements.txt (ligeras). No listar rasterio aquí.
+
 [tool.vercel]
 entrypoint = "api.main:app"

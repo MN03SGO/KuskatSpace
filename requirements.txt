@@ -1,3 +1,4 @@
+# Runtime Vercel / API ligera (sin rasterio/scipy/numpy/pandas).
 fastapi==0.115.0
 uvicorn==0.30.6
 pydantic==2.14.3

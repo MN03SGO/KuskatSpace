@@ -14,10 +14,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Un solo requirements (D7)
+# Deps ligeras + pesadas (ráster) para la imagen Docker completa.
+# Vercel usa solo requirements.txt de la raíz (sin rasterio).
 COPY backend/requirements.txt /app/backend/requirements.txt
+COPY backend/requirements-local.txt /app/backend/requirements-local.txt
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r /app/backend/requirements.txt
+    pip install --no-cache-dir -r /app/backend/requirements-local.txt
 
 # Codigo del proyecto
 COPY . /app/
