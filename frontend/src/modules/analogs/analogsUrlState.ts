@@ -55,7 +55,7 @@ export function defaultAnalogsUrlState(baseWeights: IfaWeights): AnalogsUrlState
     contextVisibility: { ...DEFAULT_CONTEXT_VISIBILITY },
     contextOpacity: { ...DEFAULT_CONTEXT_OPACITY },
     date: null,
-    ifaOpacity: 0.72,
+    ifaOpacity: 0.65,
   }
 }
 
@@ -135,7 +135,7 @@ export function serializeAnalogsUrl(state: AnalogsUrlState, baseWeights: IfaWeig
 
   if (state.selectedId) params.set('sel', state.selectedId)
 
-  if (Math.abs(state.ifaOpacity - 0.72) > 0.01) {
+  if (Math.abs(state.ifaOpacity - 0.65) > 0.01) {
     params.set('ifa', state.ifaOpacity.toFixed(2))
   }
 

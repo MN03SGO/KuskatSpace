@@ -111,32 +111,25 @@ function ifaValueExpr(w: IfaWeights): ExpressionSpecification {
   ]
 }
 
-/** Paleta viridis (global / Luna) — stops 0→1 */
-const VIRIDIS_STOPS: ExpressionSpecification[] = [
-  0, '#440154',
-  0.25, '#3b528b',
-  0.5, '#21918c',
-  0.75, '#5ec962',
-  1, '#fde725',
-]
+/**
+ * Paleta única del IFA, de frío (azul oscuro) a cálido (naranja → amarillo):
+ * matplotlib "plasma" en 0 / 0.25 / 0.5 / 0.75 / 1. Es perceptualmente
+ * uniforme (sin saltos de luminosidad) y su extremo bajo es azul, no negro,
+ * así que los IFA bajos no se confunden con el fondo oscuro.
+ * La leyenda (layerRegistry / Legend) usa estos mismos colores.
+ */
+export const IFA_PALETTE_STOPS = ['#0d0887', '#7e03a8', '#cc4778', '#f89540', '#f0f921'] as const
 
-/** Paleta inferno (Marte) — stops 0→1 */
-const INFERNO_STOPS: ExpressionSpecification[] = [
-  0, '#000004',
-  0.25, '#57106e',
-  0.5, '#bc3754',
-  0.75, '#f98e09',
-  1, '#fcffa4',
-]
+const IFA_STOP_POSITIONS = [0, 0.25, 0.5, 0.75, 1] as const
 
 /**
- * Expresión fill-color MapLibre: interpolate linear sobre IFA ponderado.
+ * Expresión fill-color MapLibre: interpolate linear sobre el IFA ponderado (0–1).
  * Pesos: siempre los `weights` normalizados (pestañas Luna/Marte cargan Z4/Marte en el estado).
- * mode elige paleta (viridis / inferno).
+ * La misma paleta para todos los escenarios; el escenario solo cambia los pesos.
  */
 export function ifaColorExpr(weights: IfaWeights, mode: IfaMode): ExpressionSpecification {
   const w = effectiveWeights(weights, mode)
-  const stops = mode === 'mars_arid' ? INFERNO_STOPS : VIRIDIS_STOPS
+  const stops: ExpressionSpecification[] = IFA_STOP_POSITIONS.flatMap((pos, i) => [pos, IFA_PALETTE_STOPS[i]])
   return ['interpolate', ['linear'], ifaValueExpr(w), ...stops]
 }
 

@@ -110,6 +110,8 @@ app.add_middleware(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:3000",
+        "https://kuskat-space.us",
+        "https://www.kuskat-space.us",
     ],
     allow_credentials=True,
     allow_methods=["*"],

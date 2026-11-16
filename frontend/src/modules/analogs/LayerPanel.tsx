@@ -52,11 +52,11 @@ export function LayerPanel({
         <p className="mt-0.5 text-[9px] text-ink-muted">
           {ifaMode === 'heatmap'
             ? isEs
-              ? 'Modo aviso'
-              : 'Notice mode'
+              ? 'IDW continuo · escáner planetario'
+              : 'Continuous IDW · planetary scanner'
             : isEs
-              ? 'Círculos (z<4) · polígonos (z≥4)'
-              : 'Circles (z<4) · polygons (z≥4)'}
+              ? 'Polígonos continuos · sin bordes'
+              : 'Continuous polygons · no borders'}
         </p>
         {gridNotice && (
           <p className="mt-0.5 text-[9px] text-amber-600 dark:text-amber-400">{gridNotice}</p>

@@ -27,11 +27,13 @@ import {
 import {
   ensureIfaLayers,
   ensureIfaPlaceholder,
-  GRID_CIRCLES_LAYER_ID,
   GRID_LAYER_ID,
   POINTS_LAYER_ID,
+  buildGridCellIndex,
+  findGridCellAt,
   setIfaFillColor,
   setIfaOpacity,
+  type GridCellIndex,
 } from './analogsIfaLayer'
 import { parseAnalogsUrl, writeAnalogsUrl } from './analogsUrlState'
 import { fetchAndValidateGrid, type GridGeometryReport } from './gridGeometry'
@@ -40,7 +42,6 @@ import {
   computeGridIFA,
   MARS_ARID_WEIGHTS,
   MOON_PSR_WEIGHTS,
-  type GridCellProps,
   type IfaMode,
   type IfaWeights,
 } from './ifaColorExpr'
@@ -109,22 +110,6 @@ function modeDefaultWeights(mode: IfaMode, current: IfaWeights): IfaWeights {
   if (mode === 'moon_psr') return { ...MOON_PSR_WEIGHTS }
   if (mode === 'mars_arid') return { ...MARS_ARID_WEIGHTS }
   return current
-}
-
-function readGridProps(raw: Record<string, unknown> | null | undefined): GridCellProps | null {
-  if (!raw) return null
-  const num = (k: string): number => {
-    const v = raw[k]
-    return typeof v === 'number' && Number.isFinite(v) ? v : Number(v) || 0
-  }
-  return {
-    relief: num('relief'),
-    illum: num('illum'),
-    cold: num('cold'),
-    ice: num('ice'),
-    dust: num('dust'),
-    valid: num('valid'),
-  }
 }
 
 type RankedPoint = {
@@ -423,15 +408,20 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     assertGridIfaParity(debouncedWeights, layerToMode(heatmapLayer))
   }, [debouncedWeights, heatmapLayer])
 
-  /** Aplica IFA (círculos + polígonos). Nunca PNG. */
+  /** Índice de celdas reales para hit-test (la custom layer no es consultable). */
+  const cellIndexRef = useRef<GridCellIndex>(new Map())
+
+  /** Aplica IFA como heatmap IDW continuo (sin círculos ni bloques). */
   function applyIfaData(map: MapLibreMap) {
     const mode = layerToMode(heatmapLayerRef.current)
     const opac = ifaOpacityRef.current
     const fc = gridFcRef.current
     try {
       if (fc) {
+        cellIndexRef.current = buildGridCellIndex(fc)
         ensureIfaLayers(map, weightsRef.current, mode, opac, fc)
       } else {
+        cellIndexRef.current = new Map()
         ensureIfaPlaceholder(map, weightsRef.current, mode, opac)
       }
     } catch (err) {
@@ -506,7 +496,7 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
       loadHandled = true
       map.resize()
       mountCustomLayers(map)
-      // 2) Validación + fetch de grid DESPUÉS de 'load' (no bloquea basemap)
+      // 2) Grid DESPUÉS de 'load' (no bloquea basemap)
       void (async () => {
         try {
           const { fc, report } = await fetchAndValidateGrid(GRID_GEOJSON_URL)
@@ -516,7 +506,7 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
           if (report.valid) {
             setGridNotice(null)
             console.info(
-              '[AnalogsView] Geometría IFA VÁLIDA → círculos (z<4) + polígonos (z≥4).',
+              '[AnalogsView] Geometría IFA VÁLIDA → heatmap IDW continuo (escáner).',
               `celdas=${report.featureCount}`,
               `oversize=${report.oversizeCount}`,
               `ifaOk=${(report.ifaCalculableRatio * 100).toFixed(1)}%`,
@@ -557,61 +547,54 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
       if (id) setSelectedId(id)
     }
 
-    const showGridPopup = (e: MapLayerMouseEvent) => {
-      const feat = e.features?.[0]
-      const props = readGridProps(feat?.properties as Record<string, unknown> | undefined)
-      if (!props || !e.lngLat) return
-      const mode = layerToMode(heatmapLayerRef.current)
-      const ifa = computeGridIFA(props, weightsRef.current, mode)
+    const showIdwPopup = (e: MapMouseEvent) => {
+      if (!e.lngLat) return
+      // Solo dentro de una celda real (fuera de la máscara no hay IFA)
+      const hit = findGridCellAt(cellIndexRef.current, e.lngLat.lng, e.lngLat.lat)
+      if (!hit) return
+      const ifa = computeGridIFA(hit, weightsRef.current, layerToMode(heatmapLayerRef.current))
       const html = `
         <div style="font:12px/1.4 system-ui,sans-serif">
           <strong>IFA ${(ifa * 100).toFixed(1)}%</strong>
           <div style="margin-top:6px;display:grid;grid-template-columns:1fr auto;gap:2px 10px">
-            <span>relief</span><span>${(props.relief * 100).toFixed(0)}%</span>
-            <span>illum</span><span>${(props.illum * 100).toFixed(0)}%</span>
-            <span>cold</span><span>${(props.cold * 100).toFixed(0)}%</span>
-            <span>ice</span><span>${(props.ice * 100).toFixed(0)}%</span>
-            <span>dust</span><span>${(props.dust * 100).toFixed(0)}%</span>
+            <span>relief</span><span>${(hit.relief * 100).toFixed(0)}%</span>
+            <span>illum</span><span>${(hit.illum * 100).toFixed(0)}%</span>
+            <span>cold</span><span>${(hit.cold * 100).toFixed(0)}%</span>
+            <span>ice</span><span>${(hit.ice * 100).toFixed(0)}%</span>
+            <span>dust</span><span>${(hit.dust * 100).toFixed(0)}%</span>
           </div>
+          <div style="margin-top:4px;color:#64748b">Celda ${hit.stepKm} km</div>
         </div>`
       popupRef.current?.setLngLat(e.lngLat).setHTML(html).addTo(map)
     }
 
-    const onGridEnter = () => {
-      map.getCanvas().style.cursor = 'pointer'
-    }
-    const onGridLeave = () => {
-      map.getCanvas().style.cursor = ''
-      setInspectorCell(null)
-    }
 
     const onMousemove = (e: MapMouseEvent) => {
       const layers: string[] = []
       if (map.getLayer(POINTS_LAYER_ID)) layers.push(POINTS_LAYER_ID)
-      if (map.getLayer(GRID_LAYER_ID)) layers.push(GRID_LAYER_ID)
-      if (map.getLayer(GRID_CIRCLES_LAYER_ID)) layers.push(GRID_CIRCLES_LAYER_ID)
-      if (layers.length === 0) return
-      const feats = map.queryRenderedFeatures(e.point, { layers })
-      let cell: InspectorCell | null = null
       let cand: InspectorCandidate | null = null
-      for (const f of feats) {
-        if (f.layer?.id === POINTS_LAYER_ID && !cand) {
-          const name = String(f.properties?.name ?? '')
-          const ifa = Number(f.properties?.ifa ?? 0)
-          if (name) cand = { name, ifa }
-        }
-        if (
-          (f.layer?.id === GRID_LAYER_ID || f.layer?.id === GRID_CIRCLES_LAYER_ID) &&
-          !cell
-        ) {
-          const props = readGridProps(f.properties as Record<string, unknown>)
-          if (props) {
-            const mode = layerToMode(heatmapLayerRef.current)
-            cell = {
-              ...props,
-              ifa: computeGridIFA(props, weightsRef.current, mode),
-            }
+      if (layers.length > 0) {
+        const feats = map.queryRenderedFeatures(e.point, { layers })
+        for (const f of feats) {
+          if (f.layer?.id === POINTS_LAYER_ID && !cand) {
+            const name = String(f.properties?.name ?? '')
+            const ifa = Number(f.properties?.ifa ?? 0)
+            if (name) cand = { name, ifa }
           }
+        }
+      }
+      // Hit-test IFA por celda real (capa custom no es consultable)
+      let cell: InspectorCell | null = null
+      const hit = e.lngLat ? findGridCellAt(cellIndexRef.current, e.lngLat.lng, e.lngLat.lat) : null
+      if (hit) {
+        const { relief, illum, cold, ice, dust } = hit
+        cell = {
+          relief,
+          illum,
+          cold,
+          ice,
+          dust,
+          ifa: computeGridIFA(hit, weightsRef.current, layerToMode(heatmapLayerRef.current)),
         }
       }
       setInspectorCell(cell)
@@ -621,12 +604,7 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     map.on('error', onMapError)
     map.on('load', onLoad)
     map.on('click', POINTS_LAYER_ID, onPointClick)
-    map.on('click', GRID_LAYER_ID, showGridPopup)
-    map.on('click', GRID_CIRCLES_LAYER_ID, showGridPopup)
-    map.on('mouseenter', GRID_LAYER_ID, onGridEnter)
-    map.on('mouseleave', GRID_LAYER_ID, onGridLeave)
-    map.on('mouseenter', GRID_CIRCLES_LAYER_ID, onGridEnter)
-    map.on('mouseleave', GRID_CIRCLES_LAYER_ID, onGridLeave)
+    map.on('click', showIdwPopup)
     map.on('mousemove', onMousemove)
     map.on('mouseenter', POINTS_LAYER_ID, () => {
       map.getCanvas().style.cursor = 'pointer'
@@ -646,12 +624,7 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
       map.off('error', onMapError)
       map.off('load', onLoad)
       map.off('click', POINTS_LAYER_ID, onPointClick)
-      map.off('click', GRID_LAYER_ID, showGridPopup)
-      map.off('click', GRID_CIRCLES_LAYER_ID, showGridPopup)
-      map.off('mouseenter', GRID_LAYER_ID, onGridEnter)
-      map.off('mouseleave', GRID_LAYER_ID, onGridLeave)
-      map.off('mouseenter', GRID_CIRCLES_LAYER_ID, onGridEnter)
-      map.off('mouseleave', GRID_CIRCLES_LAYER_ID, onGridLeave)
+      map.off('click', showIdwPopup)
       map.off('mousemove', onMousemove)
       popupRef.current?.remove()
       popupRef.current = null
@@ -665,16 +638,17 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mapa una vez al montar
   }, [])
 
-  // Escenario / pesos → solo paint (sin recrear layers)
+  // Escenario / pesos → recalcula vals IDW (sin recrear la custom layer)
   useEffect(() => {
     const map = mapRef.current
     if (!map?.isStyleLoaded()) return
     const mode = layerToMode(heatmapLayer)
     try {
-      setIfaFillColor(map, debouncedWeights, mode)
+      const fc = gridFcRef.current
+      setIfaFillColor(map, debouncedWeights, mode, fc)
       setIfaOpacity(map, ifaOpacity)
     } catch (err) {
-      console.error('[AnalogsView] update IFA paint', err)
+      console.error('[AnalogsView] update IFA IDW', err)
     }
   }, [heatmapLayer, debouncedWeights, ifaOpacity])
 
@@ -1130,8 +1104,8 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
                     : 'Loading cell count…'}
                 {' · '}
                 {isEs
-                  ? 'Clic en marcador o celda para inspeccionar. Zoom bajo = manchas; zoom ≥4 = polígonos.'
-                  : 'Click a marker or cell to inspect. Low zoom = blobs; zoom ≥4 = polygons.'}
+                  ? 'Clic en marcador o celda para inspeccionar.'
+                  : 'Click a marker or cell to inspect.'}
               </p>
             </div>
             <div className="flex gap-1">
@@ -1169,15 +1143,15 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
               style={{ height: 560, minHeight: 480 }}
               aria-label={
                 isEs
-                  ? `Mapa Dark Matter con grilla IFA ${heatmapLayer}`
-                  : `Dark Matter map with IFA grid ${heatmapLayer}`
+                  ? `Mapa satelital con heatmap IFA ${heatmapLayer}`
+                  : `Satellite map with IFA heatmap ${heatmapLayer}`
               }
             />
             <LayerPanel
               isEs={isEs}
               ifaOpacity={ifaOpacity}
               onIfaOpacity={handleIfaOpacity}
-              ifaMode="polygons"
+              ifaMode="heatmap"
               gridNotice={gridNotice}
               candidatesVisible={candidatesVisible}
               onCandidatesVisible={setCandidatesVisible}
@@ -1201,8 +1175,8 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
           </div>
           <p className="mt-1.5 text-[11px] text-ink-muted">
             {isEs
-              ? 'Fondo: Carto Dark Matter. IFA: círculos (z<4) / polígonos (z≥4). Sin color = fuera del dominio. Contexto opcional: GIBS.'
-              : 'Basemap: Carto Dark Matter. IFA: circles (z<4) / polygons (z≥4). No color = outside domain. Optional context: GIBS.'}
+              ? 'Fondo: Esri World Imagery. IFA: polígonos continuos sin bordes. Sin color = fuera del dominio o sin datos. Contexto opcional: GIBS.'
+              : 'Basemap: Esri World Imagery. IFA: continuous borderless polygons. No color = outside domain or no data. Optional context: GIBS.'}
           </p>
         </div>
 

@@ -1,3 +1,5 @@
+import { IFA_PALETTE_STOPS } from './ifaColorExpr'
+
 /**
  * Registro único de capas del Buscador de análogos.
  * IDs GIBS verificados contra GetCapabilities EPSG:3857 best (2026-11-15).
@@ -48,11 +50,8 @@ export type FixedLayerDef = {
   layerId: string
 }
 
-/** Paleta viridis (misma que ifaColorExpr global/luna). */
-export const IFA_VIRIDIS_STOPS = ['#440154', '#3b528b', '#21918c', '#5ec962', '#fde725'] as const
-
-/** Inferno (escenario Marte). */
-export const IFA_INFERNO_STOPS = ['#000004', '#57106e', '#bc3754', '#f98e09', '#fcffa4'] as const
+/** Paleta del IFA (plasma, frío → cálido): misma fuente que la expresión GPU. */
+export { IFA_PALETTE_STOPS }
 
 export const IFA_LAYER: FixedLayerDef = {
   id: 'ifa',
@@ -61,7 +60,7 @@ export const IFA_LAYER: FixedLayerDef = {
   nameEn: 'Analog Fidelity Index (IFA)',
   helpEs: 'Celdas GEE EASE-Grid · expresión GPU ponderada 5D',
   helpEn: 'GEE EASE-Grid cells · GPU-weighted 5D expression',
-  legend: { stops: [...IFA_VIRIDIS_STOPS], min: 0, max: 1, unit: 'IFA' },
+  legend: { stops: [...IFA_PALETTE_STOPS], min: 0, max: 1, unit: 'IFA' },
   layerId: 'grid-fill',
 }
 

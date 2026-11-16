@@ -1,7 +1,6 @@
 import {
   CONTEXT_LAYERS,
-  IFA_INFERNO_STOPS,
-  IFA_VIRIDIS_STOPS,
+  IFA_PALETTE_STOPS,
   type ContextLayerId,
   type LegendSpec,
 } from './layerRegistry'
@@ -34,9 +33,8 @@ function ColorBar({ legend, title }: { legend: LegendSpec; title: string }) {
   )
 }
 
-export function Legend({ isEs, scenario, contextVisibility }: Props) {
-  const ifaStops =
-    scenario === 'mars_arid' ? [...IFA_INFERNO_STOPS] : [...IFA_VIRIDIS_STOPS]
+export function Legend({ isEs, contextVisibility }: Props) {
+  const ifaStops = [...IFA_PALETTE_STOPS]
   const ifaLegend: LegendSpec = {
     stops: ifaStops,
     min: 0,
@@ -53,15 +51,7 @@ export function Legend({ isEs, scenario, contextVisibility }: Props) {
       </p>
       <ColorBar
         legend={ifaLegend}
-        title={
-          scenario === 'mars_arid'
-            ? isEs
-              ? 'IFA (inferno)'
-              : 'IFA (inferno)'
-            : isEs
-              ? 'IFA (viridis)'
-              : 'IFA (viridis)'
-        }
+        title="IFA (plasma)"
       />
       {visibleCtx.map((layer) => (
         <ColorBar

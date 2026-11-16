@@ -80,13 +80,11 @@ export function ensureAllContextLayers(map: MapLibreMap, beforeId?: string): voi
     map,
     beforeId && map.getLayer(beforeId)
       ? beforeId
-      : map.getLayer('grid-circles')
-        ? 'grid-circles'
-        : map.getLayer('grid-fill')
-          ? 'grid-fill'
-          : map.getLayer('candidates-circles')
-            ? 'candidates-circles'
-            : undefined,
+      : map.getLayer('grid-fill')
+        ? 'grid-fill'
+        : map.getLayer('candidates-circles')
+          ? 'candidates-circles'
+          : undefined,
   )
   for (const def of CONTEXT_LAYERS) {
     ensureSourceAndLayer(map, def, def.defaultDate, before)
