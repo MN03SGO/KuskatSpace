@@ -535,12 +535,17 @@ def get_candidates_near(
 # Endpoints de Productos Geoespaciales P1 (Heatmaps GEE, Previews S1/S2 y QC)
 # ---------------------------------------------------------------------------
 
-# StaticFiles exige que el directorio exista; si falta en el bundle, no tumbar el import.
-try:
-    if DATA_DIR.is_dir():
+# No montar StaticFiles en Vercel: el collector de estáticos del build falla
+# ("FastAPI static file collection failed") y /data/* del SPA sale de
+# frontend/public/data (Vite → CDN). La API lee data/ por Path + includeFiles.
+# En local/Docker sí se monta para servir PNGs/JSON del catálogo raíz.
+_ON_VERCEL = os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV") is not None
+if not _ON_VERCEL and DATA_DIR.is_dir():
+    try:
         app.mount("/data", StaticFiles(directory=str(DATA_DIR)), name="data")
-except Exception as _static_err:
-    print(f"[static] No se montó /data → {type(_static_err).__name__}: {_static_err}")
+    except Exception as _static_err:
+        print(f"[static] No se montó /data → {type(_static_err).__name__}: {_static_err}")
+
 
 
 def _sanitize_json(obj: Any) -> Any:
