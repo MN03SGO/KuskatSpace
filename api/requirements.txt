@@ -1,0 +1,12 @@
+# Deps de la función Serverless api/main.py (Vercel empaqueta api/).
+# Mantener alineado con requirements.txt de la raíz.
+fastapi==0.115.0
+uvicorn==0.30.6
+pydantic==2.14.3
+python-dotenv==1.2.4
+pymongo==4.20.0
+dnspython==2.9.2
+httpx==0.27.2
+requests==2.34.2
+pystac-client==0.9.1
+planetary-computer==1.0.0
