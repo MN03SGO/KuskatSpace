@@ -1,25 +1,69 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
- * Paleta oscura revisada por P6 (T2, docs/p6/design-tokens.md).
- * Único cambio respecto a la paleta de back-AR: ink-muted #94a3b8 -> #a3b1c6
- * (contraste 4,76:1 sobre line). accent se mantiene sin cambios.
- * Al cambiar la paleta solo se editan estos valores.
+ * Sistema visual global *Aero-Analogue Scientific* (Google Stitch)
+ * Soporta tema claro (html.light) y oscuro (html.dark) mediante variables CSS.
  */
 @theme {
-  --color-canvas: #020617;
-  --color-surface: #0f172a;
-  --color-raised: #1e293b;
-  --color-line: #334155;
-  --color-ink: #f8fafc;
+  --color-canvas: #0d1320;
+  --color-surface: #161b29;
+  --color-raised: #1a1f2d;
+  --color-line: #2f3543;
+  --color-ink: #dde2f5;
   --color-ink-muted: #a3b1c6;
-  --color-accent: #2563eb;
+  --color-accent: #0ea5e9;
   --color-info: #38bdf8;
   --color-ok: #10b981;
   --color-warn: #f59e0b;
   --color-danger: #f87171;
 
-  --font-sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-panel: 0.75rem;
+  --radius-control: 0.5rem;
+  --radius-pill: 9999px;
+}
+
+:root,
+html.light {
+  --color-canvas: #f8fafc;
+  --color-surface: #ffffff;
+  --color-raised: #f1f5f9;
+  --color-line: #e2e8f0;
+  --color-ink: #0f172a;
+  --color-ink-muted: #475569;
+  --color-accent: #0369a1;
+  --color-info: #0369a1;
+  --color-ok: #0f766e;
+  --color-warn: #b45309;
+  --color-danger: #dc2626;
+  --color-hud: rgba(255, 255, 255, 0.92);
+  --color-hud-border: rgba(226, 232, 240, 0.9);
+  --shadow-hud: 0 10px 30px -5px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
+  --scrollbar-thumb: #cbd5e1;
+  color-scheme: light;
+}
+
+html.dark {
+  --color-canvas: #0d1320;
+  --color-surface: #161b29;
+  --color-raised: #1a1f2d;
+  --color-line: #2f3543;
+  --color-ink: #dde2f5;
+  --color-ink-muted: #a3b1c6;
+  --color-accent: #0ea5e9;
+  --color-info: #38bdf8;
+  --color-ok: #10b981;
+  --color-warn: #f59e0b;
+  --color-danger: #f87171;
+  --color-hud: rgba(8, 14, 27, 0.85);
+  --color-hud-border: rgba(62, 72, 80, 0.45);
+  --shadow-hud: 0 12px 36px -4px rgba(0, 0, 0, 0.55);
+  --scrollbar-thumb: #334155;
+  color-scheme: dark;
 }
 
 html,
@@ -33,7 +77,46 @@ body {
   background: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 20;
+  line-height: 1;
+  user-select: none;
+  vertical-align: middle;
+}
+
+.hud-panel {
+  background: var(--color-hud);
+  border: 1px solid var(--color-hud-border);
+  box-shadow: var(--shadow-hud);
+  backdrop-filter: blur(16px);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Tailwind preflight limita img/svg a max-width:100%; Leaflet necesita tamaños libres. */

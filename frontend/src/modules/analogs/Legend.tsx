@@ -1,11 +1,12 @@
+import { hudPanelClass } from '../../components/ui'
+import type { ContextVisibility } from './analogsContextLayers'
+import type { IfaMode } from './ifaColorExpr'
 import {
   CONTEXT_LAYERS,
   IFA_PALETTE_STOPS,
   type ContextLayerId,
   type LegendSpec,
 } from './layerRegistry'
-import type { IfaMode } from './ifaColorExpr'
-import type { ContextVisibility } from './analogsContextLayers'
 
 type Props = {
   isEs: boolean
@@ -13,13 +14,16 @@ type Props = {
   contextVisibility: ContextVisibility
 }
 
-function ColorBar({ legend, title }: { legend: LegendSpec; title: string }) {
+function ColorBar({ legend, title, rangeLabel }: { legend: LegendSpec; title: string; rangeLabel?: string }) {
   const gradient = `linear-gradient(90deg, ${legend.stops.join(', ')})`
   return (
-    <div className="mb-1.5 last:mb-0">
-      <p className="mb-0.5 text-[10px] font-semibold text-ink">{title}</p>
-      <div className="h-2 w-full rounded-sm" style={{ background: gradient }} />
-      <div className="mt-0.5 flex justify-between font-mono text-[9px] text-ink-muted">
+    <div className="space-y-1">
+      <div className="flex items-center justify-between font-mono text-[10px] font-bold">
+        <span className="uppercase tracking-wider text-ink-muted">{title}</span>
+        {rangeLabel && <span className="text-info">{rangeLabel}</span>}
+      </div>
+      <div className="h-2 w-full rounded-full border border-line" style={{ background: gradient }} />
+      <div className="flex justify-between font-mono text-[9px] text-ink-muted">
         <span>
           {legend.min}
           {legend.unit ? ` ${legend.unit}` : ''}
@@ -45,13 +49,11 @@ export function Legend({ isEs, contextVisibility }: Props) {
   const visibleCtx = CONTEXT_LAYERS.filter((l) => contextVisibility[l.id as ContextLayerId])
 
   return (
-    <div className="pointer-events-none absolute bottom-10 left-2 z-20 w-[200px] rounded border border-line bg-surface/95 p-2 shadow-md backdrop-blur-sm">
-      <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-ink-muted">
-        {isEs ? 'Leyenda' : 'Legend'}
-      </p>
+    <div className={`w-full space-y-2 p-3 ${hudPanelClass}`}>
       <ColorBar
         legend={ifaLegend}
         title="IFA (plasma)"
+        rangeLabel="0.0 → 1.0"
       />
       {visibleCtx.map((layer) => (
         <ColorBar
@@ -60,7 +62,7 @@ export function Legend({ isEs, contextVisibility }: Props) {
           title={isEs ? layer.nameEs : layer.nameEn}
         />
       ))}
-      <p className="mt-1 text-[9px] leading-snug text-ink-muted">
+      <p className="text-[10px] leading-snug text-ink-muted">
         {isEs
           ? 'Sin color = fuera del dominio analizado'
           : 'No color = outside the analyzed domain'}

@@ -12,6 +12,12 @@
       "label": "Idioma",
       "es": "ES",
       "en": "EN"
+    },
+    "theme": {
+      "label": "Tema visual",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "auto": "Auto"
     }
   },
   "analogs": {
@@ -23,19 +29,32 @@
     "label": "Cuerpo planetario",
     "earth": {
       "label": "Tierra (Worldview)",
+      "short": "Tierra",
+      "sub": "(Worldview)",
       "region": "Tierra · Cuenca Mesoamericana y Caribe"
     },
     "moon": {
       "label": "Luna (LRO/Diviner)",
+      "short": "Luna",
+      "sub": "(LRO/Diviner)",
       "region": "Luna · Región Polar Sur (LRO Diviner)"
     },
     "mars": {
       "label": "Marte (PDS)",
+      "short": "Marte",
+      "sub": "(PDS/Viking)",
       "region": "Marte · Valles Marineris (NASA PDS)"
     }
   },
   "explorer": {
     "mapLabel": "Mapa del explorador de datos",
+    "sidebar": {
+      "collapse": "Minimizar panel",
+      "expand": "Abrir panel de control"
+    },
+    "recenter": "Restablecer vista y BBox",
+    "resetBbox": "RESET",
+    "bboxTitle": "Selección BBox",
     "view": {
       "label": "Tipo de vista",
       "globe": "Globo 3D",

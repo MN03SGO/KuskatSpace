@@ -12,6 +12,12 @@
       "label": "Language",
       "es": "ES",
       "en": "EN"
+    },
+    "theme": {
+      "label": "Visual theme",
+      "light": "Light",
+      "dark": "Dark",
+      "auto": "Auto"
     }
   },
   "analogs": {
@@ -23,19 +29,32 @@
     "label": "Planetary body",
     "earth": {
       "label": "Earth (Worldview)",
+      "short": "Earth",
+      "sub": "(Worldview)",
       "region": "Earth · Mesoamerican & Caribbean Basin"
     },
     "moon": {
       "label": "Moon (LRO/Diviner)",
+      "short": "Moon",
+      "sub": "(LRO/Diviner)",
       "region": "Moon · South Polar Region (LRO Diviner)"
     },
     "mars": {
       "label": "Mars (PDS)",
+      "short": "Mars",
+      "sub": "(PDS/Viking)",
       "region": "Mars · Valles Marineris (NASA PDS)"
     }
   },
   "explorer": {
     "mapLabel": "Data explorer map",
+    "sidebar": {
+      "collapse": "Collapse panel",
+      "expand": "Open control panel"
+    },
+    "recenter": "Reset view and BBox",
+    "resetBbox": "RESET",
+    "bboxTitle": "BBox Selection",
     "view": {
       "label": "View type",
       "globe": "3D globe",
