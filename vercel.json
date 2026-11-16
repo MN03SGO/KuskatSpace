@@ -11,20 +11,20 @@
       "entrypoint": "api.main:app",
       "functions": {
         "api/main.py": {
-          "maxDuration": 60
+          "maxDuration": 60,
+          "includeFiles": "{data/**,backend/**}"
         }
       }
     }
   },
   "rewrites": [
+    { "source": "/api/(.*)", "destination": { "service": "api" } },
     { "source": "/health", "destination": { "service": "api" } },
-    { "source": "/candidates", "destination": { "service": "api" } },
-    { "source": "/candidates/(.*)", "destination": { "service": "api" } },
     { "source": "/targets", "destination": { "service": "api" } },
     { "source": "/datasets", "destination": { "service": "api" } },
+    { "source": "/candidates(.*)", "destination": { "service": "api" } },
     { "source": "/export", "destination": { "service": "api" } },
     { "source": "/data/(.*)", "destination": { "service": "api" } },
-    { "source": "/api/(.*)", "destination": { "service": "api" } },
     { "source": "/(.*)", "destination": { "service": "frontend" } }
   ]
 }
