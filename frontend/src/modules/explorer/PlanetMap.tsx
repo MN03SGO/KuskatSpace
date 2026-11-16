@@ -105,7 +105,16 @@ export default function PlanetMap() {
 
         <FlyToBounds bounds={bounds} />
         <ClickToBBox maxLat={cfg.maxClickLat} onSelect={setBbox} />
-        <Rectangle bounds={bounds} pathOptions={{ color: '#38bdf8', weight: 2, fillOpacity: 0.05 }} />
+        <Rectangle
+          bounds={bounds}
+          pathOptions={{
+            color: '#22d3ee',
+            weight: 1.5,
+            fillOpacity: 0,
+            dashArray: '4 4',
+            opacity: 0.95,
+          }}
+        />
 
         {/* Luna/Marte: overlay de proceso (si aplica) en Leaflet */}
         {scene && (

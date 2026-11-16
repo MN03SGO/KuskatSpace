@@ -104,18 +104,32 @@ function upsertBboxLayer(map: MapLibreMap, bbox: BBox) {
     src.setData(data)
   } else {
     map.addSource(BBOX_SOURCE_ID, { type: 'geojson', data })
+    // Zona de selección: sin relleno; solo contorno cian punteado
     map.addLayer({
       id: BBOX_FILL_ID,
       type: 'fill',
       source: BBOX_SOURCE_ID,
-      paint: { 'fill-color': '#38bdf8', 'fill-opacity': 0.08 },
+      paint: { 'fill-color': '#22d3ee', 'fill-opacity': 0 },
     })
     map.addLayer({
       id: BBOX_LINE_ID,
       type: 'line',
       source: BBOX_SOURCE_ID,
-      paint: { 'line-color': '#38bdf8', 'line-width': 2 },
+      paint: {
+        'line-color': '#22d3ee',
+        'line-width': 1.5,
+        'line-dasharray': [2, 2],
+        'line-opacity': 0.95,
+      },
     })
+  }
+  if (map.getLayer(BBOX_FILL_ID)) {
+    map.setPaintProperty(BBOX_FILL_ID, 'fill-opacity', 0)
+  }
+  if (map.getLayer(BBOX_LINE_ID)) {
+    map.setPaintProperty(BBOX_LINE_ID, 'line-color', '#22d3ee')
+    map.setPaintProperty(BBOX_LINE_ID, 'line-width', 1.5)
+    map.setPaintProperty(BBOX_LINE_ID, 'line-dasharray', [2, 2])
   }
   restackOverlays(map)
 }

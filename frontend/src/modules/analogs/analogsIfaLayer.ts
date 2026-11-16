@@ -118,7 +118,31 @@ function ensureCirclesLayer(
 ): void {
   if (map.getLayer(GRID_CIRCLES_LAYER_ID)) {
     map.setPaintProperty(GRID_CIRCLES_LAYER_ID, 'circle-color', colorExpr as never)
-    map.setPaintProperty(GRID_CIRCLES_LAYER_ID, 'circle-opacity', opacityExpr(opacity) as never)
+    map.setPaintProperty(
+      GRID_CIRCLES_LAYER_ID,
+      'circle-opacity',
+      [
+        'case',
+        ['>', ['to-number', ['get', 'missing']], 2],
+        Math.max(0.55, opacity * 0.7),
+        Math.max(0.85, opacity),
+      ] as never,
+    )
+    map.setPaintProperty(GRID_CIRCLES_LAYER_ID, 'circle-radius', [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      0,
+      4.5,
+      1,
+      5,
+      2,
+      6.5,
+      3,
+      9,
+      4,
+      12,
+    ] as never)
     return
   }
   map.addLayer(
@@ -130,21 +154,31 @@ function ensureCirclesLayer(
       layout: { visibility: 'visible' },
       paint: {
         'circle-color': colorExpr as never,
-        'circle-opacity': opacityExpr(opacity) as never,
-        'circle-blur': 0.35,
-        'circle-stroke-width': 0,
+        // Más opacos sobre satélite: mínimo ~0.85 aunque missing > 2
+        'circle-opacity': [
+          'case',
+          ['>', ['to-number', ['get', 'missing']], 2],
+          Math.max(0.55, opacity * 0.7),
+          Math.max(0.85, opacity),
+        ] as never,
+        'circle-blur': 0.15,
+        'circle-stroke-width': 1,
+        'circle-stroke-color': '#f0f9ff',
+        'circle-stroke-opacity': 0.75,
         'circle-radius': [
           'interpolate',
           ['linear'],
           ['zoom'],
+          0,
+          4.5,
           1,
-          2.5,
+          5,
           2,
-          4,
+          6.5,
           3,
-          7,
+          9,
           4,
-          11,
+          12,
         ],
       },
     },

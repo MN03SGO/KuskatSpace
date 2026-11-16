@@ -6,9 +6,11 @@ import {
   type GeoJSONSource,
   type MapLayerMouseEvent,
   type MapMouseEvent,
+  type StyleSpecification,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { focusRing } from '../../components/ui'
+import { ESRI_ATTRIBUTION, ESRI_WORLD_IMAGERY } from '../../config/bodies'
 import { API_BASE } from '../../config/env'
 import { useLang } from '../../i18n/useT'
 import { ensureMaplibreWorker } from '../../lib/maplibreSetup'
@@ -50,9 +52,29 @@ import { TimeBar } from './TimeBar'
 
 ensureMaplibreWorker()
 
-/** Carto Dark Matter (vector) — sin API key; fondo oscuro espacial para resaltar la grilla IFA. */
-const CARTO_DARK_MATTER_STYLE =
-  'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
+/** Basemap satelital real (Esri World Imagery) — aspecto tipo NASA / Google Earth. */
+const ESRI_SATELLITE_STYLE: StyleSpecification = {
+  version: 8,
+  name: 'Esri World Imagery',
+  sources: {
+    'esri-world-imagery': {
+      type: 'raster',
+      tiles: [ESRI_WORLD_IMAGERY],
+      tileSize: 256,
+      attribution: ESRI_ATTRIBUTION,
+      maxzoom: 19,
+    },
+  },
+  layers: [
+    {
+      id: 'esri-world-imagery-layer',
+      type: 'raster',
+      source: 'esri-world-imagery',
+      minzoom: 0,
+      maxzoom: 22,
+    },
+  ],
+}
 
 /** NO usar ±90°: en Web Mercator lat=90 → y=Infinity y el mapa crashea. */
 const MERCATOR_MAX_LAT = 85.05112878
@@ -454,10 +476,10 @@ export function AnalogsView({ onOpenExplorer }: { onOpenExplorer: () => void }) 
     try {
       map = new MapLibreMap({
         container: el,
-        style: CARTO_DARK_MATTER_STYLE,
+        style: ESRI_SATELLITE_STYLE,
         center: [-20, 15],
         zoom: 1.4,
-        minZoom: 1,
+        minZoom: 0,
         renderWorldCopies: false,
       })
     } catch (err) {
